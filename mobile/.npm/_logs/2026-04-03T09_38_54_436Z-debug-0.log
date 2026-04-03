@@ -10,3 +10,14 @@
 9 verbose logfile /Users/chiragrana/Downloads/idk/ngo-medicine-system/mobile/.npm/_logs/2026-04-03T09_38_54_436Z-debug-0.log
 10 silly logfile done cleaning log files
 11 http fetch GET 200 https://registry.npmjs.org/npm 328ms
+12 verbose cwd /Users/chiragrana/Downloads/idk/ngo-medicine-system/mobile
+13 verbose os Darwin 25.2.0
+14 verbose node v23.11.0
+15 verbose npm  v11.2.0
+16 notice
+16 notice New [33mminor[39m version of npm available! [33m11.2.0[39m -> [34m11.12.1[39m
+16 notice Changelog: [34mhttps://github.com/npm/cli/releases/tag/v11.12.1[39m
+16 notice To update run: [4mnpm install -g npm@11.12.1[24m
+16 notice  { force: true, [Symbol(proc-log.meta)]: true }
+17 verbose exit 0
+18 info ok
