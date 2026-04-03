@@ -10,9 +10,12 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ApiService from '../services/api.service';
-import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
+import {
+    COLORS, SPACING, FONT_SIZES,
+    BORDER_RADIUS, CARD_SHADOW, SECTION_HEADER_STYLE,
+} from '../constants/theme';
 
-export default function SettingsScreen({ navigation }: any) {
+export default function SettingsScreen({ navigation, onLogout }: any) {
     const [timezone, setTimezone] = useState('');
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -44,14 +47,7 @@ export default function SettingsScreen({ navigation }: any) {
                 style: 'destructive',
                 onPress: async () => {
                     await AsyncStorage.multiRemove(['jwt_token', 'user']);
-                    // Reload the app by navigating to root or triggering state change
-                    // This will be handled by the parent App component
-                    if (navigation.getParent()) {
-                        navigation.getParent().reset({
-                            index: 0,
-                            routes: [{ name: 'Home' }],
-                        });
-                    }
+                    if (onLogout) onLogout();
                 },
             },
         ]);
@@ -129,11 +125,8 @@ const styles = StyleSheet.create({
         marginHorizontal: SPACING.md,
     },
     sectionTitle: {
-        fontSize: FONT_SIZES.xs,
-        fontWeight: '600',
-        color: COLORS.textLight,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
+        ...SECTION_HEADER_STYLE,
+        color: COLORS.textSecondary,
         marginBottom: SPACING.sm,
         marginLeft: SPACING.sm,
     },
@@ -141,13 +134,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: COLORS.white,
-        borderRadius: 12,
-        padding: SPACING.md,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 1,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
+        ...CARD_SHADOW,
     },
     avatar: {
         width: 48,
@@ -181,14 +170,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: COLORS.white,
-        borderRadius: 12,
-        padding: SPACING.md,
-        marginBottom: 1,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 1,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
+        marginBottom: 2,
+        ...CARD_SHADOW,
     },
     settingLabel: {
         fontSize: FONT_SIZES.md,
@@ -205,15 +190,15 @@ const styles = StyleSheet.create({
     logoutButton: {
         marginHorizontal: SPACING.md,
         marginTop: SPACING.xl * 2,
-        backgroundColor: '#FFE5E5',
-        paddingVertical: 14,
-        borderRadius: 12,
+        backgroundColor: COLORS.redLight,
+        paddingVertical: 16,
+        borderRadius: BORDER_RADIUS.xl,
         alignItems: 'center',
     },
     logoutText: {
         fontSize: FONT_SIZES.md,
-        fontWeight: '600',
-        color: '#E53E3E',
+        fontWeight: '700',
+        color: COLORS.error,
     },
     versionText: {
         textAlign: 'center',
@@ -221,5 +206,6 @@ const styles = StyleSheet.create({
         fontSize: FONT_SIZES.xs,
         marginTop: SPACING.lg,
         marginBottom: SPACING.xl * 2,
+        letterSpacing: 0.5,
     },
 });

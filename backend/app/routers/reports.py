@@ -10,16 +10,17 @@ from typing import Optional
 import logging
 
 from ..database import get_db
-from ..models import Schedule, ScheduleStatus, Medicine, Worker
+from ..models import Schedule, ScheduleStatus, Medicine, Worker, User
 from ..config import get_settings
+from .google_auth import get_current_user
 
-router = APIRouter(prefix="/reports", tags=["Reports"])
+router = APIRouter(prefix="/reports", tags=["Reports"], dependencies=[Depends(get_current_user)])
 logger = logging.getLogger(__name__)
 settings = get_settings()
 
 
 @router.get("/dashboard", summary="Today's dashboard stats")
-async def get_dashboard(db: Session = Depends(get_db)):
+async def get_dashboard(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Get today's summary stats for the dashboard."""
     today = datetime.now(timezone.utc).date()
     
@@ -62,7 +63,8 @@ async def get_dashboard(db: Session = Depends(get_db)):
 @router.get("/history", summary="Daily completion history")
 async def get_history(
     days: int = Query(30, ge=1, le=90),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user)
 ):
     """Get daily schedule stats for the past N days (for charts)."""
     start_date = datetime.now(timezone.utc).date() - timedelta(days=days)
@@ -107,7 +109,8 @@ async def get_history(
 @router.get("/worker-performance", summary="Worker performance stats")
 async def get_worker_performance(
     days: int = Query(30, ge=1, le=90),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user)
 ):
     """Get completion stats per worker for the past N days."""
     start_date = datetime.now(timezone.utc).date() - timedelta(days=days)
@@ -154,7 +157,7 @@ async def get_worker_performance(
 
 
 @router.get("/stock-summary", summary="Stock status overview")
-async def get_stock_summary(db: Session = Depends(get_db)):
+async def get_stock_summary(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Get all medicines with their stock status."""
     medicines = db.query(Medicine).filter(
         Medicine.is_active == True,

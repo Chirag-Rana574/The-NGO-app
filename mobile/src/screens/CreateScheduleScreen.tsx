@@ -15,10 +15,10 @@ import { format, parseISO } from 'date-fns';
 import ApiService from '../services/api.service';
 import SuccessToast from '../components/SuccessToast';
 import { Worker, Medicine, Patient } from '../types';
-import { COLORS, SPACING, FONT_SIZES, MIN_TOUCH_TARGET } from '../constants/theme';
+import { COLORS, SPACING, FONT_SIZES, MIN_TOUCH_TARGET, BORDER_RADIUS } from '../constants/theme';
 
 export default function CreateScheduleScreen({ route, navigation }: any) {
-    const { date } = route.params;
+    const date = route?.params?.date || format(new Date(), 'yyyy-MM-dd');
     const [time, setTime] = useState(new Date());
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState<number | null>(null);
@@ -218,9 +218,9 @@ const styles = StyleSheet.create({
     },
     dateSection: {
         backgroundColor: COLORS.primary,
-        borderRadius: 12,
-        padding: SPACING.md,
-        marginBottom: SPACING.md,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
+        marginBottom: SPACING.lg,
         alignItems: 'center',
     },
     dateLabel: {
@@ -245,12 +245,10 @@ const styles = StyleSheet.create({
         marginBottom: SPACING.xs,
     },
     timeButton: {
-        backgroundColor: COLORS.white,
-        borderRadius: 12,
-        padding: SPACING.md,
+        backgroundColor: COLORS.surfaceContainerLow,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
         alignItems: 'center',
-        borderWidth: 1.5,
-        borderColor: COLORS.primary,
         minHeight: MIN_TOUCH_TARGET,
         justifyContent: 'center',
     },
@@ -260,37 +258,33 @@ const styles = StyleSheet.create({
         color: COLORS.primary,
     },
     pickerContainer: {
-        backgroundColor: COLORS.white,
-        borderRadius: 12,
-        borderWidth: 1.5,
-        borderColor: COLORS.border,
+        backgroundColor: COLORS.surfaceContainerLow,
+        borderRadius: BORDER_RADIUS.xl,
         minHeight: MIN_TOUCH_TARGET,
     },
     input: {
-        backgroundColor: COLORS.white,
-        borderRadius: 12,
-        padding: SPACING.md,
+        backgroundColor: COLORS.surfaceContainerLow,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
         fontSize: FONT_SIZES.lg,
         color: COLORS.text,
-        borderWidth: 1.5,
-        borderColor: COLORS.border,
         minHeight: MIN_TOUCH_TARGET,
         textAlign: 'center',
     },
     saveButton: {
         backgroundColor: COLORS.primary,
-        borderRadius: 12,
-        padding: SPACING.md,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
         alignItems: 'center',
-        marginTop: SPACING.sm,
+        marginTop: SPACING.md,
         marginBottom: SPACING.lg,
         minHeight: MIN_TOUCH_TARGET,
         justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 6,
-        elevation: 3,
+        shadowColor: COLORS.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
     },
     saveButtonText: {
         fontSize: FONT_SIZES.lg,

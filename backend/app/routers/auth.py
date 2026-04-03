@@ -1,21 +1,23 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 import bcrypt
 import logging
 from typing import Optional
 from ..database import get_db
-from ..models import SystemConfig
+from ..models import SystemConfig, User
 from ..schemas import (
     SetupKeyRequest, ChangeKeyRequest, VerifyKeyRequest,
     KeyStatusResponse, SuccessResponse
 )
-
+from .google_auth import get_current_user
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 logger = logging.getLogger(__name__)
 
 MASTER_KEY_CONFIG = "master_key_hash"
 MASTER_KEY_LENGTH = "master_key_length"
 
+LAST_FAILURE_CONFIG = "master_key_last_failure"
+FAILURE_COUNT_CONFIG = "master_key_failure_count"
 
 def _get_key_hash(db: Session) -> Optional[str]:
     """Get the stored master key hash from DB."""
@@ -38,7 +40,7 @@ def verify_master_key(db: Session, pin: str) -> bool:
 
 
 @router.get("/key-status", response_model=KeyStatusResponse)
-def get_key_status(db: Session = Depends(get_db)):
+def get_key_status(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Check whether the master key has been set up."""
     stored_hash = _get_key_hash(db)
     pin_length = _get_key_length(db)
@@ -49,7 +51,7 @@ def get_key_status(db: Session = Depends(get_db)):
 
 
 @router.post("/setup-key", response_model=SuccessResponse)
-def setup_key(request: SetupKeyRequest, db: Session = Depends(get_db)):
+def setup_key(request: SetupKeyRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Initial master key setup. Only works if no key exists yet.
     PIN must be 4-6 digits.
@@ -75,7 +77,7 @@ def setup_key(request: SetupKeyRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/verify-key", response_model=SuccessResponse)
-def verify_key(request: VerifyKeyRequest, db: Session = Depends(get_db)):
+def verify_key(request: VerifyKeyRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Verify a PIN against the stored master key.
     Used for medicine stock edits and near-term schedule edits.
@@ -87,14 +89,16 @@ def verify_key(request: VerifyKeyRequest, db: Session = Depends(get_db)):
     is_valid = bcrypt.checkpw(request.pin.encode('utf-8'), stored_hash.encode('utf-8'))
     
     if not is_valid:
-        logger.warning("Failed master key verification attempt")
+        logger.warning(f"FAILED PIN ATTEMPT by {current_user.email}")
+        import time
+        time.sleep(2)
         raise HTTPException(status_code=403, detail="Invalid PIN")
     
     return SuccessResponse(message="PIN verified successfully", data={"valid": True})
 
 
 @router.post("/change-key", response_model=SuccessResponse)
-def change_key(request: ChangeKeyRequest, db: Session = Depends(get_db)):
+def change_key(request: ChangeKeyRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Change the master key. Requires the current PIN for verification.
     """
@@ -104,7 +108,7 @@ def change_key(request: ChangeKeyRequest, db: Session = Depends(get_db)):
     
     # Verify current PIN
     if not bcrypt.checkpw(request.current_pin.encode('utf-8'), stored_hash.encode('utf-8')):
-        logger.warning("Failed master key change attempt — wrong current PIN")
+        logger.warning("Failed master key change attempt by {current_user.email} — wrong current PIN")
         raise HTTPException(status_code=403, detail="Current PIN is incorrect")
     
     # Hash and store new PIN
@@ -128,6 +132,6 @@ def change_key(request: ChangeKeyRequest, db: Session = Depends(get_db)):
 
 # Backward compatibility: old verify-passkey endpoint redirects to new system
 @router.post("/verify-passkey")
-def verify_passkey_legacy(request: VerifyKeyRequest, db: Session = Depends(get_db)):
+def verify_passkey_legacy(request: VerifyKeyRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Legacy endpoint — redirects to verify-key."""
     return verify_key(request, db)

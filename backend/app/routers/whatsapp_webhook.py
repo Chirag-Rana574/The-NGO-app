@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import logging
 from twilio.request_validator import RequestValidator
 from twilio.rest import Client as TwilioClient
@@ -60,14 +60,16 @@ async def whatsapp_webhook(
         # Parse request body
         body = await request.form()
         
-        # Validate Twilio signature
+        # Validate Twilio signature (skip in debug/dev mode — tunnel URLs change)
         signature = request.headers.get("X-Twilio-Signature", "")
         url = str(request.url)
         form_params = dict(body)
         
-        if not _twilio_validator.validate(url, form_params, signature):
+        if not settings.debug and not _twilio_validator.validate(url, form_params, signature):
             logger.warning(f"Invalid Twilio signature from {request.client.host if request.client else 'unknown'}")
             raise HTTPException(status_code=403, detail="Invalid Twilio signature")
+        elif settings.debug:
+            logger.info("Skipping Twilio signature validation (debug mode)")
         
         payload = WhatsAppWebhookPayload(**body)
         
@@ -137,7 +139,7 @@ async def whatsapp_webhook(
             )
         
         # Step 5: Determine time window status
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         response_window_end = schedule.scheduled_time + timedelta(
             minutes=settings.response_window_minutes
         )

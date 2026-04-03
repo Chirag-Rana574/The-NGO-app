@@ -10,7 +10,10 @@ import {
 import { format } from 'date-fns';
 import ApiService from '../services/api.service';
 import { AuditLog } from '../types';
-import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
+import {
+    COLORS, SPACING, FONT_SIZES,
+    BORDER_RADIUS, CARD_SHADOW, LETTER_SPACING,
+} from '../constants/theme';
 
 export default function AuditLogScreen() {
     const [logs, setLogs] = useState<AuditLog[]>([]);
@@ -69,30 +72,33 @@ export default function AuditLogScreen() {
         }
     };
 
-    const renderLogItem = ({ item }: { item: AuditLog }) => (
-        <View style={styles.logCard}>
-            <View style={styles.logHeader}>
-                <View style={[styles.actionBadge, { backgroundColor: getActionColor(item.action) }]}>
-                    <Text style={styles.actionText}>{item.action}</Text>
+    const renderLogItem = ({ item }: { item: AuditLog }) => {
+        const actionColor = getActionColor(item.action);
+        return (
+            <View style={[styles.logCard, { borderLeftColor: actionColor }]}>
+                <View style={styles.logHeader}>
+                    <View style={[styles.actionBadge, { backgroundColor: actionColor }]}>
+                        <Text style={styles.actionText}>{item.action}</Text>
+                    </View>
+                    <Text style={styles.timestamp}>
+                        {safeFormatDate(item.created_at)}
+                    </Text>
                 </View>
-                <Text style={styles.timestamp}>
-                    {safeFormatDate(item.created_at)}
+
+                <Text style={styles.entityType}>
+                    {item.entity_type} #{item.entity_id}
                 </Text>
+
+                {item.reason && (
+                    <Text style={styles.reason}>{item.reason}</Text>
+                )}
+
+                {item.performed_by && (
+                    <Text style={styles.performedBy}>By: {item.performed_by}</Text>
+                )}
             </View>
-
-            <Text style={styles.entityType}>
-                {item.entity_type} #{item.entity_id}
-            </Text>
-
-            {item.reason && (
-                <Text style={styles.reason}>{item.reason}</Text>
-            )}
-
-            {item.performed_by && (
-                <Text style={styles.performedBy}>By: {item.performed_by}</Text>
-            )}
-        </View>
-    );
+        );
+    };
 
     if (loading) {
         return (
@@ -122,11 +128,21 @@ export default function AuditLogScreen() {
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
+                ListHeaderComponent={
+                    <View style={styles.headerSection}>
+                        <Text style={styles.heroTitle}>Activity History</Text>
+                        <Text style={styles.heroSubtitle}>
+                            Track all changes and actions performed in the system.
+                        </Text>
+                    </View>
+                }
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
+                        <Text style={styles.emptyIcon}>📋</Text>
                         <Text style={styles.emptyText}>No audit logs available</Text>
                     </View>
                 }
+                showsVerticalScrollIndicator={false}
             />
         </View>
     );
@@ -144,17 +160,31 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         padding: SPACING.md,
+        paddingBottom: 40,
+    },
+    headerSection: {
+        paddingHorizontal: SPACING.sm,
+        paddingBottom: SPACING.md,
+    },
+    heroTitle: {
+        fontSize: 28,
+        fontWeight: '800',
+        color: COLORS.text,
+        marginBottom: SPACING.xs,
+        letterSpacing: LETTER_SPACING.tight,
+    },
+    heroSubtitle: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.textSecondary,
+        lineHeight: 20,
     },
     logCard: {
         backgroundColor: COLORS.white,
-        borderRadius: 12,
+        borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.lg,
         marginBottom: SPACING.md,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        borderLeftWidth: 4,
+        ...CARD_SHADOW,
     },
     logHeader: {
         flexDirection: 'row',
@@ -165,42 +195,52 @@ const styles = StyleSheet.create({
     actionBadge: {
         paddingHorizontal: SPACING.sm,
         paddingVertical: 4,
-        borderRadius: 6,
-        minHeight: 28,
+        borderRadius: BORDER_RADIUS.full,
+        minHeight: 26,
         justifyContent: 'center',
     },
     actionText: {
         color: COLORS.white,
-        fontSize: FONT_SIZES.xs,
-        fontWeight: 'bold',
+        fontSize: FONT_SIZES.xxs,
+        fontWeight: '700',
+        letterSpacing: 0.5,
     },
     timestamp: {
-        fontSize: FONT_SIZES.sm,
+        fontSize: FONT_SIZES.xs,
         color: COLORS.textLight,
+        fontWeight: '600',
+        letterSpacing: 0.3,
     },
     entityType: {
         fontSize: FONT_SIZES.md,
-        fontWeight: '600',
+        fontWeight: '700',
         color: COLORS.text,
         marginBottom: SPACING.xs,
     },
     reason: {
         fontSize: FONT_SIZES.sm,
-        color: COLORS.textLight,
+        color: COLORS.textSecondary,
         marginTop: SPACING.xs,
-        fontStyle: 'italic',
+        lineHeight: 20,
     },
     performedBy: {
-        fontSize: FONT_SIZES.sm,
+        fontSize: FONT_SIZES.xs,
         color: COLORS.textLight,
         marginTop: SPACING.xs,
+        fontWeight: '600',
     },
     emptyContainer: {
         padding: SPACING.xl,
         alignItems: 'center',
+        marginTop: SPACING.xxl,
+    },
+    emptyIcon: {
+        fontSize: 48,
+        marginBottom: SPACING.md,
     },
     emptyText: {
-        fontSize: FONT_SIZES.md,
+        fontSize: FONT_SIZES.lg,
         color: COLORS.textLight,
+        fontWeight: '600',
     },
 });

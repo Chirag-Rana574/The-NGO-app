@@ -16,7 +16,10 @@ import ApiService from '../services/api.service';
 import PasskeyModal from '../components/PasskeyModal';
 import SuccessToast from '../components/SuccessToast';
 import { Medicine } from '../types';
-import { COLORS, SPACING, FONT_SIZES, MIN_TOUCH_TARGET } from '../constants/theme';
+import {
+    COLORS, SPACING, FONT_SIZES, MIN_TOUCH_TARGET,
+    SECTION_HEADER_STYLE, CARD_SHADOW, BORDER_RADIUS,
+} from '../constants/theme';
 
 type ModalMode = 'add' | 'edit' | 'stock' | null;
 
@@ -30,8 +33,8 @@ export default function MedicinesScreen() {
     const [passkeyAction, setPasskeyAction] = useState<'edit' | 'delete' | null>(null);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
-    // Form data
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -40,7 +43,6 @@ export default function MedicinesScreen() {
         min_stock_level: '',
     });
 
-    // Stock adjustment data
     const [stockData, setStockData] = useState({
         adjustment: '',
         notes: '',
@@ -110,7 +112,6 @@ export default function MedicinesScreen() {
             Alert.alert('Validation Error', 'Please enter valid initial stock');
             return;
         }
-
         try {
             await ApiService.createMedicine({
                 name: formData.name,
@@ -135,7 +136,6 @@ export default function MedicinesScreen() {
             Alert.alert('Validation Error', 'Please enter stock adjustment amount');
             return;
         }
-
         try {
             await ApiService.adjustStock(selectedMedicine.id, {
                 amount: parseInt(stockData.adjustment),
@@ -161,7 +161,6 @@ export default function MedicinesScreen() {
 
     const confirmDelete = () => {
         if (!selectedMedicine) return;
-
         Alert.alert(
             'Confirm Delete',
             `Are you sure you want to delete ${selectedMedicine.name}?`,
@@ -187,56 +186,138 @@ export default function MedicinesScreen() {
         );
     };
 
+    // ─── Derived data ─────────────────────────────────────────────
+    const lowStockCount = medicines.filter(m => m.current_stock <= (m.min_stock_level ?? 10)).length;
+    const totalSKUs = medicines.length;
+
+    const filteredMedicines = medicines.filter(m =>
+        m.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // ─── Card Renderer ────────────────────────────────────────────
     const renderMedicineItem = ({ item }: { item: Medicine }) => {
         const isLowStock = item.current_stock <= (item.min_stock_level ?? 10);
 
         return (
-            <View style={styles.medicineCard}>
-                <View style={styles.medicineHeader}>
-                    <Text style={styles.medicineName}>{item.name}</Text>
-                    {isLowStock && (
-                        <View style={styles.lowStockBadge}>
-                            <Text style={styles.lowStockText}>Low Stock</Text>
-                        </View>
-                    )}
+            <View style={[
+                styles.medicineCard,
+                isLowStock ? styles.medicineCardLow : styles.medicineCardStable,
+            ]}>
+                {/* Status badge */}
+                <View style={styles.cardHeaderRow}>
+                    <View style={[
+                        styles.stockStatusBadge,
+                        { backgroundColor: isLowStock ? '#FEE2E2' : '#ECFDF5' },
+                    ]}>
+                        <Text style={[
+                            styles.stockStatusText,
+                            { color: isLowStock ? COLORS.error : COLORS.green },
+                        ]}>
+                            {isLowStock ? '⚠ LOW STOCK' : '✓ STABLE'}
+                        </Text>
+                    </View>
                 </View>
 
-                {item.description && (
-                    <Text style={styles.description}>{item.description}</Text>
-                )}
-
-                <View style={styles.stockInfo}>
-                    <Text style={styles.stockLabel}>Current Stock:</Text>
-                    <Text style={[styles.stockValue, isLowStock && styles.stockValueLow]}>
-                        {item.current_stock} {item.dosage_unit}
-                    </Text>
+                {/* Name + Stock count */}
+                <View style={styles.medicineRow}>
+                    <View style={styles.medicineInfo}>
+                        <Text style={styles.medicineName}>{item.name}</Text>
+                        {item.description ? (
+                            <Text style={styles.medicineDesc}>{item.description}</Text>
+                        ) : null}
+                    </View>
+                    <View style={styles.stockCountContainer}>
+                        <Text style={[
+                            styles.stockCountBig,
+                            { color: isLowStock ? COLORS.error : COLORS.text },
+                        ]}>
+                            {item.current_stock.toString().padStart(2, '0')}
+                        </Text>
+                        <Text style={styles.stockCountUnit}>
+                            {item.dosage_unit?.toUpperCase() || 'UNITS'} LEFT
+                        </Text>
+                    </View>
                 </View>
 
-                <View style={styles.stockInfo}>
-                    <Text style={styles.stockLabel}>Min Stock Level:</Text>
-                    <Text style={styles.stockValue}>
-                        {item.min_stock_level ?? 10} {item.dosage_unit}
-                    </Text>
-                </View>
-
+                {/* Action buttons */}
                 <View style={styles.actionButtons}>
                     <TouchableOpacity
-                        style={[styles.actionButton, styles.editButton]}
+                        style={styles.actionBtn}
+                        onPress={() => {
+                            setSelectedMedicine(item);
+                            setFormData({
+                                name: item.name,
+                                description: item.description || '',
+                                dosage_unit: item.dosage_unit,
+                                initial_stock: item.current_stock.toString(),
+                                min_stock_level: (item.min_stock_level ?? 10).toString(),
+                            });
+                            setModalMode('edit');
+                        }}
+                    >
+                        <Text style={styles.actionBtnIcon}>✏️</Text>
+                        <Text style={styles.actionBtnText}>EDIT</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.actionBtn, styles.actionBtnPrimary]}
                         onPress={() => openEditStockModal(item)}
                     >
-                        <Text style={styles.actionButtonText}>Edit Stock</Text>
+                        <Text style={styles.actionBtnIconWhite}>➕</Text>
+                        <Text style={styles.actionBtnTextWhite}>STOCK +/-</Text>
                     </TouchableOpacity>
-
                     <TouchableOpacity
-                        style={[styles.actionButton, styles.deleteButton]}
+                        style={styles.actionBtn}
                         onPress={() => handleDeleteRequest(item)}
                     >
-                        <Text style={styles.actionButtonText}>Delete</Text>
+                        <Text style={styles.actionBtnIcon}>🗑</Text>
+                        <Text style={styles.actionBtnText}>DELETE</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         );
     };
+
+    // ─── Header ───────────────────────────────────────────────────
+    const ListHeader = () => (
+        <View style={styles.headerSection}>
+            <Text style={styles.heroTitle}>Pharmacy Inventory</Text>
+            <Text style={styles.heroSubtitle}>
+                Monitor and manage essential medical supplies. Real-time stock alerts for field coordinators.
+            </Text>
+
+            {/* Summary chips */}
+            <View style={styles.chipRow}>
+                <View style={styles.chipCard}>
+                    <Text style={styles.chipLabel}>TOTAL SKUS</Text>
+                    <Text style={styles.chipValue}>{totalSKUs}</Text>
+                </View>
+                <View style={[styles.chipCard, styles.chipCardAlert]}>
+                    <Text style={[styles.chipLabel, { color: COLORS.error }]}>LOW STOCK</Text>
+                    <Text style={[styles.chipValue, { color: COLORS.error }]}>
+                        {lowStockCount.toString().padStart(2, '0')}
+                    </Text>
+                </View>
+            </View>
+
+            {/* Search */}
+            <View style={styles.searchBar}>
+                <Text style={styles.searchIcon}>🔍</Text>
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="Search medicines by name or salt..."
+                    placeholderTextColor={COLORS.textHint}
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                />
+            </View>
+
+            {/* Filters button */}
+            <TouchableOpacity style={styles.filtersBtn}>
+                <Text style={styles.filtersBtnIcon}>☰</Text>
+                <Text style={styles.filtersBtnText}>Filters</Text>
+            </TouchableOpacity>
+        </View>
+    );
 
     if (loading) {
         return (
@@ -267,10 +348,11 @@ export default function MedicinesScreen() {
             />
 
             <FlatList
-                data={medicines}
+                data={filteredMedicines}
                 renderItem={renderMedicineItem}
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.listContainer}
+                ListHeaderComponent={<ListHeader />}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
@@ -278,18 +360,20 @@ export default function MedicinesScreen() {
                     <View style={styles.emptyContainer}>
                         <Text style={styles.emptyIcon}>💊</Text>
                         <Text style={styles.emptyText}>No medicines yet</Text>
-                        <Text style={styles.emptySubtext}>Tap "+ Add" to create one</Text>
+                        <Text style={styles.emptySubtext}>Tap + to add one</Text>
                     </View>
                 }
+                showsVerticalScrollIndicator={false}
             />
 
-            <TouchableOpacity style={styles.fab} onPress={openAddModal}>
-                <Text style={styles.fabText}>+ Add</Text>
+            {/* FAB */}
+            <TouchableOpacity style={styles.fab} onPress={openAddModal} activeOpacity={0.85}>
+                <Text style={styles.fabText}>+</Text>
             </TouchableOpacity>
 
             {/* Add Medicine Modal */}
             <Modal
-                visible={modalMode === 'add'}
+                visible={modalMode === 'add' || modalMode === 'edit'}
                 transparent
                 animationType="slide"
                 onRequestClose={() => setModalMode(null)}
@@ -297,80 +381,89 @@ export default function MedicinesScreen() {
                 <View style={styles.modalOverlay}>
                     <ScrollView contentContainerStyle={styles.modalScrollContent}>
                         <View style={styles.modalContainer}>
-                            <Text style={styles.modalTitle}>Add Medicine</Text>
+                            <View style={styles.modalHeader}>
+                                <Text style={styles.modalBrand}>CLINICAL CURATOR</Text>
+                                <TouchableOpacity onPress={() => setModalMode(null)}>
+                                    <Text style={styles.modalClose}>✕</Text>
+                                </TouchableOpacity>
+                            </View>
 
-                            <View style={styles.formSection}>
-                                <Text style={styles.label}>Medicine Name *</Text>
+                            <Text style={styles.modalTitle}>
+                                {modalMode === 'edit' ? 'Edit Medicine' : 'Add Medicine'}
+                            </Text>
+
+                            <Text style={styles.formLabel}>MEDICINE NAME *</Text>
+                            <View style={styles.inputContainer}>
                                 <TextInput
                                     style={styles.input}
                                     value={formData.name}
                                     onChangeText={(text) => setFormData({ ...formData, name: text })}
-                                    placeholder="e.g., Aspirin"
-                                    placeholderTextColor={COLORS.textLight}
+                                    placeholder="e.g., Amoxicillin 500mg"
+                                    placeholderTextColor={COLORS.textHint}
                                 />
                             </View>
 
-                            <View style={styles.formSection}>
-                                <Text style={styles.label}>Description</Text>
+                            <Text style={styles.formLabel}>DESCRIPTION</Text>
+                            <View style={styles.inputContainer}>
                                 <TextInput
                                     style={styles.input}
                                     value={formData.description}
                                     onChangeText={(text) => setFormData({ ...formData, description: text })}
                                     placeholder="Optional description"
-                                    placeholderTextColor={COLORS.textLight}
+                                    placeholderTextColor={COLORS.textHint}
                                 />
                             </View>
 
-                            <View style={styles.formSection}>
-                                <Text style={styles.label}>Dosage Unit *</Text>
+                            <Text style={styles.formLabel}>DOSAGE UNIT *</Text>
+                            <View style={styles.inputContainer}>
                                 <TextInput
                                     style={styles.input}
                                     value={formData.dosage_unit}
                                     onChangeText={(text) => setFormData({ ...formData, dosage_unit: text })}
                                     placeholder="e.g., mg, ml, tablets"
-                                    placeholderTextColor={COLORS.textLight}
+                                    placeholderTextColor={COLORS.textHint}
                                 />
                             </View>
 
-                            <View style={styles.formSection}>
-                                <Text style={styles.label}>Initial Stock *</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={formData.initial_stock}
-                                    onChangeText={(text) => setFormData({ ...formData, initial_stock: text })}
-                                    placeholder="0"
-                                    placeholderTextColor={COLORS.textLight}
-                                    keyboardType="numeric"
-                                />
+                            <View style={styles.halfRow}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.formLabel}>INITIAL STOCK *</Text>
+                                    <View style={styles.inputContainer}>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={formData.initial_stock}
+                                            onChangeText={(text) => setFormData({ ...formData, initial_stock: text })}
+                                            placeholder="0"
+                                            placeholderTextColor={COLORS.textHint}
+                                            keyboardType="numeric"
+                                        />
+                                    </View>
+                                </View>
+                                <View style={{ width: SPACING.md }} />
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.formLabel}>MIN LEVEL</Text>
+                                    <View style={styles.inputContainer}>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={formData.min_stock_level}
+                                            onChangeText={(text) => setFormData({ ...formData, min_stock_level: text })}
+                                            placeholder="10"
+                                            placeholderTextColor={COLORS.textHint}
+                                            keyboardType="numeric"
+                                        />
+                                    </View>
+                                </View>
                             </View>
 
-                            <View style={styles.formSection}>
-                                <Text style={styles.label}>Minimum Stock Level</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={formData.min_stock_level}
-                                    onChangeText={(text) => setFormData({ ...formData, min_stock_level: text })}
-                                    placeholder="10"
-                                    placeholderTextColor={COLORS.textLight}
-                                    keyboardType="numeric"
-                                />
-                            </View>
+                            <TouchableOpacity style={styles.saveButton} onPress={handleAddMedicine}>
+                                <Text style={styles.saveButtonText}>
+                                    {modalMode === 'edit' ? '💾  Save Changes' : '➕  Add Medicine'}
+                                </Text>
+                            </TouchableOpacity>
 
-                            <View style={styles.modalButtons}>
-                                <TouchableOpacity
-                                    style={[styles.button, styles.cancelButton]}
-                                    onPress={() => setModalMode(null)}
-                                >
-                                    <Text style={styles.cancelButtonText}>Cancel</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    style={[styles.button, styles.saveButton]}
-                                    onPress={handleAddMedicine}
-                                >
-                                    <Text style={styles.saveButtonText}>Add</Text>
-                                </TouchableOpacity>
-                            </View>
+                            <TouchableOpacity style={styles.cancelButton} onPress={() => setModalMode(null)}>
+                                <Text style={styles.cancelButtonText}>Cancel</Text>
+                            </TouchableOpacity>
                         </View>
                     </ScrollView>
                 </View>
@@ -384,54 +477,52 @@ export default function MedicinesScreen() {
                 onRequestClose={() => setModalMode(null)}
             >
                 <View style={styles.modalOverlay}>
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Adjust Stock</Text>
-                        <Text style={styles.modalSubtitle}>{selectedMedicine?.name}</Text>
-                        <Text style={styles.currentStock}>
+                    <View style={styles.modalContainerCenter}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalBrand}>STOCK ADJUSTMENT</Text>
+                            <TouchableOpacity onPress={() => setModalMode(null)}>
+                                <Text style={styles.modalClose}>✕</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <Text style={styles.modalTitle}>{selectedMedicine?.name}</Text>
+                        <Text style={styles.currentStockLabel}>
                             Current: {selectedMedicine?.current_stock} {selectedMedicine?.dosage_unit}
                         </Text>
 
-                        <View style={styles.formSection}>
-                            <Text style={styles.label}>Adjustment Amount</Text>
-                            <Text style={styles.helpText}>
-                                Use positive numbers to add stock, negative to remove
-                            </Text>
+                        <Text style={styles.formLabel}>ADJUSTMENT AMOUNT</Text>
+                        <Text style={styles.helpText}>
+                            Use positive numbers to add stock, negative to remove
+                        </Text>
+                        <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
                                 value={stockData.adjustment}
                                 onChangeText={(text) => setStockData({ ...stockData, adjustment: text })}
                                 placeholder="e.g., +50 or -20"
-                                placeholderTextColor={COLORS.textLight}
+                                placeholderTextColor={COLORS.textHint}
                                 keyboardType="numeric"
                             />
                         </View>
 
-                        <View style={styles.formSection}>
-                            <Text style={styles.label}>Notes</Text>
+                        <Text style={styles.formLabel}>NOTES</Text>
+                        <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
                                 value={stockData.notes}
                                 onChangeText={(text) => setStockData({ ...stockData, notes: text })}
                                 placeholder="Reason for adjustment"
-                                placeholderTextColor={COLORS.textLight}
+                                placeholderTextColor={COLORS.textHint}
                             />
                         </View>
 
-                        <View style={styles.modalButtons}>
-                            <TouchableOpacity
-                                style={[styles.button, styles.cancelButton]}
-                                onPress={() => setModalMode(null)}
-                            >
-                                <Text style={styles.cancelButtonText}>Cancel</Text>
-                            </TouchableOpacity>
+                        <TouchableOpacity style={styles.saveButton} onPress={handleStockAdjustment}>
+                            <Text style={styles.saveButtonText}>💾  Update Stock</Text>
+                        </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={[styles.button, styles.saveButton]}
-                                onPress={handleStockAdjustment}
-                            >
-                                <Text style={styles.saveButtonText}>Save</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity style={styles.cancelButton} onPress={() => setModalMode(null)}>
+                            <Text style={styles.cancelButtonText}>Cancel</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -450,221 +541,341 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     listContainer: {
-        padding: SPACING.md,
+        paddingBottom: 100,
     },
+
+    // ─── Header Section ─────────────────────────────────────────
+    headerSection: {
+        paddingHorizontal: SPACING.lg,
+        paddingTop: SPACING.md,
+        paddingBottom: SPACING.md,
+    },
+    heroTitle: {
+        fontSize: 30,
+        fontWeight: '800',
+        color: COLORS.text,
+        marginBottom: SPACING.xs,
+    },
+    heroSubtitle: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.textSecondary,
+        lineHeight: 20,
+        marginBottom: SPACING.lg,
+    },
+    chipRow: {
+        flexDirection: 'row',
+        gap: SPACING.sm,
+        marginBottom: SPACING.lg,
+    },
+    chipCard: {
+        backgroundColor: COLORS.grayLight,
+        borderRadius: BORDER_RADIUS.md,
+        paddingVertical: SPACING.sm,
+        paddingHorizontal: SPACING.lg,
+    },
+    chipCardAlert: {
+        backgroundColor: '#FEE2E2',
+    },
+    chipLabel: {
+        fontSize: 9,
+        fontWeight: '700',
+        color: COLORS.textSecondary,
+        letterSpacing: 1,
+        marginBottom: 2,
+    },
+    chipValue: {
+        fontSize: FONT_SIZES.xl,
+        fontWeight: '800',
+        color: COLORS.text,
+    },
+    searchBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.xl,
+        paddingHorizontal: SPACING.md,
+        paddingVertical: SPACING.sm,
+        marginBottom: SPACING.sm,
+        ...CARD_SHADOW,
+    },
+    searchIcon: {
+        fontSize: 16,
+        marginRight: SPACING.sm,
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.text,
+    },
+    filtersBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.xl,
+        paddingVertical: SPACING.sm,
+        marginBottom: SPACING.md,
+        ...CARD_SHADOW,
+    },
+    filtersBtnIcon: {
+        fontSize: 14,
+        marginRight: SPACING.sm,
+        color: COLORS.textSecondary,
+    },
+    filtersBtnText: {
+        fontSize: FONT_SIZES.sm,
+        fontWeight: '600',
+        color: COLORS.textSecondary,
+    },
+
+    // ─── Medicine Card ──────────────────────────────────────────
     medicineCard: {
         backgroundColor: COLORS.white,
-        borderRadius: 16,
-        padding: SPACING.xl,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
+        marginHorizontal: SPACING.md,
         marginBottom: SPACING.md,
-        borderLeftWidth: 6,
-        borderLeftColor: COLORS.green,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        borderLeftWidth: 4,
+        ...CARD_SHADOW,
     },
-    medicineHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+    medicineCardStable: {
+        borderLeftColor: COLORS.green,
+    },
+    medicineCardLow: {
+        borderLeftColor: COLORS.error,
+    },
+    cardHeaderRow: {
         marginBottom: SPACING.sm,
+    },
+    stockStatusBadge: {
+        alignSelf: 'flex-start',
+        paddingHorizontal: SPACING.sm,
+        paddingVertical: 3,
+        borderRadius: 6,
+    },
+    stockStatusText: {
+        fontSize: 10,
+        fontWeight: '700',
+        letterSpacing: 0.5,
+    },
+    medicineRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: SPACING.md,
+    },
+    medicineInfo: {
+        flex: 1,
+        marginRight: SPACING.md,
     },
     medicineName: {
         fontSize: FONT_SIZES.xl,
-        fontWeight: 'bold',
+        fontWeight: '800',
         color: COLORS.text,
-        flex: 1,
+        marginBottom: 4,
     },
-    lowStockBadge: {
-        backgroundColor: COLORS.error,
-        paddingHorizontal: SPACING.md,
-        paddingVertical: SPACING.xs,
-        borderRadius: 12,
-    },
-    lowStockText: {
-        color: COLORS.white,
+    medicineDesc: {
         fontSize: FONT_SIZES.sm,
-        fontWeight: 'bold',
+        color: COLORS.textSecondary,
+        lineHeight: 20,
     },
-    description: {
-        fontSize: FONT_SIZES.md,
+    stockCountContainer: {
+        alignItems: 'flex-end',
+    },
+    stockCountBig: {
+        fontSize: 40,
+        fontWeight: '800',
+        lineHeight: 44,
+    },
+    stockCountUnit: {
+        fontSize: 9,
+        fontWeight: '700',
         color: COLORS.textLight,
-        marginBottom: SPACING.md,
+        letterSpacing: 0.5,
+        marginTop: 2,
     },
-    stockInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: SPACING.lg,
-    },
-    stockLabel: {
-        fontSize: FONT_SIZES.lg,
-        color: COLORS.textLight,
-        marginRight: SPACING.sm,
-    },
-    stockValue: {
-        fontSize: FONT_SIZES.xl,
-        fontWeight: 'bold',
-        color: COLORS.success,
-    },
-    stockValueLow: {
-        color: COLORS.error,
-    },
+
+    // ─── Action Buttons ─────────────────────────────────────────
     actionButtons: {
         flexDirection: 'row',
-        gap: SPACING.md,
+        gap: SPACING.sm,
     },
-    actionButton: {
+    actionBtn: {
         flex: 1,
-        borderRadius: 12,
-        padding: SPACING.lg,
+        flexDirection: 'column',
         alignItems: 'center',
-        minHeight: MIN_TOUCH_TARGET,
-        justifyContent: 'center',
+        paddingVertical: SPACING.sm,
+        borderRadius: BORDER_RADIUS.md,
+        backgroundColor: COLORS.grayLight,
     },
-    editButton: {
+    actionBtnPrimary: {
         backgroundColor: COLORS.primary,
     },
-    deleteButton: {
-        backgroundColor: COLORS.error,
+    actionBtnIcon: {
+        fontSize: 16,
+        marginBottom: 2,
     },
-    actionButtonText: {
-        fontSize: FONT_SIZES.md,
-        fontWeight: 'bold',
+    actionBtnIconWhite: {
+        fontSize: 16,
+        marginBottom: 2,
+    },
+    actionBtnText: {
+        fontSize: 9,
+        fontWeight: '700',
+        color: COLORS.textSecondary,
+        letterSpacing: 0.5,
+    },
+    actionBtnTextWhite: {
+        fontSize: 9,
+        fontWeight: '700',
         color: COLORS.white,
+        letterSpacing: 0.5,
     },
+
+    // ─── Empty ──────────────────────────────────────────────────
     emptyContainer: {
         padding: SPACING.xl,
         alignItems: 'center',
         marginTop: SPACING.xxl,
     },
     emptyIcon: {
-        fontSize: 64,
-        marginBottom: SPACING.lg,
+        fontSize: 48,
+        marginBottom: SPACING.md,
     },
     emptyText: {
-        fontSize: FONT_SIZES.xl,
+        fontSize: FONT_SIZES.lg,
         color: COLORS.textLight,
         fontWeight: '600',
-        marginBottom: SPACING.sm,
+        marginBottom: SPACING.xs,
     },
     emptySubtext: {
-        fontSize: FONT_SIZES.md,
+        fontSize: FONT_SIZES.sm,
         color: COLORS.textLight,
     },
+
+    // ─── FAB ────────────────────────────────────────────────────
     fab: {
         position: 'absolute',
-        right: SPACING.lg,
-        bottom: SPACING.lg,
-        backgroundColor: COLORS.green,
+        bottom: 90,
+        right: 24,
+        width: 56,
+        height: 56,
         borderRadius: 28,
-        paddingHorizontal: SPACING.xl,
-        paddingVertical: SPACING.lg,
-        shadowColor: '#000',
+        backgroundColor: COLORS.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: COLORS.primary,
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.35,
         shadowRadius: 8,
         elevation: 8,
-        minHeight: MIN_TOUCH_TARGET,
-        justifyContent: 'center',
     },
     fabText: {
+        fontSize: 28,
         color: COLORS.white,
-        fontSize: FONT_SIZES.lg,
-        fontWeight: 'bold',
+        fontWeight: '300',
+        marginTop: -2,
     },
+
+    // ─── Modal ──────────────────────────────────────────────────
     modalOverlay: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: 'flex-end',
     },
     modalScrollContent: {
         flexGrow: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: SPACING.lg,
+        justifyContent: 'flex-end',
     },
     modalContainer: {
         backgroundColor: COLORS.white,
-        borderRadius: 24,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
         padding: SPACING.xl,
-        width: '90%',
-        maxWidth: 500,
+        paddingBottom: SPACING.xxl,
     },
-    modalTitle: {
-        fontSize: FONT_SIZES.xxl,
-        fontWeight: 'bold',
-        color: COLORS.text,
-        marginBottom: SPACING.sm,
-        textAlign: 'center',
+    modalContainerCenter: {
+        backgroundColor: COLORS.white,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        padding: SPACING.xl,
+        paddingBottom: SPACING.xxl,
+        marginTop: 'auto',
     },
-    modalSubtitle: {
-        fontSize: FONT_SIZES.lg,
-        color: COLORS.textLight,
-        textAlign: 'center',
-        marginBottom: SPACING.xs,
-    },
-    currentStock: {
-        fontSize: FONT_SIZES.md,
-        color: COLORS.textLight,
-        textAlign: 'center',
-        marginBottom: SPACING.xl,
-    },
-    formSection: {
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         marginBottom: SPACING.lg,
     },
-    label: {
-        fontSize: FONT_SIZES.lg,
-        fontWeight: '600',
+    modalBrand: {
+        fontSize: FONT_SIZES.xs,
+        fontWeight: '700',
+        color: COLORS.primary,
+        letterSpacing: 1.5,
+    },
+    modalClose: {
+        fontSize: 20,
+        color: COLORS.textSecondary,
+        padding: 4,
+    },
+    modalTitle: {
+        fontSize: 24,
+        fontWeight: '800',
         color: COLORS.text,
+        marginBottom: SPACING.sm,
+    },
+    currentStockLabel: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.textSecondary,
+        marginBottom: SPACING.xl,
+    },
+    formLabel: {
+        fontSize: FONT_SIZES.xxs,
+        fontWeight: '700',
+        color: COLORS.textSecondary,
+        letterSpacing: 1,
         marginBottom: SPACING.sm,
     },
     helpText: {
-        fontSize: FONT_SIZES.sm,
+        fontSize: FONT_SIZES.xs,
         color: COLORS.textLight,
         marginBottom: SPACING.sm,
     },
+    inputContainer: {
+        backgroundColor: COLORS.grayLight,
+        borderRadius: BORDER_RADIUS.md,
+        paddingHorizontal: SPACING.md,
+        marginBottom: SPACING.lg,
+    },
     input: {
-        backgroundColor: COLORS.background,
-        borderRadius: 12,
-        padding: SPACING.lg,
-        fontSize: FONT_SIZES.lg,
+        paddingVertical: SPACING.md,
+        fontSize: FONT_SIZES.md,
         color: COLORS.text,
-        borderWidth: 2,
-        borderColor: COLORS.border,
-        minHeight: MIN_TOUCH_TARGET,
     },
-    modalButtons: {
+    halfRow: {
         flexDirection: 'row',
-        gap: SPACING.md,
-        marginTop: SPACING.lg,
     },
-    button: {
-        flex: 1,
-        borderRadius: 12,
-        padding: SPACING.lg,
+    saveButton: {
+        backgroundColor: COLORS.primary,
+        borderRadius: BORDER_RADIUS.xl,
+        paddingVertical: 16,
         alignItems: 'center',
-        minHeight: MIN_TOUCH_TARGET,
-        justifyContent: 'center',
+        marginBottom: SPACING.sm,
+    },
+    saveButtonText: {
+        fontSize: FONT_SIZES.md,
+        fontWeight: '700',
+        color: COLORS.white,
     },
     cancelButton: {
-        backgroundColor: COLORS.background,
-        borderWidth: 2,
-        borderColor: COLORS.border,
+        alignItems: 'center',
+        paddingVertical: 16,
+        backgroundColor: COLORS.grayLight,
+        borderRadius: BORDER_RADIUS.xl,
     },
     cancelButtonText: {
         fontSize: FONT_SIZES.md,
         fontWeight: '600',
-        color: COLORS.textLight,
-    },
-    saveButton: {
-        backgroundColor: COLORS.primary,
-    },
-    saveButtonText: {
-        fontSize: FONT_SIZES.lg,
-        fontWeight: 'bold',
-        color: COLORS.white,
+        color: COLORS.textSecondary,
     },
 });

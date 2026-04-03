@@ -7,7 +7,9 @@ import {
     TouchableOpacity,
     Vibration,
 } from 'react-native';
-import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
+import {
+    COLORS, SPACING, FONT_SIZES, BORDER_RADIUS, CARD_SHADOW,
+} from '../constants/theme';
 
 interface PasskeyModalProps {
     visible: boolean;
@@ -22,7 +24,7 @@ export default function PasskeyModal({
     onClose,
     onSuccess,
     onVerify,
-    title = 'Enter Passkey',
+    title = 'Security Key',
 }: PasskeyModalProps) {
     const [passkey, setPasskey] = useState('');
     const [error, setError] = useState('');
@@ -86,8 +88,13 @@ export default function PasskeyModal({
         >
             <View style={styles.overlay}>
                 <View style={styles.container}>
+                    {/* Lock icon */}
+                    <View style={styles.lockContainer}>
+                        <Text style={styles.lockIcon}>🔐</Text>
+                    </View>
+
                     <Text style={styles.title}>{title}</Text>
-                    <Text style={styles.subtitle}>Enter 4-digit PIN</Text>
+                    <Text style={styles.subtitle}>Enter 4-digit PIN to continue</Text>
 
                     {/* PIN Dots */}
                     <View style={styles.dotsContainer}>
@@ -110,7 +117,7 @@ export default function PasskeyModal({
                         <View style={styles.errorPlaceholder} />
                     )}
 
-                    {/* Number Pad */}
+                    {/* Number Pad — recessed keys, no borders */}
                     <View style={styles.keypad}>
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                             <TouchableOpacity
@@ -118,6 +125,7 @@ export default function PasskeyModal({
                                 style={styles.key}
                                 onPress={() => handleNumberPress(num.toString())}
                                 disabled={loading}
+                                activeOpacity={0.7}
                             >
                                 <Text style={styles.keyText}>{num}</Text>
                             </TouchableOpacity>
@@ -126,6 +134,7 @@ export default function PasskeyModal({
                             style={styles.key}
                             onPress={handleClear}
                             disabled={loading}
+                            activeOpacity={0.7}
                         >
                             <Text style={styles.keyTextSecondary}>Clear</Text>
                         </TouchableOpacity>
@@ -133,6 +142,7 @@ export default function PasskeyModal({
                             style={styles.key}
                             onPress={() => handleNumberPress('0')}
                             disabled={loading}
+                            activeOpacity={0.7}
                         >
                             <Text style={styles.keyText}>0</Text>
                         </TouchableOpacity>
@@ -140,6 +150,7 @@ export default function PasskeyModal({
                             style={styles.key}
                             onPress={handleBackspace}
                             disabled={loading}
+                            activeOpacity={0.7}
                         >
                             <Text style={styles.keyTextSecondary}>⌫</Text>
                         </TouchableOpacity>
@@ -158,27 +169,42 @@ export default function PasskeyModal({
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
         justifyContent: 'center',
         alignItems: 'center',
     },
     container: {
         backgroundColor: COLORS.white,
-        borderRadius: 24,
+        borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.xl,
         width: '85%',
         maxWidth: 400,
+        ...CARD_SHADOW,
+    },
+    lockContainer: {
+        alignSelf: 'center',
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: COLORS.surfaceContainerHighest,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: SPACING.md,
+    },
+    lockIcon: {
+        fontSize: 28,
     },
     title: {
-        fontSize: FONT_SIZES.xxl,
-        fontWeight: 'bold',
+        fontSize: FONT_SIZES.xl,
+        fontWeight: '800',
         color: COLORS.text,
         textAlign: 'center',
         marginBottom: SPACING.xs,
+        letterSpacing: -0.5,
     },
     subtitle: {
-        fontSize: FONT_SIZES.md,
-        color: COLORS.textLight,
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.textSecondary,
         textAlign: 'center',
         marginBottom: SPACING.xl,
     },
@@ -192,63 +218,60 @@ const styles = StyleSheet.create({
         width: 20,
         height: 20,
         borderRadius: 10,
-        borderWidth: 2,
-        borderColor: COLORS.border,
-        backgroundColor: COLORS.white,
+        backgroundColor: COLORS.surfaceContainerHighest,
     },
     dotFilled: {
         backgroundColor: COLORS.primary,
-        borderColor: COLORS.primary,
     },
     dotError: {
         backgroundColor: COLORS.error,
-        borderColor: COLORS.error,
     },
     errorText: {
         color: COLORS.error,
-        fontSize: FONT_SIZES.md,
+        fontSize: FONT_SIZES.sm,
         textAlign: 'center',
         marginBottom: SPACING.md,
-        minHeight: 24,
+        fontWeight: '600',
+        minHeight: 22,
     },
     errorPlaceholder: {
-        minHeight: 24,
+        minHeight: 22,
         marginBottom: SPACING.md,
     },
     keypad: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: SPACING.md,
+        gap: SPACING.sm,
         marginBottom: SPACING.lg,
     },
     key: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: COLORS.background,
+        width: 72,
+        height: 72,
+        borderRadius: BORDER_RADIUS.md,
+        backgroundColor: COLORS.surfaceContainerHighest,
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: COLORS.border,
     },
     keyText: {
-        fontSize: 32,
-        fontWeight: 'bold',
+        fontSize: 28,
+        fontWeight: '700',
         color: COLORS.text,
     },
     keyTextSecondary: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '600',
-        color: COLORS.textLight,
+        color: COLORS.textSecondary,
     },
     cancelButton: {
-        padding: SPACING.lg,
+        padding: SPACING.md,
         alignItems: 'center',
+        backgroundColor: COLORS.surfaceContainerLow,
+        borderRadius: BORDER_RADIUS.xl,
     },
     cancelButtonText: {
-        fontSize: FONT_SIZES.lg,
-        color: COLORS.textLight,
+        fontSize: FONT_SIZES.md,
+        color: COLORS.textSecondary,
         fontWeight: '600',
     },
 });

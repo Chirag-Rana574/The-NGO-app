@@ -5,7 +5,7 @@ import {
     StyleSheet,
     Animated,
 } from 'react-native';
-import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
+import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS } from '../constants/theme';
 
 interface SuccessToastProps {
     visible: boolean;
@@ -75,7 +75,9 @@ export default function SuccessToast({
             ]}
         >
             <View style={styles.content}>
-                <Text style={styles.icon}>✓</Text>
+                <View style={styles.iconContainer}>
+                    <Text style={styles.icon}>✓</Text>
+                </View>
                 <Text style={styles.message}>{message}</Text>
             </View>
         </Animated.View>
@@ -94,23 +96,32 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: COLORS.success,
-        borderRadius: 16,
+        borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.lg,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
+        // Tinted ambient shadow
+        shadowColor: COLORS.success,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.25,
+        shadowRadius: 16,
         elevation: 8,
     },
-    icon: {
-        fontSize: 28,
-        color: COLORS.white,
+    iconContainer: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: 'rgba(255,255,255,0.25)',
+        justifyContent: 'center',
+        alignItems: 'center',
         marginRight: SPACING.md,
+    },
+    icon: {
+        fontSize: 18,
+        color: COLORS.white,
         fontWeight: 'bold',
     },
     message: {
         flex: 1,
-        fontSize: FONT_SIZES.lg,
+        fontSize: FONT_SIZES.md,
         color: COLORS.white,
         fontWeight: '600',
     },

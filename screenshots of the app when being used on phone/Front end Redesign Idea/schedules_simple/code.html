@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Schedules - Clinical Curator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed": "#e9ddff",
+              "surface-container-highest": "#e1e3e4",
+              "outline": "#727785",
+              "surface-bright": "#f8f9fa",
+              "tertiary-fixed-dim": "#d0bcff",
+              "on-error-container": "#93000a",
+              "tertiary-container": "#8455ef",
+              "secondary-container": "#dce2f3",
+              "primary-fixed-dim": "#adc6ff",
+              "surface": "#f8f9fa",
+              "on-primary-fixed-variant": "#004395",
+              "on-primary-container": "#fefcff",
+              "surface-tint": "#005ac2",
+              "surface-container-low": "#f3f4f5",
+              "surface-dim": "#d9dadb",
+              "surface-container-high": "#e7e8e9",
+              "tertiary": "#6b38d4",
+              "on-secondary": "#ffffff",
+              "primary-container": "#2170e4",
+              "outline-variant": "#c2c6d6",
+              "primary": "#0058be",
+              "on-primary": "#ffffff",
+              "secondary-fixed": "#dce2f3",
+              "secondary": "#585f6c",
+              "on-surface-variant": "#424754",
+              "error-container": "#ffdad6",
+              "primary-fixed": "#d8e2ff",
+              "background": "#f8f9fa",
+              "on-tertiary-fixed-variant": "#5516be",
+              "inverse-primary": "#adc6ff",
+              "on-secondary-container": "#5e6572",
+              "on-tertiary-container": "#fffbff",
+              "on-error": "#ffffff",
+              "on-background": "#191c1d",
+              "on-surface": "#191c1d",
+              "error": "#ba1a1a",
+              "surface-variant": "#e1e3e4",
+              "surface-container-lowest": "#ffffff",
+              "surface-container": "#edeeef",
+              "on-primary-fixed": "#001a42",
+              "on-secondary-fixed": "#151c27",
+              "inverse-on-surface": "#f0f1f2",
+              "on-secondary-fixed-variant": "#404754",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed-dim": "#c0c7d6",
+              "on-tertiary-fixed": "#23005c",
+              "inverse-surface": "#2e3132"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-40 bg-slate-50/85 backdrop-blur-md shadow-sm flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="p-2 transition-colors duration-200 hover:bg-slate-200/50 text-blue-600">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-manrope font-extrabold tracking-tighter text-blue-700 text-xl">Clinical Curator</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 transition-colors duration-200 hover:bg-slate-200/50 text-blue-600">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="p-2 transition-colors duration-200 hover:bg-slate-200/50 text-blue-600">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-2xl mx-auto">
+<!-- Section Header -->
+<div class="mb-6 mt-4">
+<h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface">Daily Schedules</h2>
+<p class="text-on-surface-variant font-medium mt-1">Regional District A • May 2024</p>
+</div>
+<!-- Horizontal Week Strip -->
+<div class="flex overflow-x-auto gap-3 py-2 no-scrollbar mb-8">
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-24 rounded-2xl bg-surface-container-high transition-all duration-300">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Mon</span>
+<span class="font-headline text-xl font-extrabold mt-1">13</span>
+</div>
+<!-- Current Day -->
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-24 rounded-2xl bg-primary-fixed border-2 border-primary-container transition-all duration-300">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-primary">Tue</span>
+<span class="font-headline text-xl font-extrabold mt-1 text-primary">14</span>
+<div class="w-1.5 h-1.5 bg-primary rounded-full mt-1"></div>
+</div>
+<!-- Selected Day -->
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-24 rounded-2xl bg-primary text-on-primary shadow-lg scale-110 transition-all duration-300">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest opacity-80">Wed</span>
+<span class="font-headline text-xl font-extrabold mt-1">15</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-24 rounded-2xl bg-surface-container-high transition-all duration-300">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Thu</span>
+<span class="font-headline text-xl font-extrabold mt-1">16</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-24 rounded-2xl bg-surface-container-high transition-all duration-300">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Fri</span>
+<span class="font-headline text-xl font-extrabold mt-1">17</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-24 rounded-2xl bg-surface-container-high transition-all duration-300">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Sat</span>
+<span class="font-headline text-xl font-extrabold mt-1">18</span>
+</div>
+</div>
+<!-- Schedule Cards List -->
+<div class="space-y-4">
+<!-- Morning Schedule -->
+<div class="relative pl-4">
+<div class="absolute left-0 top-0 bottom-0 w-0.5 bg-outline-variant opacity-30"></div>
+<h3 class="font-label text-xs font-bold uppercase tracking-widest text-secondary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">wb_twilight</span> Morning Shift
+                </h3>
+<div class="space-y-3">
+<!-- Schedule Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm relative overflow-hidden flex items-center gap-4 group hover:shadow-md transition-shadow">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-[#8B5CF6]"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="portrait of a young african woman smiling softly in a clinic setting with warm natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAazxYB23yEN6T2-APy-6pOYY2ebYCnNiYKkckSL10EKuuQUTqL88axg6V6ZAiNKWsCioBSGmN1N4nCJInAlemef2BtxpvofttN8knbNio-wlMFlGloW6GhQY0q8Ck_cIcjqkHBqrEKHcxoFjPj0wdXywVcYhEQrq_eGeiA_QwZ8ZEIW7CKHKfOA22NlDxcY8VBW12aYVm1syDPByeL4zx82i5B3x_kcPSUKeI9ZDS_9HtfrxmqqotLBG8qX7Spr18Hzq_3stBvPw"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-manrope font-bold text-on-surface">Zainab Olowo</h4>
+<p class="text-sm text-on-surface-variant font-medium">Paracetamol 500mg</p>
+</div>
+<span class="font-manrope font-extrabold text-primary text-sm">08:30 AM</span>
+</div>
+<div class="mt-3 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">badge</span>
+<span class="text-xs font-semibold text-on-surface-variant">Amina Chen</span>
+</div>
+<div class="px-2.5 py-1 bg-surface-container-high rounded-full">
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Pending</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Schedule Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm relative overflow-hidden flex items-center gap-4 group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="elderly man with gentle expression wearing a traditional cap in a soft bright room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqUbgDEFYZ2HJOm6M__oKj1hw5LlhhbVzRwmQuSv_hJf5jvk7xFWfD_Ksf58UL96V5SzTx_57osAM8LWs4hHCGlzwXK9w6CPnwWXLfPfDyjbBG3cIoNz_PucnK_lW7eMYnn6nT8gULgJdLr52Rp5vdSEVnB7G5E0JF2mf9xaAuN-zI1LDuXNkl_VfxmZiDMP9SOJIcnkyYvqKe-oxL6cFlIrJ0i4W0FVXzETqGhsYfUCVGTYkOivp81_j1tqDjP0WGbx7_Ij22tw"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-manrope font-bold text-on-surface">Musa Ibrahim</h4>
+<p class="text-sm text-on-surface-variant font-medium">Amoxicillin 250mg</p>
+</div>
+<span class="font-manrope font-extrabold text-primary text-sm">09:15 AM</span>
+</div>
+<div class="mt-3 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">badge</span>
+<span class="text-xs font-semibold text-on-surface-variant">Amina Chen</span>
+</div>
+<div class="px-2.5 py-1 bg-primary-container/20 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-primary-container" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-primary-container">Administered</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Afternoon Schedule -->
+<div class="relative pl-4 mt-8">
+<div class="absolute left-0 top-0 bottom-0 w-0.5 bg-outline-variant opacity-30"></div>
+<h3 class="font-label text-xs font-bold uppercase tracking-widest text-secondary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">light_mode</span> Afternoon Shift
+                </h3>
+<div class="space-y-3">
+<!-- Schedule Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm relative overflow-hidden flex items-center gap-4 group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-tertiary"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="middle aged woman with glasses looking at camera in a professional healthcare environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdD6nQtT5EbOlxIbU4vQZ_5kvuTDCo3gZ0e9LnfsFDlMm5aCz6QeDWh_fgD11zxXr2Svr7MCOvFzg88g9cGOA_vyYlLQNA2XHeKchRd4jNpkuOgfw5mWBlSrK0cAH2aJHetXdIh-cz_u0ypjOWEFtQcdGUe5JgvJ7yU_7U6i3lGXR-UDmfRY1LMU9MmyJxnEf_O2--LaF-QTl2O5Wi1pjgVl87ltKXMEsA6gPg-GvXsyeG4W2fgW9UZ6kY3ybjlq8h93EkYdhRNg"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-manrope font-bold text-on-surface">Elena Rodriguez</h4>
+<p class="text-sm text-on-surface-variant font-medium">Metformin 500mg</p>
+</div>
+<span class="font-manrope font-extrabold text-primary text-sm">02:00 PM</span>
+</div>
+<div class="mt-3 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">badge</span>
+<span class="text-xs font-semibold text-on-surface-variant">David Kalu</span>
+</div>
+<div class="px-2.5 py-1 bg-surface-container-high rounded-full">
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Scheduled</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-28 right-6 w-16 h-16 bg-gradient-to-br from-primary to-primary-container text-white rounded-full shadow-2xl flex items-center justify-center transition-transform active:scale-95 hover:scale-105 z-50">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-4 left-0 right-0 mx-auto max-w-md flex justify-around items-center p-2 z-50 bg-white/90 backdrop-blur-xl rounded-full shadow-[0_8px_24px_rgba(59,130,246,0.12)]">
+<a class="flex flex-col items-center justify-center text-slate-500 px-4 py-2 hover:bg-blue-50 transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-blue-600 text-white rounded-full px-5 py-2 scale-105 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Schedules</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 px-4 py-2 hover:bg-blue-50 transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Patients</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 px-4 py-2 hover:bg-blue-50 transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Stock</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 px-4 py-2 hover:bg-blue-50 transition-colors" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Workers</span>
+</a>
+</nav>
+</body></html>

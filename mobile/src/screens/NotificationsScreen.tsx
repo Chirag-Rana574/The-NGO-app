@@ -10,7 +10,10 @@ import {
 } from 'react-native';
 import { format } from 'date-fns';
 import ApiService from '../services/api.service';
-import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
+import {
+    COLORS, SPACING, FONT_SIZES,
+    SECTION_HEADER_STYLE, CARD_SHADOW, BORDER_RADIUS,
+} from '../constants/theme';
 
 interface NotificationItem {
     id: number;
@@ -28,12 +31,26 @@ const SEVERITY_COLORS: Record<string, string> = {
     SERIOUS: '#EF4444',
 };
 
+const SEVERITY_BG: Record<string, string> = {
+    NORMAL: '#EBF5FF',
+    MODERATE: '#FEF3CD',
+    SERIOUS: '#FEE2E2',
+};
+
 const TYPE_ICONS: Record<string, string> = {
     TASK_COMPLETED: '✅',
     TASK_OVERDUE: '⚠️',
     TASK_MISSED: '❌',
-    LOW_STOCK: '💊',
+    LOW_STOCK: '📦',
     DAILY_SUMMARY: '📋',
+};
+
+const TYPE_LABELS: Record<string, string> = {
+    TASK_COMPLETED: 'Task Done',
+    TASK_OVERDUE: 'Overdue Alert',
+    TASK_MISSED: 'Missed Task',
+    LOW_STOCK: 'Low Stock',
+    DAILY_SUMMARY: 'Summary',
 };
 
 export default function NotificationsScreen() {
@@ -89,36 +106,77 @@ export default function NotificationsScreen() {
         }
     };
 
+    const getRelativeTime = (dateStr: string) => {
+        const now = new Date();
+        const date = new Date(dateStr);
+        const diff = (now.getTime() - date.getTime()) / 1000;
+        if (diff < 60) return 'Just now';
+        if (diff < 3600) return `${Math.floor(diff / 60)} MIN AGO`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)} HOURS AGO`;
+        return format(date, 'MMM d');
+    };
+
+    // ─── Card Renderer ────────────────────────────────────────────
     const renderItem = ({ item }: { item: NotificationItem }) => {
         const icon = TYPE_ICONS[item.type] || '🔔';
-        const severityColor = SEVERITY_COLORS[item.severity] || COLORS.textLight;
-        const timeStr = format(new Date(item.created_at), 'hh:mm a');
-        const dateStr = format(new Date(item.created_at), 'dd/MM');
+        const severityColor = SEVERITY_COLORS[item.severity] || COLORS.primary;
+        const severityBg = SEVERITY_BG[item.severity] || '#EBF5FF';
+        const typeLabel = TYPE_LABELS[item.type] || item.type;
+        const timeAgo = getRelativeTime(item.created_at);
+        const isUnread = !item.is_read;
 
         return (
             <TouchableOpacity
-                style={[styles.notifCard, !item.is_read && styles.unreadCard]}
-                onPress={() => !item.is_read && markAsRead(item.id)}
+                style={[
+                    styles.notifCard,
+                    isUnread && { borderLeftColor: severityColor, backgroundColor: severityBg },
+                ]}
+                onPress={() => isUnread && markAsRead(item.id)}
                 activeOpacity={0.7}
             >
-                <View style={styles.notifRow}>
-                    <Text style={styles.notifIcon}>{icon}</Text>
-                    <View style={styles.notifContent}>
-                        <Text style={[styles.notifTitle, !item.is_read && styles.unreadTitle]}>
+                {/* Icon circle */}
+                <View style={[styles.iconCircle, { backgroundColor: isUnread ? severityColor + '20' : COLORS.grayLight }]}>
+                    <Text style={styles.iconEmoji}>{icon}</Text>
+                </View>
+
+                {/* Content */}
+                <View style={styles.notifContent}>
+                    <View style={styles.titleRow}>
+                        <Text style={[styles.notifTitle, isUnread && { fontWeight: '800' }]}>
                             {item.title}
                         </Text>
-                        <Text style={styles.notifBody} numberOfLines={2}>
-                            {item.body}
-                        </Text>
-                        <Text style={styles.notifTime}>{timeStr} · {dateStr}</Text>
+                        {isUnread && (
+                            <View style={styles.newBadge}>
+                                <Text style={styles.newBadgeText}>NEW</Text>
+                            </View>
+                        )}
                     </View>
-                    {!item.is_read && (
-                        <View style={[styles.unreadDot, { backgroundColor: severityColor }]} />
-                    )}
+                    <Text style={styles.notifBody} numberOfLines={3}>
+                        {item.body}
+                    </Text>
+                    <Text style={styles.notifTime}>{timeAgo}</Text>
                 </View>
             </TouchableOpacity>
         );
     };
+
+    // ─── List Header ──────────────────────────────────────────────
+    const ListHeader = () => (
+        <View style={styles.headerSection}>
+            <View style={styles.headerRow}>
+                <Text style={styles.heroTitle}>Notifications</Text>
+                {unreadCount > 0 && (
+                    <TouchableOpacity style={styles.markAllButton} onPress={markAllRead}>
+                        <Text style={styles.markAllIcon}>✓✓</Text>
+                        <Text style={styles.markAllText}>Mark all as read</Text>
+                    </TouchableOpacity>
+                )}
+            </View>
+            <Text style={styles.heroSubtitle}>
+                Stay updated with clinical alerts and stock updates.
+            </Text>
+        </View>
+    );
 
     if (loading) {
         return (
@@ -130,27 +188,23 @@ export default function NotificationsScreen() {
 
     return (
         <View style={styles.container}>
-            {/* Header actions */}
-            {unreadCount > 0 && (
-                <TouchableOpacity style={styles.markAllButton} onPress={markAllRead}>
-                    <Text style={styles.markAllText}>Mark all as read ({unreadCount})</Text>
-                </TouchableOpacity>
-            )}
-
             <FlatList
                 data={notifications}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.list}
+                ListHeaderComponent={<ListHeader />}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
                 ListEmptyComponent={
-                    <View style={styles.centered}>
+                    <View style={styles.emptyContainer}>
                         <Text style={styles.emptyIcon}>🔔</Text>
                         <Text style={styles.emptyText}>No notifications yet</Text>
+                        <Text style={styles.emptySubtext}>You're all caught up!</Text>
                     </View>
                 }
+                showsVerticalScrollIndicator={false}
             />
         </View>
     );
@@ -165,80 +219,134 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 60,
     },
     list: {
-        padding: SPACING.md,
+        paddingBottom: 40,
+    },
+
+    // ─── Header ─────────────────────────────────────────────
+    headerSection: {
+        paddingHorizontal: SPACING.lg,
+        paddingTop: SPACING.md,
+        paddingBottom: SPACING.md,
+    },
+    headerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: SPACING.xs,
+    },
+    heroTitle: {
+        fontSize: 32,
+        fontWeight: '800',
+        color: COLORS.text,
+    },
+    heroSubtitle: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.textSecondary,
+        lineHeight: 20,
     },
     markAllButton: {
-        alignSelf: 'flex-end',
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: COLORS.primary,
         paddingHorizontal: SPACING.md,
         paddingVertical: SPACING.sm,
+        borderRadius: BORDER_RADIUS.xl,
+    },
+    markAllIcon: {
+        color: COLORS.white,
+        fontSize: 12,
+        fontWeight: '700',
+        marginRight: 6,
     },
     markAllText: {
-        fontSize: FONT_SIZES.sm,
-        color: COLORS.primary,
+        fontSize: FONT_SIZES.xs,
+        color: COLORS.white,
         fontWeight: '600',
     },
+
+    // ─── Notification Card ──────────────────────────────────
     notifCard: {
-        backgroundColor: COLORS.white,
-        borderRadius: 12,
-        padding: SPACING.md,
-        marginBottom: SPACING.sm,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 1,
-    },
-    unreadCard: {
-        backgroundColor: '#F0F7FF',
-        borderLeftWidth: 3,
-        borderLeftColor: COLORS.primary,
-    },
-    notifRow: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
+        marginHorizontal: SPACING.md,
+        marginBottom: SPACING.sm,
+        borderLeftWidth: 4,
+        borderLeftColor: 'transparent',
+        ...CARD_SHADOW,
     },
-    notifIcon: {
-        fontSize: 24,
-        marginRight: SPACING.sm,
-        marginTop: 2,
+    iconCircle: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: SPACING.md,
+    },
+    iconEmoji: {
+        fontSize: 22,
     },
     notifContent: {
         flex: 1,
     },
-    notifTitle: {
-        fontSize: FONT_SIZES.md,
-        color: COLORS.text,
+    titleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
         marginBottom: 4,
     },
-    unreadTitle: {
-        fontWeight: '600',
+    notifTitle: {
+        fontSize: FONT_SIZES.md,
+        fontWeight: '700',
+        color: COLORS.text,
+        flex: 1,
+    },
+    newBadge: {
+        backgroundColor: COLORS.primary,
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: BORDER_RADIUS.full,
+        marginLeft: SPACING.sm,
+    },
+    newBadgeText: {
+        color: COLORS.white,
+        fontSize: 9,
+        fontWeight: '800',
+        letterSpacing: 0.5,
     },
     notifBody: {
         fontSize: FONT_SIZES.sm,
-        color: COLORS.textLight,
-        lineHeight: 18,
+        color: COLORS.textSecondary,
+        lineHeight: 20,
+        marginBottom: SPACING.xs,
     },
     notifTime: {
         fontSize: FONT_SIZES.xs,
         color: COLORS.textLight,
-        marginTop: 6,
+        fontWeight: '600',
+        letterSpacing: 0.5,
     },
-    unreadDot: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        marginLeft: SPACING.sm,
-        marginTop: 6,
+
+    // ─── Empty ──────────────────────────────────────────────
+    emptyContainer: {
+        padding: SPACING.xl,
+        alignItems: 'center',
+        marginTop: SPACING.xxl,
     },
     emptyIcon: {
         fontSize: 48,
         marginBottom: SPACING.md,
     },
     emptyText: {
-        fontSize: FONT_SIZES.md,
+        fontSize: FONT_SIZES.lg,
+        color: COLORS.textLight,
+        fontWeight: '600',
+        marginBottom: SPACING.xs,
+    },
+    emptySubtext: {
+        fontSize: FONT_SIZES.sm,
         color: COLORS.textLight,
     },
 });

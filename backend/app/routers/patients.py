@@ -3,12 +3,13 @@ from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime, timezone
 from ..database import get_db
-from ..models import Patient, AuditLog, AuditAction
+from ..models import Patient, AuditLog, AuditAction, User 
 from ..schemas import PatientCreate, PatientUpdate, PatientResponse, SuccessResponse
 import logging
 import json
+from .google_auth import get_current_user
 
-router = APIRouter(prefix="/patients", tags=["Patients"])
+router = APIRouter(prefix="/patients", tags=["Patients"], dependencies=[Depends(get_current_user)])
 logger = logging.getLogger(__name__)
 
 
@@ -41,7 +42,7 @@ def get_patient(patient_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=PatientResponse, status_code=201)
-def create_patient(patient_data: PatientCreate, db: Session = Depends(get_db)):
+def create_patient(patient_data: PatientCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Create a new patient"""
     # Check if name already exists
     existing = db.query(Patient).filter(
@@ -69,7 +70,7 @@ def create_patient(patient_data: PatientCreate, db: Session = Depends(get_db)):
         entity_id=patient.id,
         action=AuditAction.CREATE,
         new_value=json.dumps({"name": patient.name}),
-        performed_by="System"
+        performed_by=current_user.email
     )
     db.add(audit_log)
     db.commit()
@@ -83,7 +84,8 @@ def create_patient(patient_data: PatientCreate, db: Session = Depends(get_db)):
 def update_patient(
     patient_id: int,
     patient_data: PatientUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Update patient"""
     patient = db.query(Patient).filter(
@@ -128,7 +130,7 @@ def update_patient(
         action=AuditAction.UPDATE,
         old_value=json.dumps(old_value),
         new_value=json.dumps(new_value),
-        performed_by="System"
+        performed_by=current_user.email
     )
     db.add(audit_log)
     db.commit()
@@ -139,7 +141,7 @@ def update_patient(
 
 
 @router.delete("/{patient_id}", response_model=SuccessResponse)
-def delete_patient(patient_id: int, db: Session = Depends(get_db)):
+def delete_patient(patient_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Soft delete patient"""
     patient = db.query(Patient).filter(
         Patient.id == patient_id,
@@ -161,7 +163,7 @@ def delete_patient(patient_id: int, db: Session = Depends(get_db)):
         entity_id=patient.id,
         action=AuditAction.DELETE,
         old_value=json.dumps({"name": patient.name}),
-        performed_by="System"
+        performed_by=current_user.email
     )
     db.add(audit_log)
     db.commit()

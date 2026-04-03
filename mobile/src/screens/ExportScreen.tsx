@@ -11,7 +11,10 @@ import {
 } from 'react-native';
 import { Linking } from 'react-native';
 import ApiService from '../services/api.service';
-import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
+import {
+    COLORS, SPACING, FONT_SIZES,
+    BORDER_RADIUS, CARD_SHADOW, LETTER_SPACING,
+} from '../constants/theme';
 
 const API_BASE = 'http://10.248.163.249:8000/api';
 
@@ -131,15 +134,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: COLORS.white,
-        borderRadius: 12,
-        padding: SPACING.md,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
         marginBottom: SPACING.sm,
-        borderWidth: 2,
-        borderColor: 'transparent',
+        ...CARD_SHADOW,
     },
     typeCardSelected: {
-        borderColor: COLORS.primary,
-        backgroundColor: '#F0F7FF',
+        backgroundColor: COLORS.blueLight,
     },
     typeIcon: {
         fontSize: 28,
@@ -174,14 +175,11 @@ const styles = StyleSheet.create({
     monthChip: {
         paddingHorizontal: SPACING.md,
         paddingVertical: SPACING.sm + 2,
-        borderRadius: 10,
-        backgroundColor: COLORS.white,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderRadius: BORDER_RADIUS.full,
+        backgroundColor: COLORS.surfaceContainerLow,
     },
     monthChipSelected: {
         backgroundColor: COLORS.primary,
-        borderColor: COLORS.primary,
     },
     monthText: {
         fontSize: FONT_SIZES.sm,
@@ -195,14 +193,14 @@ const styles = StyleSheet.create({
     exportButton: {
         backgroundColor: COLORS.primary,
         paddingVertical: 16,
-        borderRadius: 14,
+        borderRadius: BORDER_RADIUS.xl,
         alignItems: 'center',
         marginTop: SPACING.xl * 2,
         shadowColor: COLORS.primary,
-        shadowOffset: { width: 0, height: 3 },
+        shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.3,
-        shadowRadius: 6,
-        elevation: 4,
+        shadowRadius: 12,
+        elevation: 6,
     },
     exportButtonDisabled: {
         opacity: 0.6,

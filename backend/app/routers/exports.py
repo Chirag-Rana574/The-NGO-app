@@ -13,10 +13,11 @@ import io
 import logging
 
 from ..database import get_db
-from ..models import Schedule, Medicine, StockTransaction, AuditLog
+from ..models import Schedule, Medicine, StockTransaction, AuditLog, User, AuditAction
 from ..config import get_settings
+from .google_auth import get_current_user
 
-router = APIRouter(prefix="/exports", tags=["Data Export"])
+router = APIRouter(prefix="/exports", tags=["Data Export"], dependencies=[Depends(get_current_user)])
 logger = logging.getLogger(__name__)
 
 
@@ -37,8 +38,8 @@ def _csv_response(rows: list, headers: list, filename: str) -> StreamingResponse
 
 @router.get("/schedules", summary="Export schedules as CSV")
 async def export_schedules(
-    month: str = Query(..., description="Month in YYYY-MM format", regex=r"^\d{4}-\d{2}$"),
-    db: Session = Depends(get_db),
+    month: str = Query(..., description="Month in YYYY-MM format", pattern=r"^\d{4}-\d{2}$"),
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
     """Export all schedules for a given month as CSV."""
     year, mon = map(int, month.split("-"))
@@ -73,14 +74,23 @@ async def export_schedules(
             s.status.value,
             s.reminder_count or 0,
         ])
+    db.add(AuditLog(
+        entity_type="EXPORT",
+        entity_id=0,
+        action=AuditAction.UPDATE, # Using UPDATE or a custom EXPORT action
+        performed_by=current_user.email,
+        details=f"Exported schedules for {month}"
+    ))
+    db.commit()
     
     return _csv_response(rows, headers, f"schedules_{month}.csv")
 
 
 @router.get("/stock", summary="Export stock transactions as CSV")
 async def export_stock(
-    month: str = Query(..., description="Month in YYYY-MM format", regex=r"^\d{4}-\d{2}$"),
+    month: str = Query(..., description="Month in YYYY-MM format", pattern=r"^\d{4}-\d{2}$"),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Export stock transactions for a given month as CSV."""
     year, mon = map(int, month.split("-"))
@@ -110,14 +120,23 @@ async def export_stock(
             t.created_by or "",
             t.stock_after,
         ])
+    db.add(AuditLog(
+        entity_type="EXPORT",
+        entity_id=0,
+        action=AuditAction.UPDATE, # Using UPDATE or a custom EXPORT action
+        performed_by=current_user.email,
+        details=f"Exported stock transactions for {month}"
+    ))
+    db.commit()
     
     return _csv_response(rows, headers, f"stock_{month}.csv")
 
 
 @router.get("/audit", summary="Export audit logs as CSV")
 async def export_audit(
-    month: str = Query(..., description="Month in YYYY-MM format", regex=r"^\d{4}-\d{2}$"),
+    month: str = Query(..., description="Month in YYYY-MM format", pattern=r"^\d{4}-\d{2}$"),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Export audit logs for a given month as CSV."""
     year, mon = map(int, month.split("-"))
@@ -144,5 +163,13 @@ async def export_audit(
             l.performed_by or "",
             l.details or "",
         ])
+    db.add(AuditLog(
+        entity_type="EXPORT",
+        entity_id=0,
+        action=AuditAction.UPDATE, # Using UPDATE or a custom EXPORT action
+        performed_by=current_user.email,
+        details=f"Exported audit logs for {month}"
+    ))
+    db.commit()
     
     return _csv_response(rows, headers, f"audit_{month}.csv")

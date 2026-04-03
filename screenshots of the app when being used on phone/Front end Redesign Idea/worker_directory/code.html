@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed": "#e9ddff",
+              "surface-container-highest": "#e1e3e4",
+              "outline": "#727785",
+              "surface-bright": "#f8f9fa",
+              "tertiary-fixed-dim": "#d0bcff",
+              "on-error-container": "#93000a",
+              "tertiary-container": "#8455ef",
+              "secondary-container": "#dce2f3",
+              "primary-fixed-dim": "#adc6ff",
+              "surface": "#f8f9fa",
+              "on-primary-fixed-variant": "#004395",
+              "on-primary-container": "#fefcff",
+              "surface-tint": "#005ac2",
+              "surface-container-low": "#f3f4f5",
+              "surface-dim": "#d9dadb",
+              "surface-container-high": "#e7e8e9",
+              "tertiary": "#6b38d4",
+              "on-secondary": "#ffffff",
+              "primary-container": "#2170e4",
+              "outline-variant": "#c2c6d6",
+              "primary": "#0058be",
+              "on-primary": "#ffffff",
+              "secondary-fixed": "#dce2f3",
+              "secondary": "#585f6c",
+              "on-surface-variant": "#424754",
+              "error-container": "#ffdad6",
+              "primary-fixed": "#d8e2ff",
+              "background": "#f8f9fa",
+              "on-tertiary-fixed-variant": "#5516be",
+              "inverse-primary": "#adc6ff",
+              "on-secondary-container": "#5e6572",
+              "on-tertiary-container": "#fffbff",
+              "on-error": "#ffffff",
+              "on-background": "#191c1d",
+              "on-surface": "#191c1d",
+              "error": "#ba1a1a",
+              "surface-variant": "#e1e3e4",
+              "surface-container-lowest": "#ffffff",
+              "surface-container": "#edeeef",
+              "on-primary-fixed": "#001a42",
+              "on-secondary-fixed": "#151c27",
+              "inverse-on-surface": "#f0f1f2",
+              "on-secondary-fixed-variant": "#404754",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed-dim": "#c0c7d6",
+              "on-tertiary-fixed": "#23005c",
+              "inverse-surface": "#2e3132",
+              "whatsapp-green": "#25D366"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .whatsapp-gradient {
+        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-40 bg-slate-50/85 backdrop-blur-md shadow-sm flex items-center justify-between px-6 py-4 w-full h-16">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-slate-200/50 transition-colors duration-200 rounded-full">
+<span class="material-symbols-outlined text-blue-600">menu</span>
+</button>
+<h1 class="font-headline font-extrabold tracking-tighter text-blue-700 text-xl">Clinical Curator</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-slate-200/50 transition-colors duration-200 rounded-full">
+<span class="material-symbols-outlined text-blue-600">more_vert</span>
+</button>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-4xl mx-auto">
+<!-- Editorial Header Section -->
+<div class="mb-10">
+<span class="font-label text-xs font-semibold uppercase tracking-[0.2em] text-secondary mb-2 block">Management</span>
+<h2 class="font-headline text-4xl font-extrabold text-on-surface tracking-tight leading-none mb-4">Workers</h2>
+<p class="text-on-surface-variant max-w-md font-medium leading-relaxed">
+                Connect and coordinate with your regional field team. Real-time updates and direct contact integration.
+            </p>
+</div>
+<!-- Filter/Search Bar (No borders, tonal layering) -->
+<div class="bg-surface-container-low rounded-2xl p-2 mb-8 flex items-center gap-3">
+<div class="flex-1 bg-surface-container-lowest rounded-xl flex items-center px-4 py-3 shadow-sm">
+<span class="material-symbols-outlined text-outline mr-3">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full font-medium" placeholder="Search by name or district..." type="text"/>
+</div>
+<button class="p-3 bg-surface-container-lowest rounded-xl shadow-sm hover:bg-blue-50 transition-colors">
+<span class="material-symbols-outlined text-blue-600">filter_list</span>
+</button>
+</div>
+<!-- Workers Bento/List Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Worker Card 1 -->
+<div class="relative overflow-hidden bg-surface-container-lowest rounded-3xl p-6 transition-all duration-300 hover:translate-y-[-4px] group">
+<!-- Signature Edge (Design System Rule) -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-whatsapp-green"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="flex gap-4">
+<div class="w-14 h-14 rounded-2xl overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a smiling female healthcare professional wearing a light blue polo shirt in an outdoor setting with warm sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_z0137nW7Xy5hPd9zSmCWQ8DE3d2Jqzv_KmdSPPffHXpI50E5_Ttx9iydPWbmWQ73RGDkL8pRxVl2SFEwnRJAMPpHvKV2kIHtO-SaZLI-Sm_JehKiK-LGRsDKrwKsnGHw098InUzT9fxubzKhrL_aos2dP35cBfJhzGUkIWQuVMPD9aXZ28_Yl9IkyvN333kuT45LnCoYlTk9fzUMG4XeFWb3HHxJGNhgyq18IkFKz1JHLHAm0U3qft3TBlmo01T84dI4088TfQ"/>
+</div>
+<div>
+<h3 class="font-headline text-xl font-bold tracking-tight text-on-surface">Amina Chen</h3>
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-secondary block mt-0.5">District A • Senior Field Worker</span>
+</div>
+</div>
+<div class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                        Active
+                    </div>
+</div>
+<div class="flex flex-col gap-1 mb-6">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-outline">WhatsApp Contact</span>
+<div class="flex items-center gap-3">
+<div class="p-2 bg-green-50 rounded-lg">
+<span class="material-symbols-outlined text-whatsapp-green text-xl" style="font-variation-settings: 'FILL' 1;">chat</span>
+</div>
+<span class="font-headline text-2xl font-extrabold text-on-surface tracking-tighter">+254 712 345 678</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-3 bg-surface-container rounded-xl font-bold text-sm text-secondary hover:bg-surface-container-high transition-colors">Details</button>
+<button class="flex-1 py-3 whatsapp-gradient rounded-xl font-bold text-sm text-white shadow-lg shadow-green-200/50 flex items-center justify-center gap-2">
+                        Message
+                    </button>
+</div>
+</div>
+<!-- Worker Card 2 -->
+<div class="relative overflow-hidden bg-surface-container-lowest rounded-3xl p-6 transition-all duration-300 hover:translate-y-[-4px] group">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-whatsapp-green"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="flex gap-4">
+<div class="w-14 h-14 rounded-2xl overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a young male worker in a crisp white shirt against a neutral architectural background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVr1PNVz-XBX9IOg1TGalOEMQV24aquDra3lsI2oOaznqCktfKYC-5-xI52ynQ8BEWJrSoFmQm7-kjEQCFkMTDJoJF0GBbmShbsVK-8lUtJsjS53Jl9ktI_dnmibZDNGxMDiEKfRRjDbTOiIHj2FgRwpigLBo8Q5erPjugytNdhRv5rUpYKyrQzoFj1XkZqJ80ol12Gt616TJ5yLvnLWBr-gIbLHJHcYm-OfjiRbKxZ8YJkPiYFYSaa-FEmuxpxr2iovLmp6SqMQ"/>
+</div>
+<div>
+<h3 class="font-headline text-xl font-bold tracking-tight text-on-surface">Kwame Mensah</h3>
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-secondary block mt-0.5">District B • Logistics Lead</span>
+</div>
+</div>
+<div class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                        On Duty
+                    </div>
+</div>
+<div class="flex flex-col gap-1 mb-6">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-outline">WhatsApp Contact</span>
+<div class="flex items-center gap-3">
+<div class="p-2 bg-green-50 rounded-lg">
+<span class="material-symbols-outlined text-whatsapp-green text-xl" style="font-variation-settings: 'FILL' 1;">chat</span>
+</div>
+<span class="font-headline text-2xl font-extrabold text-on-surface tracking-tighter">+233 245 889 123</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-3 bg-surface-container rounded-xl font-bold text-sm text-secondary hover:bg-surface-container-high transition-colors">Details</button>
+<button class="flex-1 py-3 whatsapp-gradient rounded-xl font-bold text-sm text-white shadow-lg shadow-green-200/50 flex items-center justify-center gap-2">
+                        Message
+                    </button>
+</div>
+</div>
+<!-- Worker Card 3 -->
+<div class="relative overflow-hidden bg-surface-container-lowest rounded-3xl p-6 transition-all duration-300 hover:translate-y-[-4px] group">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-whatsapp-green"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="flex gap-4">
+<div class="w-14 h-14 rounded-2xl overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Portrait of a middle aged woman with a kind expression, wearing professional attire in an office with soft plant foliage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQrnCGamkweqn1yD0JcdkHRNmxzuw-UwucGRLgmRtgbUg9BQ6T5sVmpvYigEb920ftN6UCXmbqyun8MFxYwExuJry6sUk1zjGRNFaBnruodMbL1HpJ3tBMAOxAP9sOLeIRcexHgEOnP9RePZLvYNouwGYujanXyvXxhw7uX7AVnHNAj0FZrK1xUkYPIqrrDvsnTdSk5SnQgEXqvXELn_1u5TQGwKxzIp9DiXSpySQcjh19kD17Bd9ZYqcwNg7AT6oS6A48l8kyvQ"/>
+</div>
+<div>
+<h3 class="font-headline text-xl font-bold tracking-tight text-on-surface">Elena Rodriguez</h3>
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-secondary block mt-0.5">District A • Field Nurse</span>
+</div>
+</div>
+<div class="bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                        Offline
+                    </div>
+</div>
+<div class="flex flex-col gap-1 mb-6">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-outline">WhatsApp Contact</span>
+<div class="flex items-center gap-3">
+<div class="p-2 bg-green-50 rounded-lg">
+<span class="material-symbols-outlined text-whatsapp-green text-xl" style="font-variation-settings: 'FILL' 1;">chat</span>
+</div>
+<span class="font-headline text-2xl font-extrabold text-on-surface tracking-tighter">+34 612 004 559</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-3 bg-surface-container rounded-xl font-bold text-sm text-secondary hover:bg-surface-container-high transition-colors">Details</button>
+<button class="flex-1 py-3 whatsapp-gradient rounded-xl font-bold text-sm text-white shadow-lg shadow-green-200/50 flex items-center justify-center gap-2">
+                        Message
+                    </button>
+</div>
+</div>
+<!-- Add Worker Placeholder / CTA Card -->
+<div class="border-2 border-dashed border-outline-variant bg-transparent rounded-3xl p-6 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-white hover:border-blue-200 transition-all duration-300">
+<div class="w-16 h-16 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">person_add</span>
+</div>
+<h3 class="font-headline text-lg font-bold text-on-surface">Onboard New Worker</h3>
+<p class="text-on-surface-variant text-sm px-4 mt-2">Add a new field agent to your regional directory.</p>
+</div>
+</div>
+</main>
+<!-- FAB (Contextual for Workers Screen) -->
+<button class="fixed bottom-32 right-8 w-14 h-14 whatsapp-gradient text-white rounded-2xl shadow-xl shadow-green-200 flex items-center justify-center z-50 transition-transform hover:scale-110 active:scale-95">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- BottomNavBar (Mobile Shell) -->
+<nav class="fixed bottom-4 left-0 right-0 mx-auto max-w-md flex justify-around items-center p-2 z-50 bg-white/90 backdrop-blur-xl rounded-full shadow-[0_8px_24px_rgba(59,130,246,0.12)] md:hidden">
+<a class="flex flex-col items-center justify-center text-slate-500 px-4 py-2 hover:bg-blue-50 rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 px-4 py-2 hover:bg-blue-50 rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Schedules</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 px-4 py-2 hover:bg-blue-50 rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Patients</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 px-4 py-2 hover:bg-blue-50 rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Stock</span>
+</a>
+<!-- Active Tab: Workers -->
+<a class="flex flex-col items-center justify-center bg-blue-600 text-white rounded-full px-5 py-2 scale-105 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-0.5">Workers</span>
+</a>
+</nav>
+</body></html>

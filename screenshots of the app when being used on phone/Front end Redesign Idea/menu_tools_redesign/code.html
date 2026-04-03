@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed": "#23005c",
+              "on-error": "#ffffff",
+              "tertiary-fixed-dim": "#d0bcff",
+              "tertiary-container": "#8455ef",
+              "surface-dim": "#d9dadb",
+              "on-tertiary": "#ffffff",
+              "tertiary": "#6b38d4",
+              "primary-fixed-dim": "#adc6ff",
+              "surface-container": "#edeeef",
+              "primary": "#0058be",
+              "secondary-fixed-dim": "#c0c7d6",
+              "background": "#f8f9fa",
+              "on-primary-container": "#fefcff",
+              "inverse-surface": "#2e3132",
+              "surface-variant": "#e1e3e4",
+              "surface": "#f8f9fa",
+              "secondary": "#585f6c",
+              "outline": "#727785",
+              "inverse-on-surface": "#f0f1f2",
+              "surface-bright": "#f8f9fa",
+              "error-container": "#ffdad6",
+              "on-surface": "#191c1d",
+              "secondary-container": "#dce2f3",
+              "primary-container": "#2170e4",
+              "on-secondary-container": "#5e6572",
+              "primary-fixed": "#d8e2ff",
+              "on-tertiary-container": "#fffbff",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-fixed-variant": "#404754",
+              "on-secondary-fixed": "#151c27",
+              "surface-container-highest": "#e1e3e4",
+              "on-primary-fixed-variant": "#004395",
+              "inverse-primary": "#adc6ff",
+              "secondary-fixed": "#dce2f3",
+              "error": "#ba1a1a",
+              "on-secondary": "#ffffff",
+              "surface-container-high": "#e7e8e9",
+              "surface-container-low": "#f3f4f5",
+              "on-surface-variant": "#424754",
+              "on-tertiary-fixed-variant": "#5516be",
+              "tertiary-fixed": "#e9ddff",
+              "outline-variant": "#c2c6d6",
+              "on-background": "#191c1d",
+              "on-primary": "#ffffff",
+              "surface-tint": "#005ac2",
+              "on-error-container": "#93000a",
+              "on-primary-fixed": "#001a42"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .spring-200 {
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-[#F8F9FA] dark:bg-slate-900 flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-blue-600 dark:text-blue-400">menu</span>
+<h1 class="font-['Manrope'] font-bold text-xl tracking-tight text-slate-900 dark:text-slate-50">Clinical Curator</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="Close-up professional portrait of a medical worker in blue scrubs with a warm, confident expression in a clean clinic setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3rIwWpUH0hvmaIHHjmXe4mIcjqwqYsPFANwLnYCoRv8VvpHV8dEPtg6wBandxU9kcvyltvkeVE80eqarT6lGf4D4SAMh0gnEHMfz2CO4V1HvewQmRg-gyEwMx68DJitFRJdd-wEOHYsOALAjnfd1E9Y5dgT0vjxXlF4kBT0lwe39u4GVV2UYCRBJCxHiybNKNxVGq87lDWjbEZ3DPF7CODBRZe3aZU_hwopmB5RGMT_dM11vOwX0U0JCTwLjioe6HMkA7spajoA"/>
+</div>
+</header>
+<main class="px-6 pt-8 max-w-2xl mx-auto">
+<!-- Profile Header Section -->
+<section class="mb-10 flex items-center gap-6">
+<div class="relative">
+<div class="w-20 h-20 rounded-2xl overflow-hidden shadow-lg">
+<img alt="NGO Worker Profile" class="w-full h-full object-cover" data-alt="Close-up professional portrait of a medical worker in blue scrubs with a warm, confident expression in a clean clinic setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFOXhRs5Adw-C7yk1k4kcouHynbCZbDVrqTnimRv7eGk3yiuZXZgE_hEhKknWIk9PNI-c__VODvQa1W3dIBm9kR1D0ECR4SsPV42_n5nm98KRZmvBqu85bNMkgZzORWjv_fLvpTMl3p0i-R0MZPp8AE-mykaOUo31c0uhrbPWNaMtUgl9U252IpyGzgnS8BazdjRr1BdZn_EZ3jJik-baLjRa2Qs6ZaUjXLNKgirEQO8Lki80MA5V5beE-jvzgIW8rTDxK8J3dbA"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-primary w-6 h-6 rounded-full border-2 border-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px] text-on-primary" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div>
+<h2 class="font-headline font-extrabold text-2xl text-on-surface tracking-tight">Dr. Elena Rodriguez</h2>
+<p class="font-body text-secondary text-sm">Medical Staff • Global Health Initiative</p>
+<div class="mt-1 inline-block px-2 py-0.5 bg-surface-container-high rounded text-[10px] font-bold text-outline uppercase tracking-widest">v2.4.0</div>
+</div>
+</section>
+<!-- Tools Grid -->
+<section>
+<h3 class="font-headline font-bold text-lg mb-6 text-on-surface-variant">Menu &amp; Tools</h3>
+<div class="grid grid-cols-2 gap-4">
+<!-- Reports -->
+<button class="bg-surface-container-lowest p-6 rounded-xl flex flex-col items-start gap-4 text-left group active:scale-95 transition-transform duration-200">
+<div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                        📊
+                    </div>
+<div>
+<span class="block font-headline font-bold text-on-surface">Reports</span>
+<span class="block text-xs text-secondary mt-1">Analytics &amp; Stats</span>
+</div>
+</button>
+<!-- Activity Log -->
+<button class="bg-surface-container-lowest p-6 rounded-xl flex flex-col items-start gap-4 text-left group active:scale-95 transition-transform duration-200">
+<div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                        📝
+                    </div>
+<div>
+<span class="block font-headline font-bold text-on-surface">Activity Log</span>
+<span class="block text-xs text-secondary mt-1">Recent updates</span>
+</div>
+</button>
+<!-- Export Data -->
+<button class="bg-surface-container-lowest p-6 rounded-xl flex flex-col items-start gap-4 text-left group active:scale-95 transition-transform duration-200">
+<div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                        📥
+                    </div>
+<div>
+<span class="block font-headline font-bold text-on-surface">Export Data</span>
+<span class="block text-xs text-secondary mt-1">Download records</span>
+</div>
+</button>
+<!-- Settings -->
+<button class="bg-surface-container-lowest p-6 rounded-xl flex flex-col items-start gap-4 text-left group active:scale-95 transition-transform duration-200">
+<div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                        ⚙️
+                    </div>
+<div>
+<span class="block font-headline font-bold text-on-surface">Settings</span>
+<span class="block text-xs text-secondary mt-1">App configuration</span>
+</div>
+</button>
+<!-- Notifications -->
+<button class="bg-surface-container-lowest p-6 rounded-xl flex flex-col items-start gap-4 text-left group active:scale-95 transition-transform duration-200 col-span-2">
+<div class="flex items-center gap-4 w-full">
+<div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                            🔔
+                        </div>
+<div class="flex-1">
+<span class="block font-headline font-bold text-on-surface">Notifications</span>
+<span class="block text-xs text-secondary mt-1">Manage alerts and messages</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</button>
+</div>
+</section>
+<!-- Secondary Support List (Subtle Tonal Depth) -->
+<section class="mt-10">
+<div class="bg-surface-container-low rounded-2xl p-2">
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container-high rounded-xl transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">help_outline</span>
+<span class="font-body font-medium text-sm text-on-surface">Help &amp; Support</span>
+</div>
+<span class="material-symbols-outlined text-outline text-sm">open_in_new</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container-high rounded-xl transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">description</span>
+<span class="font-body font-medium text-sm text-on-surface">Privacy Policy</span>
+</div>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-error-container/20 rounded-xl transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error">logout</span>
+<span class="font-body font-medium text-sm text-error">Logout</span>
+</div>
+</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center pb-8 px-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md rounded-full shadow-[0_8px_24px_rgba(59,130,246,0.06)] bg-white/90 dark:bg-slate-800/90 flex justify-around items-center py-2 px-2 border border-outline-variant/10">
+<!-- Reports -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-blue-500 spring-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-['Inter'] text-[11px] font-medium uppercase tracking-wider mt-1">Reports</span>
+</a>
+<!-- Key Setup -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-blue-500 spring-200" href="#">
+<span class="material-symbols-outlined" data-icon="vpn_key">vpn_key</span>
+<span class="font-['Inter'] text-[11px] font-medium uppercase tracking-wider mt-1">Key Setup</span>
+</a>
+<!-- Alerts -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-blue-500 spring-200" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-['Inter'] text-[11px] font-medium uppercase tracking-wider mt-1">Alerts</span>
+</a>
+<!-- Menu (Active) -->
+<a class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full px-5 py-2 scale-110 spring-200" href="#">
+<span class="material-symbols-outlined" data-icon="more_horiz" style="font-variation-settings: 'FILL' 1;">more_horiz</span>
+<span class="font-['Inter'] text-[11px] font-medium uppercase tracking-wider mt-1">Menu</span>
+</a>
+</div>
+</nav>
+</body></html>

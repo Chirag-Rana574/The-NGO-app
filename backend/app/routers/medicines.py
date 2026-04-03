@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime, timezone
 from ..database import get_db
-from ..models import Medicine, StockTransaction, TransactionReason
+from ..models import Medicine, StockTransaction, TransactionReason, User
 from ..schemas import (
     MedicineCreate, MedicineUpdate, MedicineResponse,
     StockAdjustment, StockTransactionResponse, SuccessResponse
@@ -12,8 +12,9 @@ from ..stock_service import StockService, InsufficientStockError
 from ..config import get_settings
 from .auth import verify_master_key
 import logging
+from .google_auth import get_current_user
 
-router = APIRouter(prefix="/medicines", tags=["Medicines"])
+router = APIRouter(prefix="/medicines", tags=["Medicines"], dependencies=[Depends(get_current_user)])
 logger = logging.getLogger(__name__)
 
 
@@ -46,7 +47,7 @@ def get_medicine(medicine_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=MedicineResponse, status_code=201)
-def create_medicine(medicine_data: MedicineCreate, db: Session = Depends(get_db)):
+def create_medicine(medicine_data: MedicineCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Create a new medicine"""
     # Check if name already exists
     existing = db.query(Medicine).filter(
@@ -79,7 +80,7 @@ def create_medicine(medicine_data: MedicineCreate, db: Session = Depends(get_db)
             change_amount=medicine_data.initial_stock,
             reason=TransactionReason.MANUAL_ADJUSTMENT,
             notes="Initial stock",
-            created_by="SYSTEM"
+            created_by=current_user.email
         )
     
     db.commit()
@@ -94,7 +95,8 @@ def create_medicine(medicine_data: MedicineCreate, db: Session = Depends(get_db)
 def update_medicine(
     medicine_id: int,
     medicine_data: MedicineUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Update medicine (not stock - use adjust-stock endpoint)"""
     medicine = db.query(Medicine).filter(
@@ -146,7 +148,8 @@ def update_medicine(
 def adjust_stock(
     medicine_id: int,
     adjustment: StockAdjustment,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
     Manually adjust medicine stock.
@@ -166,7 +169,7 @@ def adjust_stock(
             medicine_id=medicine_id,
             amount=adjustment.amount,
             notes=adjustment.notes,
-            created_by=adjustment.created_by
+            created_by=current_user.email
         )
         
         db.commit()
@@ -210,7 +213,7 @@ def get_transactions(
 
 
 @router.delete("/{medicine_id}", response_model=SuccessResponse)
-def delete_medicine(medicine_id: int, db: Session = Depends(get_db)):
+def delete_medicine(medicine_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Soft delete medicine"""
     medicine = db.query(Medicine).filter(
         Medicine.id == medicine_id,

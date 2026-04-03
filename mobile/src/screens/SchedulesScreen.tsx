@@ -3,26 +3,33 @@ import {
     View,
     Text,
     StyleSheet,
-    FlatList,
+    SectionList,
     TouchableOpacity,
     RefreshControl,
     ActivityIndicator,
     Alert,
     AppState,
+    Dimensions,
 } from 'react-native';
-import { Calendar, DateData } from 'react-native-calendars';
-import { format, parseISO, addDays, isBefore, isAfter, startOfDay, differenceInHours } from 'date-fns';
+import { format, parseISO, addDays, startOfWeek, isBefore, isAfter, startOfDay, differenceInHours, isSameDay } from 'date-fns';
 import ApiService from '../services/api.service';
 import PasskeyModal from '../components/PasskeyModal';
 import { Schedule } from '../types';
-import { COLORS, SPACING, FONT_SIZES, STATUS_COLORS, STATUS_LABELS } from '../constants/theme';
+import {
+    COLORS, SPACING, FONT_SIZES,
+    STATUS_COLORS, STATUS_LABELS,
+    SECTION_HEADER_STYLE, CARD_SHADOW, BORDER_RADIUS,
+} from '../constants/theme';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const DAY_WIDTH = (SCREEN_WIDTH - 48) / 7;
 
 export default function SchedulesScreen({ navigation }: any) {
     const [schedules, setSchedules] = useState<Schedule[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-    const [markedDates, setMarkedDates] = useState<any>({});
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [weekOffset, setWeekOffset] = useState(0);
     const [showPasskeyModal, setShowPasskeyModal] = useState(false);
     const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
     const verifiedDeletePinRef = React.useRef<string | null>(null);
@@ -31,24 +38,6 @@ export default function SchedulesScreen({ navigation }: any) {
         try {
             const data = await ApiService.getSchedules();
             setSchedules(data);
-
-            // Create marked dates object for calendar
-            const marked: any = {};
-            data.forEach((schedule: Schedule) => {
-                const date = format(parseISO(schedule.scheduled_time), 'yyyy-MM-dd');
-                if (!marked[date]) {
-                    marked[date] = { marked: true, dots: [] };
-                }
-            });
-
-            // Add selected date
-            marked[selectedDate] = {
-                ...marked[selectedDate],
-                selected: true,
-                selectedColor: COLORS.primary,
-            };
-
-            setMarkedDates(marked);
         } catch (error) {
             console.error('Failed to load schedules:', error);
             Alert.alert('Error', 'Failed to load schedules');
@@ -56,19 +45,14 @@ export default function SchedulesScreen({ navigation }: any) {
             setLoading(false);
             setRefreshing(false);
         }
-    }, [selectedDate]);
+    }, []);
 
     useEffect(() => {
         loadSchedules();
-
-        // Auto-refresh every 30 seconds
         const interval = setInterval(loadSchedules, 30000);
-
-        // Refresh when app returns from background
         const appStateSub = AppState.addEventListener('change', (state) => {
             if (state === 'active') loadSchedules();
         });
-
         return () => {
             clearInterval(interval);
             appStateSub.remove();
@@ -80,6 +64,28 @@ export default function SchedulesScreen({ navigation }: any) {
         loadSchedules();
     };
 
+    // ─── Week Strip Logic ─────────────────────────────────────────────────────
+    const getWeekDays = () => {
+        const today = new Date();
+        const weekStart = startOfWeek(addDays(today, weekOffset * 7), { weekStartsOn: 1 });
+        return Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+    };
+
+    const weekDays = getWeekDays();
+
+    const goToToday = () => {
+        setWeekOffset(0);
+        setSelectedDate(new Date());
+    };
+
+    const getScheduleCountForDate = (date: Date) => {
+        const dateStr = format(date, 'yyyy-MM-dd');
+        return schedules.filter(s => format(parseISO(s.scheduled_time), 'yyyy-MM-dd') === dateStr).length;
+    };
+
+    const selectedDateStr = format(selectedDate, 'yyyy-MM-dd');
+
+    // ─── Delete Logic ─────────────────────────────────────────────────────────
     const performDelete = async (scheduleId: number, masterKey?: string) => {
         try {
             await ApiService.deleteSchedule(scheduleId, masterKey);
@@ -92,7 +98,6 @@ export default function SchedulesScreen({ navigation }: any) {
 
     const handleDeleteSchedule = (schedule: Schedule) => {
         const isWithin24Hours = differenceInHours(new Date(schedule.scheduled_time), new Date()) < 24;
-
         Alert.alert(
             'Delete Schedule',
             isWithin24Hours
@@ -126,84 +131,122 @@ export default function SchedulesScreen({ navigation }: any) {
         }
     };
 
-    const onDayPress = (day: DateData) => {
-        setSelectedDate(day.dateString);
+    // ─── Filtered + Grouped Schedules ─────────────────────────────────────────
+    const selectedDateSchedules = schedules.filter(schedule => {
+        const scheduleDate = format(parseISO(schedule.scheduled_time), 'yyyy-MM-dd');
+        return scheduleDate === selectedDateStr;
+    });
 
-        // Update marked dates
-        const newMarked = { ...markedDates };
-        Object.keys(newMarked).forEach(key => {
-            if (newMarked[key].selected) {
-                delete newMarked[key].selected;
-                delete newMarked[key].selectedColor;
-            }
-        });
-        newMarked[day.dateString] = {
-            ...newMarked[day.dateString],
-            selected: true,
-            selectedColor: COLORS.primary,
-        };
-        setMarkedDates(newMarked);
-    };
+    // Group into Morning (before 12) / Afternoon shifts
+    const morningSchedules = selectedDateSchedules.filter(s => {
+        const hour = new Date(s.scheduled_time).getHours();
+        return hour < 12;
+    });
+    const afternoonSchedules = selectedDateSchedules.filter(s => {
+        const hour = new Date(s.scheduled_time).getHours();
+        return hour >= 12;
+    });
 
-    const getSchedulesForSelectedDate = () => {
-        return schedules.filter(schedule => {
-            const scheduleDate = format(parseISO(schedule.scheduled_time), 'yyyy-MM-dd');
-            return scheduleDate === selectedDate;
-        });
-    };
+    const sections = [
+        ...(morningSchedules.length > 0 ? [{ title: 'MORNING SHIFT', icon: '🌅', data: morningSchedules }] : []),
+        ...(afternoonSchedules.length > 0 ? [{ title: 'AFTERNOON SHIFT', icon: '☀️', data: afternoonSchedules }] : []),
+    ];
 
     const isEditable = (status: string) => {
         return ['CREATED', 'REMINDER_SENT', 'AWAITING_RESPONSE'].includes(status);
     };
 
-    const renderScheduleItem = ({ item }: { item: Schedule }) => (
-        <TouchableOpacity
-            style={[styles.scheduleCard, { borderLeftColor: STATUS_COLORS[item.status] }]}
-            onPress={() => isEditable(item.status) && navigation.navigate('EditSchedule', { schedule: item })}
-        >
-            <View style={styles.scheduleHeader}>
-                <Text style={styles.workerName}>{item.worker.name}</Text>
-                <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[item.status] }]}>
-                    <Text style={styles.statusText}>{STATUS_LABELS[item.status]}</Text>
-                </View>
-            </View>
-
-            <Text style={styles.patientName}>Patient: {item.patient.name}</Text>
-            <Text style={styles.medicineName}>{item.medicine.name}</Text>
-            <Text style={styles.doseInfo}>
-                {item.dose_amount} {item.medicine.dosage_unit}
-            </Text>
-
-            <View style={styles.timeContainer}>
-                <Text style={styles.timeValue}>{format(parseISO(item.scheduled_time), 'h:mm a')}</Text>
-            </View>
-
-            {isEditable(item.status) && (
-                <View style={styles.scheduleActions}>
-                    <TouchableOpacity
-                        style={styles.editBtn}
-                        onPress={() => navigation.navigate('EditSchedule', { schedule: item })}
-                    >
-                        <Text style={styles.editBtnText}>Edit</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.deleteBtn}
-                        onPress={() => handleDeleteSchedule(item)}
-                    >
-                        <Text style={styles.deleteBtnText}>Delete</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
-        </TouchableOpacity>
-    );
-
-    const selectedDateSchedules = getSchedulesForSelectedDate();
-
-    // Determine if the selected date is within the 2-week creation window
     const today = startOfDay(new Date());
     const maxCreateDate = addDays(today, 14);
-    const selectedDateObj = parseISO(selectedDate);
-    const canCreateSchedule = !isBefore(selectedDateObj, today) && !isAfter(selectedDateObj, maxCreateDate);
+    const canCreateSchedule = !isBefore(startOfDay(selectedDate), today) && !isAfter(startOfDay(selectedDate), maxCreateDate);
+
+    // ─── Avatar initials ──────────────────────────────────────────────────────
+    const getInitials = (name: string) => {
+        const parts = name.split(' ');
+        return parts.length > 1
+            ? `${parts[0][0]}${parts[1][0]}`.toUpperCase()
+            : name.substring(0, 2).toUpperCase();
+    };
+
+    // ─── Render ───────────────────────────────────────────────────────────────
+    const renderScheduleItem = ({ item }: { item: Schedule }) => {
+        const statusColor = STATUS_COLORS[item.status] || COLORS.gray;
+        const isAdministered = ['COMPLETED', 'LATE_COMPLETED'].includes(item.status);
+
+        return (
+            <TouchableOpacity
+                style={[styles.scheduleCard, { borderLeftColor: statusColor }]}
+                onPress={() => isEditable(item.status) && navigation.navigate('EditSchedule', { schedule: item })}
+                activeOpacity={0.7}
+            >
+                <View style={styles.cardContent}>
+                    {/* Avatar */}
+                    <View style={[styles.avatar, { borderColor: statusColor }]}>
+                        <Text style={styles.avatarText}>{getInitials(item.worker?.name || 'W')}</Text>
+                    </View>
+
+                    {/* Info */}
+                    <View style={styles.cardInfo}>
+                        <Text style={styles.workerName}>{item.worker?.name || 'Worker'}</Text>
+                        <Text style={styles.medicineName}>
+                            {item.medicine?.name || 'Medicine'} {item.dose_amount}{item.medicine?.dosage_unit || 'mg'}
+                        </Text>
+                        <View style={styles.patientRow}>
+                            <Text style={styles.patientIcon}>🏥</Text>
+                            <Text style={styles.patientName}>{item.patient?.name || 'Patient'}</Text>
+                        </View>
+                    </View>
+
+                    {/* Time + Status */}
+                    <View style={styles.cardRight}>
+                        <Text style={[styles.timeValue, { color: statusColor }]}>
+                            {format(parseISO(item.scheduled_time), 'hh:mm a')}
+                        </Text>
+                        <View style={[
+                            styles.statusPill,
+                            isAdministered
+                                ? { backgroundColor: statusColor }
+                                : { borderColor: statusColor, borderWidth: 1.5 }
+                        ]}>
+                            {isAdministered && <Text style={styles.statusCheck}>✓ </Text>}
+                            <Text style={[
+                                styles.statusPillText,
+                                isAdministered ? { color: COLORS.white } : { color: statusColor }
+                            ]}>
+                                {STATUS_LABELS[item.status]}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+
+                {/* Action buttons */}
+                {isEditable(item.status) && (
+                    <View style={styles.scheduleActions}>
+                        <TouchableOpacity
+                            style={styles.editBtn}
+                            onPress={() => navigation.navigate('EditSchedule', { schedule: item })}
+                        >
+                            <Text style={styles.editBtnText}>Edit</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.deleteBtn}
+                            onPress={() => handleDeleteSchedule(item)}
+                        >
+                            <Text style={styles.deleteBtnText}>Delete</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
+            </TouchableOpacity>
+        );
+    };
+
+    const renderSectionHeader = ({ section }: { section: { title: string; icon: string } }) => (
+        <View style={styles.shiftHeader}>
+            <View style={styles.shiftHeaderLine} />
+            <Text style={styles.shiftIcon}>{section.icon}</Text>
+            <Text style={styles.shiftLabel}>{section.title}</Text>
+        </View>
+    );
 
     if (loading) {
         return (
@@ -228,47 +271,58 @@ export default function SchedulesScreen({ navigation }: any) {
                 }}
                 title="Master Key Required"
             />
-            <Calendar
-                current={selectedDate}
-                onDayPress={onDayPress}
-                markedDates={markedDates}
-                maxDate={format(addDays(new Date(), 14), 'yyyy-MM-dd')}
-                theme={{
-                    calendarBackground: COLORS.white,
-                    textSectionTitleColor: COLORS.text,
-                    selectedDayBackgroundColor: COLORS.primary,
-                    selectedDayTextColor: COLORS.white,
-                    todayTextColor: COLORS.primary,
-                    dayTextColor: COLORS.text,
-                    textDisabledColor: COLORS.textLight,
-                    dotColor: COLORS.primary,
-                    selectedDotColor: COLORS.white,
-                    arrowColor: COLORS.primary,
-                    monthTextColor: COLORS.text,
-                    textDayFontSize: FONT_SIZES.lg,
-                    textMonthFontSize: FONT_SIZES.xl,
-                    textDayHeaderFontSize: FONT_SIZES.md,
-                }}
-                style={styles.calendar}
-            />
 
-            <View style={styles.selectedDateHeader}>
-                <Text style={styles.selectedDateText}>
-                    {format(parseISO(selectedDate), 'EEEE, MMMM d, yyyy')}
+            {/* ─── Title section ────────────────────────────────────── */}
+            <View style={styles.titleSection}>
+                <Text style={styles.heroTitle}>Daily Schedules</Text>
+                <Text style={styles.heroSubtitle}>
+                    Regional District A • {format(weekDays[3], 'MMMM yyyy')}
                 </Text>
-                {canCreateSchedule && (
-                    <TouchableOpacity
-                        style={styles.addButton}
-                        onPress={() => navigation.navigate('CreateSchedule', { date: selectedDate })}
-                    >
-                        <Text style={styles.addButtonText}>+ Add</Text>
-                    </TouchableOpacity>
-                )}
             </View>
 
-            <FlatList
-                data={selectedDateSchedules}
+            {/* ─── Week Strip ──────────────────────────────────────── */}
+            <View style={styles.weekStrip}>
+                {weekDays.map((day, i) => {
+                    const isSelected = isSameDay(day, selectedDate);
+                    const isToday = isSameDay(day, new Date());
+                    const count = getScheduleCountForDate(day);
+                    return (
+                        <TouchableOpacity
+                            key={i}
+                            style={[
+                                styles.dayPill,
+                                isSelected && styles.dayPillSelected,
+                                isToday && !isSelected && styles.dayPillToday,
+                            ]}
+                            onPress={() => setSelectedDate(day)}
+                            activeOpacity={0.7}
+                        >
+                            <Text style={[
+                                styles.dayLabel,
+                                isSelected && styles.dayLabelSelected,
+                            ]}>
+                                {format(day, 'EEE').toUpperCase()}
+                            </Text>
+                            <Text style={[
+                                styles.dayNumber,
+                                isSelected && styles.dayNumberSelected,
+                                isToday && !isSelected && styles.dayNumberToday,
+                            ]}>
+                                {format(day, 'd')}
+                            </Text>
+                            {count > 0 && !isSelected && (
+                                <View style={styles.dotIndicator} />
+                            )}
+                        </TouchableOpacity>
+                    );
+                })}
+            </View>
+
+            {/* ─── Schedule List ────────────────────────────────────── */}
+            <SectionList
+                sections={sections}
                 renderItem={renderScheduleItem}
+                renderSectionHeader={renderSectionHeader}
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.listContainer}
                 refreshControl={
@@ -277,11 +331,25 @@ export default function SchedulesScreen({ navigation }: any) {
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
                         <Text style={styles.emptyIcon}>📅</Text>
-                        <Text style={styles.emptyText}>No schedules for this date</Text>
-                        <Text style={styles.emptySubtext}>Tap "+ Add" to create one</Text>
+                        <Text style={styles.emptyText}>No schedules</Text>
+                        <Text style={styles.emptySubtext}>
+                            {canCreateSchedule ? 'Tap + to create one' : 'Select a date to view schedules'}
+                        </Text>
                     </View>
                 }
+                stickySectionHeadersEnabled={false}
             />
+
+            {/* ─── FAB ─────────────────────────────────────────────── */}
+            {canCreateSchedule && (
+                <TouchableOpacity
+                    style={styles.fab}
+                    onPress={() => navigation.navigate('CreateSchedule', { date: selectedDateStr })}
+                    activeOpacity={0.85}
+                >
+                    <Text style={styles.fabText}>+</Text>
+                </TouchableOpacity>
+            )}
         </View>
     );
 }
@@ -296,153 +364,262 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    calendar: {
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
-        paddingBottom: SPACING.md,
-        maxHeight: 380,
-    },
-    selectedDateHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: SPACING.lg,
-        backgroundColor: COLORS.white,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
-    },
-    selectedDateText: {
-        fontSize: FONT_SIZES.lg,
-        fontWeight: 'bold',
-        color: COLORS.text,
-        flex: 1,
-    },
-    addButton: {
-        backgroundColor: COLORS.primary,
+
+    // ─── Title Section ─────────────────────────────────────────
+    titleSection: {
         paddingHorizontal: SPACING.lg,
+        paddingTop: SPACING.md,
+        paddingBottom: SPACING.sm,
+        backgroundColor: COLORS.white,
+    },
+    heroTitle: {
+        fontSize: 28,
+        fontWeight: '800',
+        color: COLORS.text,
+    },
+    heroSubtitle: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.textSecondary,
+        marginTop: 4,
+    },
+
+    // ─── Week Strip ────────────────────────────────────────────
+    weekStrip: {
+        flexDirection: 'row',
+        paddingHorizontal: SPACING.md,
         paddingVertical: SPACING.md,
-        borderRadius: 12,
-        minHeight: 56,
-        justifyContent: 'center',
+        backgroundColor: COLORS.white,
+        justifyContent: 'space-between',
     },
-    addButtonText: {
-        color: COLORS.white,
+    dayPill: {
+        width: DAY_WIDTH,
+        alignItems: 'center',
+        paddingVertical: SPACING.sm,
+        borderRadius: BORDER_RADIUS.md,
+        backgroundColor: COLORS.grayLight,
+    },
+    dayPillSelected: {
+        backgroundColor: COLORS.primary,
+    },
+    dayPillToday: {
+        borderColor: COLORS.primary,
+        borderWidth: 1.5,
+        backgroundColor: COLORS.white,
+    },
+    dayLabel: {
+        fontSize: 10,
+        fontWeight: '700',
+        color: COLORS.textLight,
+        letterSpacing: 0.5,
+        marginBottom: 4,
+    },
+    dayLabelSelected: {
+        color: 'rgba(255,255,255,0.8)',
+    },
+    dayNumber: {
         fontSize: FONT_SIZES.lg,
-        fontWeight: '600',
+        fontWeight: '800',
+        color: COLORS.text,
     },
+    dayNumberSelected: {
+        color: COLORS.white,
+    },
+    dayNumberToday: {
+        color: COLORS.primary,
+    },
+    dotIndicator: {
+        width: 5,
+        height: 5,
+        borderRadius: 2.5,
+        backgroundColor: COLORS.primary,
+        marginTop: 4,
+    },
+
+    // ─── Shift Headers ──────────────────────────────────────────
+    shiftHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: SPACING.lg,
+        paddingTop: SPACING.lg,
+        paddingBottom: SPACING.sm,
+    },
+    shiftHeaderLine: {
+        width: 3,
+        height: 20,
+        backgroundColor: COLORS.primary,
+        borderRadius: 2,
+        marginRight: SPACING.sm,
+    },
+    shiftIcon: {
+        fontSize: 16,
+        marginRight: SPACING.xs,
+    },
+    shiftLabel: {
+        ...SECTION_HEADER_STYLE,
+        marginBottom: 0,
+        color: COLORS.textSecondary,
+    },
+
+    // ─── Schedule Cards ─────────────────────────────────────────
     listContainer: {
-        padding: SPACING.md,
+        paddingBottom: 100,
     },
     scheduleCard: {
         backgroundColor: COLORS.white,
-        borderRadius: 16,
-        padding: SPACING.xl,
-        marginBottom: SPACING.md,
-        borderLeftWidth: 6,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-        minHeight: 120,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.md,
+        marginHorizontal: SPACING.md,
+        marginBottom: SPACING.sm,
+        borderLeftWidth: 4,
+        ...CARD_SHADOW,
     },
-    scheduleHeader: {
+    cardContent: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: SPACING.md,
     },
-    workerName: {
-        fontSize: FONT_SIZES.xl,
-        fontWeight: 'bold',
-        color: COLORS.text,
+    avatar: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: COLORS.grayLight,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: SPACING.md,
+        borderWidth: 2,
+    },
+    avatarText: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: COLORS.textSecondary,
+    },
+    cardInfo: {
         flex: 1,
     },
-    statusBadge: {
-        paddingHorizontal: SPACING.md,
-        paddingVertical: SPACING.sm,
-        borderRadius: 8,
-        minHeight: 40,
-        justifyContent: 'center',
-    },
-    statusText: {
-        color: COLORS.white,
+    workerName: {
         fontSize: FONT_SIZES.md,
-        fontWeight: '600',
+        fontWeight: '700',
+        color: COLORS.text,
+        marginBottom: 2,
     },
     medicineName: {
-        fontSize: FONT_SIZES.lg,
-        color: COLORS.text,
-        fontWeight: '600',
-        marginBottom: SPACING.xs,
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.textSecondary,
+        marginBottom: 4,
     },
-    doseInfo: {
-        fontSize: FONT_SIZES.md,
-        color: COLORS.textLight,
-        marginBottom: SPACING.md,
+    patientRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
-    timeContainer: {
-        marginTop: SPACING.sm,
-    },
-    timeValue: {
-        fontSize: FONT_SIZES.xxl,
-        fontWeight: 'bold',
-        color: COLORS.primary,
+    patientIcon: {
+        fontSize: 12,
+        marginRight: 4,
     },
     patientName: {
-        fontSize: FONT_SIZES.md,
+        fontSize: FONT_SIZES.xs,
         color: COLORS.textLight,
-        marginBottom: SPACING.xs,
         fontWeight: '500',
     },
+    cardRight: {
+        alignItems: 'flex-end',
+        marginLeft: SPACING.sm,
+    },
+    timeValue: {
+        fontSize: FONT_SIZES.sm,
+        fontWeight: '700',
+        marginBottom: 6,
+    },
+    statusPill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: SPACING.sm,
+        paddingVertical: 4,
+        borderRadius: BORDER_RADIUS.full,
+    },
+    statusCheck: {
+        color: COLORS.white,
+        fontSize: 10,
+        fontWeight: '700',
+    },
+    statusPillText: {
+        fontSize: 9,
+        fontWeight: '700',
+        letterSpacing: 0.5,
+        textTransform: 'uppercase',
+    },
+
+    // ─── Actions ────────────────────────────────────────────────
     scheduleActions: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        gap: SPACING.md,
+        gap: SPACING.sm,
         marginTop: SPACING.md,
-        paddingTop: SPACING.md,
-        borderTopWidth: 1,
-        borderTopColor: COLORS.border,
+        paddingTop: SPACING.sm,
     },
     editBtn: {
         backgroundColor: COLORS.primary,
         paddingHorizontal: SPACING.lg,
         paddingVertical: SPACING.sm,
-        borderRadius: 8,
+        borderRadius: BORDER_RADIUS.xl,
     },
     editBtnText: {
         color: COLORS.white,
-        fontSize: FONT_SIZES.md,
+        fontSize: FONT_SIZES.sm,
         fontWeight: '600',
     },
     deleteBtn: {
         backgroundColor: COLORS.error,
         paddingHorizontal: SPACING.lg,
         paddingVertical: SPACING.sm,
-        borderRadius: 8,
+        borderRadius: BORDER_RADIUS.xl,
     },
     deleteBtnText: {
         color: COLORS.white,
-        fontSize: FONT_SIZES.md,
+        fontSize: FONT_SIZES.sm,
         fontWeight: '600',
     },
+
+    // ─── Empty State ────────────────────────────────────────────
     emptyContainer: {
         padding: SPACING.xl,
         alignItems: 'center',
         marginTop: SPACING.xxl,
     },
     emptyIcon: {
-        fontSize: 64,
-        marginBottom: SPACING.lg,
+        fontSize: 48,
+        marginBottom: SPACING.md,
     },
     emptyText: {
-        fontSize: FONT_SIZES.xl,
+        fontSize: FONT_SIZES.lg,
         color: COLORS.textLight,
         fontWeight: '600',
-        marginBottom: SPACING.sm,
+        marginBottom: SPACING.xs,
     },
     emptySubtext: {
-        fontSize: FONT_SIZES.md,
+        fontSize: FONT_SIZES.sm,
         color: COLORS.textLight,
+    },
+
+    // ─── FAB ────────────────────────────────────────────────────
+    fab: {
+        position: 'absolute',
+        bottom: 90,
+        right: 24,
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: COLORS.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: COLORS.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.35,
+        shadowRadius: 8,
+        elevation: 8,
+    },
+    fabText: {
+        fontSize: 28,
+        color: COLORS.white,
+        fontWeight: '300',
+        marginTop: -2,
     },
 });

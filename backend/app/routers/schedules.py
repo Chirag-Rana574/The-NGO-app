@@ -3,18 +3,20 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import and_, or_
 from typing import List, Optional
 from datetime import datetime, timedelta, timezone
+import json
 import bcrypt
 import logging
 from ..database import get_db
-from ..models import Schedule, ScheduleStatus, Worker, Medicine, Patient
+from ..models import Schedule, ScheduleStatus, Worker, Medicine, Patient, User, AuditLog, AuditAction
 from ..schemas import (
     ScheduleCreate, ScheduleUpdate, ScheduleResponse,
     ScheduleOverride, SuccessResponse
 )
 from ..config import get_settings
 from .auth import verify_master_key
+from .google_auth import get_current_user
 
-router = APIRouter(prefix="/schedules", tags=["Schedules"])
+router = APIRouter(prefix="/schedules", tags=["Schedules"], dependencies=[Depends(get_current_user)])
 logger = logging.getLogger(__name__)
 settings = get_settings()
 
@@ -72,7 +74,7 @@ def get_schedule(schedule_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=ScheduleResponse, status_code=201)
-def create_schedule(schedule_data: ScheduleCreate, db: Session = Depends(get_db)):
+def create_schedule(schedule_data: ScheduleCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Create a new schedule"""
     # Validate patient exists and is active
     patient = db.query(Patient).filter(
@@ -132,6 +134,19 @@ def create_schedule(schedule_data: ScheduleCreate, db: Session = Depends(get_db)
     db.add(schedule)
     db.commit()
     db.refresh(schedule)
+
+    db.add(AuditLog(
+        entity_type="Schedule",
+        entity_id=schedule.id,
+        action=AuditAction.CREATE,
+        performed_by=current_user.email,
+        new_value=json.dumps({
+            "patient_id": schedule.patient_id,
+            "time": str(schedule.scheduled_time),
+            "dose": schedule.dose_amount
+        })
+    ))
+    db.commit()
     
     # Re-query with eager loading for response serialization
     schedule = db.query(Schedule).options(
@@ -152,7 +167,8 @@ def create_schedule(schedule_data: ScheduleCreate, db: Session = Depends(get_db)
 def update_schedule(
     schedule_id: int,
     schedule_data: ScheduleUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
     Update schedule with 24-hour lock enforcement.
@@ -162,6 +178,12 @@ def update_schedule(
         Schedule.id == schedule_id,
         Schedule.deleted_at.is_(None)
     ).first()
+    
+    old_values = {
+        "scheduled_time": str(schedule.scheduled_time),
+        "dose_amount": schedule.dose_amount,
+        "worker_id": schedule.worker_id
+    }
     
     if not schedule:
         raise HTTPException(status_code=404, detail="Schedule not found")
@@ -240,6 +262,20 @@ def update_schedule(
     db.commit()
     db.refresh(schedule)
     
+    db.add(AuditLog(
+        entity_type="Schedule",
+        entity_id=schedule.id,
+        action=AuditAction.UPDATE,
+        performed_by=current_user.email,
+        old_value=json.dumps({
+        "scheduled_time": str(schedule.scheduled_time),
+        "dose_amount": schedule.dose_amount,
+        "worker_id": schedule.worker_id
+    }),
+        details="Updated schedule (Override used if within 24h)"
+    ))
+    db.commit()
+
     logger.info(f"Updated schedule #{schedule.id}")
     
     return schedule
@@ -249,7 +285,8 @@ def update_schedule(
 def override_schedule(
     schedule_id: int,
     override_data: ScheduleOverride,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user)
 ):
     """
     Override schedule edit lock with master password.
@@ -298,6 +335,15 @@ def override_schedule(
     
     db.commit()
     db.refresh(schedule)
+
+    db.add(AuditLog(
+        entity_type="Schedule",
+        entity_id=schedule.id,
+        action=AuditAction.UPDATE,
+        performed_by=current_user.email,
+        details=f"FORCE OVERRIDE: {override_data.reason}"
+    ))
+    db.commit()
     
     logger.info(f"Override applied to schedule #{schedule.id}: {override_data.reason}")
     
@@ -308,7 +354,8 @@ def override_schedule(
 def delete_schedule(
     schedule_id: int,
     master_key: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user)
 ):
     """Soft delete schedule — requires master key if within 24 hours"""
     schedule = db.query(Schedule).filter(
@@ -345,6 +392,14 @@ def delete_schedule(
     
     db.commit()
     
+    db.add(AuditLog(
+        entity_type="Schedule",
+        entity_id=schedule.id,
+        action=AuditAction.DELETE,
+        performed_by=current_user.email
+    ))
+    db.commit()
+
     logger.info(f"Deleted schedule #{schedule.id}")
     
     return SuccessResponse(message=f"Schedule #{schedule.id} deleted successfully")

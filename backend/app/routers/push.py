@@ -9,11 +9,11 @@ from datetime import datetime
 import logging
 
 from ..database import get_db
-from ..models import PushToken, Notification
+from ..models import PushToken, Notification, User
 from ..routers.google_auth import get_current_user
-from ..models import User
 
-router = APIRouter(prefix="/push", tags=["Push Notifications"])
+
+router = APIRouter(prefix="/push", tags=["Push Notifications"], dependencies=[Depends(get_current_user)])
 logger = logging.getLogger(__name__)
 
 
@@ -68,10 +68,11 @@ async def register_push_token(
 @router.delete("/unregister", summary="Remove a push token (e.g. on logout)")
 async def unregister_push_token(
     token: str,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user),
 ):
     """Remove a push notification token."""
-    deleted = db.query(PushToken).filter(PushToken.token == token).delete()
+    deleted = db.query(PushToken).filter(PushToken.token == token, PushToken.user_id == current_user.id).delete()
     db.commit()
     
     if deleted:
@@ -84,10 +85,11 @@ async def unregister_push_token(
 async def get_notifications(
     limit: int = 50,
     unread_only: bool = False,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user),
 ):
     """Get notification history for in-app display."""
-    query = db.query(Notification).order_by(Notification.created_at.desc())
+    query = db.query(Notification).filter(Notification.user_id == current_user.id).order_by(Notification.created_at.desc())
     
     if unread_only:
         query = query.filter(Notification.is_read == False)
@@ -96,9 +98,9 @@ async def get_notifications(
 
 
 @router.post("/notifications/{notification_id}/read", summary="Mark notification as read")
-async def mark_read(notification_id: int, db: Session = Depends(get_db)):
+async def mark_read(notification_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Mark a notification as read."""
-    notification = db.query(Notification).filter(Notification.id == notification_id).first()
+    notification = db.query(Notification).filter(Notification.id == notification_id, Notification.user_id == current_user.id).first()
     if not notification:
         raise HTTPException(status_code=404, detail="Notification not found")
     
@@ -108,15 +110,15 @@ async def mark_read(notification_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/notifications/read-all", summary="Mark all notifications as read")
-async def mark_all_read(db: Session = Depends(get_db)):
+async def mark_all_read(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Mark all notifications as read."""
-    db.query(Notification).filter(Notification.is_read == False).update({"is_read": True})
+    db.query(Notification).filter(Notification.is_read == False, Notification.user_id == current_user.id).update({"is_read": True})
     db.commit()
     return {"status": "all_read"}
 
 
 @router.get("/notifications/unread-count", summary="Get unread notification count")
-async def unread_count(db: Session = Depends(get_db)):
+async def unread_count(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Get the count of unread notifications (for badge display)."""
-    count = db.query(Notification).filter(Notification.is_read == False).count()
+    count = db.query(Notification).filter(Notification.is_read == False, Notification.user_id == current_user.id).count()
     return {"unread_count": count}

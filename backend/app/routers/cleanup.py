@@ -4,35 +4,42 @@ Records older than a configurable retention period (default 90 days)
 are permanently removed to save database storage costs.
 """
 import logging
+import json
 from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from pydantic import BaseModel, Field
 
 from ..database import get_db
-from ..models import Patient, Worker, Medicine, Schedule, AuditLog
+from ..models import Patient, Worker, Medicine, Schedule, AuditLog, AuditAction, User
 from ..schemas import SuccessResponse
 from .auth import verify_master_key
+from .google_auth import get_current_user
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/cleanup", tags=["cleanup"])
+router = APIRouter(prefix="/cleanup", tags=["cleanup"], dependencies=[Depends(get_current_user)])
 
+class PurgeRequest(BaseModel):
+    master_key : str
+    retention_days : int = Field(90, ge=30, le=365)
 
 @router.post("/purge", response_model=SuccessResponse)
 def purge_deleted_records(
-    master_key: str = Query(..., description="Master key required for purge"),
-    retention_days: int = Query(90, ge=30, le=365, description="Records deleted more than this many days ago will be purged"),
-    db: Session = Depends(get_db)
+    request : PurgeRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
     Permanently delete soft-deleted records older than retention_days.
     Requires master key for safety.
     Default retention: 90 days. Minimum: 30 days.
     """
-    if not verify_master_key(db, master_key):
+    if not verify_master_key(db, request.master_key):
+        logger.warning(f"FAILED PURGE ATTEMPT by {current_user.email} - Invalid Master Key")
         raise HTTPException(status_code=403, detail="Invalid master key")
     
-    cutoff = datetime.now(timezone.utc) - timedelta(days=retention_days)
+    cutoff = datetime.now(timezone.utc) - timedelta(days=request.retention_days)
     
     # Order matters: delete schedules first (they reference patients/workers/medicines)
     tables = [
@@ -62,18 +69,26 @@ def purge_deleted_records(
         total_purged += audit_count
         details.append(f"audit_logs: {audit_count}")
     
+    new_audit = AuditLog(
+        entity_type = "SYSTEM",
+        entity_id = 0,
+        action = AuditAction.DELETE,
+        new_value=json.dumps({"purge_details": details, "retention_days": request.retention_days}),
+        performed_by=current_user.email
+    )
+    db.add(new_audit)
     db.commit()
     
     detail_str = ", ".join(details) if details else "no records to purge"
     logger.info(f"Purge completed: {total_purged} records removed ({detail_str})")
     
     return SuccessResponse(
-        message=f"Purged {total_purged} records older than {retention_days} days ({detail_str})"
+        message=f"Purged {total_purged} records older than {request.retention_days} days ({detail_str})"
     )
 
 
 @router.get("/stats")
-def get_cleanup_stats(db: Session = Depends(get_db)):
+def get_cleanup_stats(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Get counts of soft-deleted records grouped by age.
     Helps decide when to run a purge.

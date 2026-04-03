@@ -6,9 +6,13 @@ import {
     ScrollView,
     RefreshControl,
     ActivityIndicator,
+    TouchableOpacity,
 } from 'react-native';
 import ApiService from '../services/api.service';
-import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
+import {
+    COLORS, SPACING, FONT_SIZES,
+    SECTION_HEADER_STYLE, CARD_SHADOW, BORDER_RADIUS,
+} from '../constants/theme';
 
 interface DashboardStats {
     date: string;
@@ -40,6 +44,17 @@ interface StockItem {
     dosage_unit: string;
     is_low: boolean;
 }
+
+const STAT_CONFIGS = [
+    { key: 'total', label: 'TOTAL', icon: '📋', color: '#3B82F6' },
+    { key: 'completed', label: 'COMPLETED', icon: '✅', color: '#10B981' },
+    { key: 'not_done', label: 'NOT GIVEN', icon: '⚠️', color: '#F59E0B' },
+    { key: 'missed', label: 'MISSED', icon: '❌', color: '#EF4444' },
+    { key: 'pending', label: 'PENDING', icon: '⏳', color: '#8B5CF6' },
+    { key: 'completion_rate', label: 'RATE %', icon: '📈', color: '#06B6D4', suffix: '%' },
+];
+
+const STOCK_ICONS = ['💊', '🧬', '💉'];
 
 export default function ReportScreen() {
     const [dashboard, setDashboard] = useState<DashboardStats | null>(null);
@@ -81,92 +96,120 @@ export default function ReportScreen() {
         );
     }
 
-    const StatCard = ({ label, value, color, icon }: { label: string; value: number | string; color: string; icon: string }) => (
-        <View style={[styles.statCard, { borderLeftColor: color }]}>
-            <Text style={styles.statIcon}>{icon}</Text>
-            <Text style={[styles.statValue, { color }]}>{value}</Text>
-            <Text style={styles.statLabel}>{label}</Text>
-        </View>
-    );
+    const getStockStatus = (item: StockItem) => {
+        if (item.is_low && item.current_stock <= 15) return { label: 'CRITICAL', color: '#EF4444' };
+        if (item.is_low) return { label: 'LOW STOCK', color: '#F59E0B' };
+        return { label: 'STABLE', color: '#10B981' };
+    };
 
     return (
         <ScrollView
             style={styles.container}
+            contentContainerStyle={styles.contentContainer}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            showsVerticalScrollIndicator={false}
         >
-            {/* Today's Summary */}
-            <Text style={styles.sectionTitle}>Today's Summary</Text>
+            {/* ─── Header ──────────────────────────────── */}
+            <View style={styles.headerRow}>
+                <Text style={styles.heroTitle}>Daily Progress</Text>
+                <View style={styles.liveBadge}>
+                    <Text style={styles.liveBadgeText}>Live Updates</Text>
+                </View>
+            </View>
+
+            {/* ─── 2×3 Stat Grid ──────────────────────── */}
             {dashboard && (
-                <>
-                    <View style={styles.statRow}>
-                        <StatCard label="Total" value={dashboard.total} color="#3B82F6" icon="📊" />
-                        <StatCard label="Completed" value={dashboard.completed} color="#10B981" icon="✅" />
-                    </View>
-                    <View style={styles.statRow}>
-                        <StatCard label="Not Given" value={dashboard.not_done} color="#F59E0B" icon="⚠️" />
-                        <StatCard label="Missed" value={dashboard.missed} color="#EF4444" icon="❌" />
-                    </View>
-                    <View style={styles.statRow}>
-                        <StatCard label="Pending" value={dashboard.pending} color="#8B5CF6" icon="⏳" />
-                        <StatCard label="Rate" value={`${dashboard.completion_rate}%`} color="#06B6D4" icon="📈" />
-                    </View>
-                </>
+                <View style={styles.statGrid}>
+                    {STAT_CONFIGS.map((cfg, i) => {
+                        const value = (dashboard as any)[cfg.key];
+                        const displayValue = cfg.suffix ? `${value}${cfg.suffix}` : value;
+                        return (
+                            <View key={cfg.key} style={[
+                                styles.statCard,
+                                { borderLeftColor: cfg.color },
+                            ]}>
+                                <Text style={styles.statIcon}>{cfg.icon}</Text>
+                                <Text style={styles.statLabel}>{cfg.label}</Text>
+                                <Text style={[styles.statValue, { color: cfg.color }]}>
+                                    {typeof displayValue === 'number' ? displayValue.toLocaleString() : displayValue}
+                                </Text>
+                            </View>
+                        );
+                    })}
+                </View>
             )}
 
-            {/* Worker Performance */}
-            <Text style={styles.sectionTitle}>Worker Performance (30d)</Text>
+            {/* ─── Worker Performance ─────────────────── */}
+            <Text style={styles.sectionTitle}>Worker Performance</Text>
             {workerPerf.length === 0 ? (
                 <Text style={styles.emptyText}>No worker data yet</Text>
             ) : (
-                workerPerf.map((w) => (
-                    <View key={w.worker_id} style={styles.workerCard}>
-                        <View style={styles.workerHeader}>
-                            <Text style={styles.workerName}>{w.worker_name}</Text>
-                            <Text style={[
-                                styles.workerRate,
-                                { color: w.completion_rate >= 80 ? '#10B981' : w.completion_rate >= 50 ? '#F59E0B' : '#EF4444' }
-                            ]}>
-                                {w.completion_rate}%
-                            </Text>
-                        </View>
-                        <View style={styles.workerBar}>
-                            <View style={[styles.barSegment, { flex: w.completed, backgroundColor: '#10B981' }]} />
-                            <View style={[styles.barSegment, { flex: w.late, backgroundColor: '#F59E0B' }]} />
-                            <View style={[styles.barSegment, { flex: w.not_done + w.missed, backgroundColor: '#EF4444' }]} />
-                            {w.total === 0 && <View style={[styles.barSegment, { flex: 1, backgroundColor: '#E5E7EB' }]} />}
-                        </View>
-                        <Text style={styles.workerStats}>
-                            {w.completed} done · {w.late} late · {w.not_done} skipped · {w.missed} missed
-                        </Text>
-                    </View>
-                ))
+                <View style={styles.workerSection}>
+                    {workerPerf.map((w) => {
+                        const rateColor = w.completion_rate >= 80 ? '#10B981'
+                            : w.completion_rate >= 50 ? '#F59E0B' : '#EF4444';
+                        const total = Math.max(w.total, 1);
+                        return (
+                            <View key={w.worker_id} style={styles.workerCard}>
+                                <View style={styles.workerHeader}>
+                                    <Text style={styles.workerName}>{w.worker_name}</Text>
+                                    <Text style={[styles.workerRate, { color: rateColor }]}>
+                                        {w.completion_rate}% Target
+                                    </Text>
+                                </View>
+                                <View style={styles.progressBar}>
+                                    <View style={[styles.barSegment, {
+                                        flex: w.completed / total,
+                                        backgroundColor: '#10B981',
+                                        borderTopLeftRadius: 4,
+                                        borderBottomLeftRadius: 4,
+                                    }]} />
+                                    <View style={[styles.barSegment, {
+                                        flex: w.late / total,
+                                        backgroundColor: '#F59E0B',
+                                    }]} />
+                                    <View style={[styles.barSegment, {
+                                        flex: (w.not_done + w.missed) / total,
+                                        backgroundColor: '#EF4444',
+                                        borderTopRightRadius: 4,
+                                        borderBottomRightRadius: 4,
+                                    }]} />
+                                </View>
+                            </View>
+                        );
+                    })}
+                </View>
             )}
 
-            {/* Stock Status */}
-            <Text style={styles.sectionTitle}>Stock Status</Text>
+            {/* ─── Stock Summary ──────────────────────── */}
+            <Text style={styles.sectionTitle}>Stock Summary</Text>
             {stockSummary.length === 0 ? (
                 <Text style={styles.emptyText}>No medicines added yet</Text>
             ) : (
-                stockSummary.map((s) => (
-                    <View key={s.id} style={[styles.stockCard, s.is_low && styles.stockLow]}>
-                        <View style={styles.stockRow}>
-                            <Text style={styles.stockName}>
-                                {s.is_low ? '⚠️ ' : '💊 '}{s.name}
-                            </Text>
-                            <Text style={[
-                                styles.stockCount,
-                                { color: s.is_low ? '#EF4444' : '#10B981' }
-                            ]}>
-                                {s.current_stock} {s.dosage_unit}
-                            </Text>
+                stockSummary.map((s, index) => {
+                    const status = getStockStatus(s);
+                    return (
+                        <View key={s.id} style={styles.stockCard}>
+                            <View style={styles.stockIconContainer}>
+                                <Text style={styles.stockIcon}>{STOCK_ICONS[index % STOCK_ICONS.length]}</Text>
+                            </View>
+                            <View style={styles.stockInfo}>
+                                <Text style={styles.stockName}>{s.name}</Text>
+                                <Text style={styles.stockCategory}>
+                                    {s.dosage_unit}
+                                </Text>
+                            </View>
+                            <View style={styles.stockRight}>
+                                <Text style={[styles.stockCount, { color: status.color }]}>
+                                    {s.current_stock}
+                                </Text>
+                                <Text style={[styles.stockStatus, { color: status.color }]}>
+                                    {status.label}
+                                </Text>
+                            </View>
                         </View>
-                        {s.is_low && (
-                            <Text style={styles.stockWarning}>
-                                Below minimum ({s.min_stock_level} {s.dosage_unit})
-                            </Text>
-                        )}
-                    </View>
-                ))
+                    );
+                })
             )}
 
             <View style={{ height: 40 }} />
@@ -178,19 +221,81 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.background,
-        padding: SPACING.md,
+    },
+    contentContainer: {
+        paddingHorizontal: SPACING.lg,
+        paddingBottom: 40,
     },
     centered: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    sectionTitle: {
-        fontSize: FONT_SIZES.lg,
+
+    // ─── Header ─────────────────────────────────────────────
+    headerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingTop: SPACING.lg,
+        marginBottom: SPACING.lg,
+    },
+    heroTitle: {
+        fontSize: 28,
+        fontWeight: '800',
+        color: COLORS.text,
+    },
+    liveBadge: {
+        backgroundColor: COLORS.primary,
+        paddingHorizontal: SPACING.md,
+        paddingVertical: 6,
+        borderRadius: BORDER_RADIUS.xl,
+    },
+    liveBadgeText: {
+        color: COLORS.white,
+        fontSize: FONT_SIZES.xs,
         fontWeight: '700',
+    },
+
+    // ─── 2×3 Stat Grid ─────────────────────────────────────
+    statGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: SPACING.sm,
+        marginBottom: SPACING.lg,
+    },
+    statCard: {
+        width: '47.5%',
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
+        borderLeftWidth: 4,
+        ...CARD_SHADOW,
+    },
+    statIcon: {
+        fontSize: 28,
+        marginBottom: SPACING.sm,
+    },
+    statLabel: {
+        fontSize: 10,
+        fontWeight: '700',
+        color: COLORS.textLight,
+        letterSpacing: 0.5,
+        marginBottom: 4,
+        textTransform: 'uppercase',
+    },
+    statValue: {
+        fontSize: 32,
+        fontWeight: '800',
+    },
+
+    // ─── Section ────────────────────────────────────────────
+    sectionTitle: {
+        fontSize: 22,
+        fontWeight: '800',
         color: COLORS.text,
         marginTop: SPACING.lg,
-        marginBottom: SPACING.sm,
+        marginBottom: SPACING.md,
     },
     emptyText: {
         fontSize: FONT_SIZES.sm,
@@ -199,116 +304,87 @@ const styles = StyleSheet.create({
         paddingVertical: SPACING.md,
     },
 
-    // Stat cards
-    statRow: {
-        flexDirection: 'row',
-        gap: SPACING.sm,
-        marginBottom: SPACING.sm,
-    },
-    statCard: {
-        flex: 1,
+    // ─── Worker Cards ───────────────────────────────────────
+    workerSection: {
         backgroundColor: COLORS.white,
-        borderRadius: 12,
-        padding: SPACING.md,
-        borderLeftWidth: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 3,
-        elevation: 1,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
+        ...CARD_SHADOW,
     },
-    statIcon: {
-        fontSize: 20,
-        marginBottom: 4,
-    },
-    statValue: {
-        fontSize: 24,
-        fontWeight: '800',
-    },
-    statLabel: {
-        fontSize: FONT_SIZES.xs,
-        color: COLORS.textLight,
-        marginTop: 2,
-    },
-
-    // Worker cards
     workerCard: {
-        backgroundColor: COLORS.white,
-        borderRadius: 12,
-        padding: SPACING.md,
-        marginBottom: SPACING.sm,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 3,
-        elevation: 1,
+        marginBottom: SPACING.lg,
     },
     workerHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 8,
+        marginBottom: SPACING.sm,
     },
     workerName: {
         fontSize: FONT_SIZES.md,
-        fontWeight: '600',
+        fontWeight: '700',
         color: COLORS.text,
     },
     workerRate: {
-        fontSize: FONT_SIZES.lg,
-        fontWeight: '800',
+        fontSize: FONT_SIZES.sm,
+        fontWeight: '700',
     },
-    workerBar: {
+    progressBar: {
         flexDirection: 'row',
-        height: 6,
-        borderRadius: 3,
+        height: 10,
+        borderRadius: 5,
         overflow: 'hidden',
         backgroundColor: '#E5E7EB',
-        marginBottom: 6,
     },
     barSegment: {
         height: '100%',
     },
-    workerStats: {
-        fontSize: FONT_SIZES.xs,
-        color: COLORS.textLight,
-    },
 
-    // Stock cards
+    // ─── Stock Cards ────────────────────────────────────────
     stockCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: COLORS.white,
-        borderRadius: 12,
+        borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.md,
         marginBottom: SPACING.sm,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 3,
-        elevation: 1,
+        ...CARD_SHADOW,
     },
-    stockLow: {
-        borderLeftWidth: 3,
-        borderLeftColor: '#EF4444',
-        backgroundColor: '#FFF5F5',
-    },
-    stockRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    stockIconContainer: {
+        width: 44,
+        height: 44,
+        borderRadius: 12,
+        backgroundColor: COLORS.grayLight,
+        justifyContent: 'center',
         alignItems: 'center',
+        marginRight: SPACING.md,
+    },
+    stockIcon: {
+        fontSize: 22,
+    },
+    stockInfo: {
+        flex: 1,
     },
     stockName: {
         fontSize: FONT_SIZES.md,
-        fontWeight: '600',
+        fontWeight: '700',
         color: COLORS.text,
-        flex: 1,
+        marginBottom: 2,
+    },
+    stockCategory: {
+        fontSize: FONT_SIZES.xs,
+        color: COLORS.textSecondary,
+    },
+    stockRight: {
+        alignItems: 'flex-end',
     },
     stockCount: {
-        fontSize: FONT_SIZES.lg,
+        fontSize: FONT_SIZES.xl,
         fontWeight: '800',
     },
-    stockWarning: {
-        fontSize: FONT_SIZES.xs,
-        color: '#EF4444',
-        marginTop: 4,
+    stockStatus: {
+        fontSize: 9,
+        fontWeight: '700',
+        letterSpacing: 0.5,
     },
 });

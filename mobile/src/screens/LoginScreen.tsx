@@ -12,13 +12,21 @@ import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from 'expo-auth-session';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ApiService from '../services/api.service';
-import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
+import {
+    COLORS, SPACING, FONT_SIZES, FONT_WEIGHTS,
+    BORDER_RADIUS, CARD_SHADOW, LETTER_SPACING,
+} from '../constants/theme';
 
 // Required for Google auth redirect
 WebBrowser.maybeCompleteAuthSession();
 
 const GOOGLE_CLIENT_ID = '882072791591-7a7b2l5dnahhf702ait801akaood65tn.apps.googleusercontent.com';
-const redirectUri = AuthSession.makeRedirectUri();
+const redirectUri = AuthSession.makeRedirectUri({
+    scheme: 'ngomedicine',
+});
+
+// Log redirect URI for debugging
+console.log('OAuth Redirect URI:', redirectUri);
 
 interface LoginScreenProps {
     onLoginSuccess: () => void;
@@ -69,36 +77,76 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
     return (
         <View style={styles.container}>
+            {/* Subtle cross-pattern overlay */}
+            <View style={styles.patternOverlay} />
+
+            {/* Header branding */}
             <View style={styles.header}>
-                <Text style={styles.emoji}>💊</Text>
-                <Text style={styles.title}>NGO Medicine</Text>
-                <Text style={styles.subtitle}>Administration System</Text>
+                <View style={styles.pillContainer}>
+                    <Text style={styles.pillEmoji}>💊</Text>
+                </View>
+                <Text style={styles.brandName}>Vitalis NGO</Text>
+                <Text style={styles.systemLabel}>ADMINISTRATION SYSTEM</Text>
             </View>
 
+            {/* Main card */}
             <View style={styles.card}>
                 <Text style={styles.welcomeText}>Welcome</Text>
                 <Text style={styles.descText}>
                     Sign in to manage medicine schedules, track stock, and coordinate with workers.
                 </Text>
 
+                {/* Google Sign In */}
                 <TouchableOpacity
                     style={[styles.googleButton, (!request || loading) && styles.disabledButton]}
                     onPress={() => promptAsync()}
                     disabled={!request || loading}
+                    activeOpacity={0.85}
                 >
                     {loading ? (
                         <ActivityIndicator color={COLORS.white} />
                     ) : (
                         <>
-                            <Text style={styles.googleIcon}>G</Text>
+                            <View style={styles.googleIconContainer}>
+                                <Text style={styles.googleIcon}>G</Text>
+                            </View>
                             <Text style={styles.googleButtonText}>Sign in with Google</Text>
                         </>
                     )}
                 </TouchableOpacity>
+
+                {/* OR divider */}
+                <View style={styles.orDivider}>
+                    <View style={styles.orLine} />
+                    <Text style={styles.orText}>OR</Text>
+                    <View style={styles.orLine} />
+                </View>
+
+                {/* Dev bypass */}
+                <TouchableOpacity
+                    style={styles.devBypass}
+                    onPress={async () => {
+                        await AsyncStorage.setItem('jwt_token', 'dev-bypass-token');
+                        await AsyncStorage.setItem('user', JSON.stringify({
+                            id: 1, name: 'Admin', email: 'admin@ngo.org',
+                        }));
+                        onLoginSuccess();
+                    }}
+                    activeOpacity={0.7}
+                >
+                    <Text style={styles.devBypassIcon}>→</Text>
+                    <Text style={styles.devBypassText}>Continue without Google (Dev)</Text>
+                </TouchableOpacity>
+
+                {/* Restricted access note */}
+                <Text style={styles.restrictedNote}>
+                    Restricted access for NGO personnel.
+                </Text>
             </View>
 
+            {/* Footer */}
             <Text style={styles.footerText}>
-                Secure login powered by Google
+                🛡 SECURE NODE  ·  {'<>'} V2.4.0-STABLE
             </Text>
         </View>
     );
@@ -112,89 +160,146 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: SPACING.lg,
     },
+    patternOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0,0,0,0.03)',
+    },
     header: {
         alignItems: 'center',
-        marginBottom: SPACING.xl * 2,
+        marginBottom: SPACING.xl,
     },
-    emoji: {
-        fontSize: 64,
-        marginBottom: SPACING.md,
+    pillContainer: {
+        width: 80,
+        height: 80,
+        borderRadius: BORDER_RADIUS.lg,
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: SPACING.lg,
     },
-    title: {
-        fontSize: 28,
-        fontWeight: 'bold',
+    pillEmoji: {
+        fontSize: 40,
+    },
+    brandName: {
+        fontSize: 32,
+        fontWeight: '800',
         color: COLORS.white,
-        letterSpacing: 1,
+        letterSpacing: LETTER_SPACING.tight,
     },
-    subtitle: {
-        fontSize: FONT_SIZES.md,
-        color: 'rgba(255,255,255,0.8)',
-        marginTop: 4,
+    systemLabel: {
+        fontSize: FONT_SIZES.xs,
+        fontWeight: '700',
+        color: 'rgba(255,255,255,0.6)',
+        letterSpacing: LETTER_SPACING.widest,
+        marginTop: SPACING.xs,
     },
     card: {
         backgroundColor: COLORS.white,
-        borderRadius: 20,
+        borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.xl,
         width: '100%',
-        maxWidth: 360,
+        maxWidth: 380,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 12,
-        elevation: 8,
+        ...CARD_SHADOW,
     },
     welcomeText: {
-        fontSize: 22,
-        fontWeight: 'bold',
+        fontSize: FONT_SIZES.xl,
+        fontWeight: '800',
         color: COLORS.text,
         marginBottom: SPACING.sm,
+        letterSpacing: LETTER_SPACING.tight,
     },
     descText: {
         fontSize: FONT_SIZES.sm,
-        color: COLORS.textLight,
+        color: COLORS.textSecondary,
         textAlign: 'center',
         lineHeight: 20,
-        marginBottom: SPACING.lg,
+        marginBottom: SPACING.xl,
     },
     googleButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#4285F4',
-        paddingVertical: 14,
+        backgroundColor: COLORS.primary,
+        paddingVertical: 16,
         paddingHorizontal: 24,
-        borderRadius: 12,
+        borderRadius: BORDER_RADIUS.xl,
         width: '100%',
-        shadowColor: '#4285F4',
-        shadowOffset: { width: 0, height: 2 },
+        shadowColor: COLORS.primary,
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
-        shadowRadius: 4,
+        shadowRadius: 8,
         elevation: 4,
     },
     disabledButton: {
         opacity: 0.6,
     },
+    googleIconContainer: {
+        width: 28,
+        height: 28,
+        borderRadius: 8,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: SPACING.sm,
+    },
     googleIcon: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: 'bold',
         color: COLORS.white,
-        marginRight: 10,
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        width: 30,
-        height: 30,
-        textAlign: 'center',
-        lineHeight: 30,
-        borderRadius: 6,
     },
     googleButtonText: {
         fontSize: FONT_SIZES.md,
-        fontWeight: '600',
+        fontWeight: '700',
         color: COLORS.white,
     },
-    footerText: {
-        color: 'rgba(255,255,255,0.6)',
+    orDivider: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        marginVertical: SPACING.lg,
+    },
+    orLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: COLORS.surfaceContainerHigh,
+    },
+    orText: {
         fontSize: FONT_SIZES.xs,
+        fontWeight: '700',
+        color: COLORS.textLight,
+        marginHorizontal: SPACING.md,
+        letterSpacing: LETTER_SPACING.wider,
+    },
+    devBypass: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: SPACING.md,
+        width: '100%',
+    },
+    devBypassIcon: {
+        fontSize: 16,
+        color: COLORS.primary,
+        fontWeight: '700',
+        marginRight: SPACING.sm,
+    },
+    devBypassText: {
+        color: COLORS.primary,
+        fontSize: FONT_SIZES.sm,
+        fontWeight: '600',
+    },
+    restrictedNote: {
+        fontSize: FONT_SIZES.xs,
+        color: COLORS.textLight,
+        textAlign: 'center',
+        marginTop: SPACING.md,
+    },
+    footerText: {
+        color: 'rgba(255,255,255,0.5)',
+        fontSize: FONT_SIZES.xxs,
         marginTop: SPACING.xl,
+        letterSpacing: LETTER_SPACING.wider,
+        fontWeight: '600',
     },
 });
