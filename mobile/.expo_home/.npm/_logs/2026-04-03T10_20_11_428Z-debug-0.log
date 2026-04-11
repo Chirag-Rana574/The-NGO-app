@@ -1,0 +1,24 @@
+0 verbose cli /opt/homebrew/Cellar/node/23.11.0/bin/node /opt/homebrew/lib/node_modules/npm/bin/npm-cli.js
+1 info using npm@11.2.0
+2 info using node@v23.11.0
+3 silly config load:file:/opt/homebrew/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/chiragrana/Downloads/idk/ngo-medicine-system/mobile/.npmrc
+5 silly config load:file:/Users/chiragrana/Downloads/idk/ngo-medicine-system/mobile/.expo_home/.npmrc
+6 silly config load:file:/opt/homebrew/etc/npmrc
+7 verbose title npm exec expo start -c
+8 verbose argv "exec" "--" "expo" "start" "-c"
+9 verbose logfile logs-max:10 dir:/Users/chiragrana/Downloads/idk/ngo-medicine-system/mobile/.expo_home/.npm/_logs/2026-04-03T10_20_11_428Z-
+10 verbose logfile /Users/chiragrana/Downloads/idk/ngo-medicine-system/mobile/.expo_home/.npm/_logs/2026-04-03T10_20_11_428Z-debug-0.log
+11 silly logfile done cleaning log files
+12 http fetch GET 200 https://registry.npmjs.org/npm 409ms
+13 verbose cwd /Users/chiragrana/Downloads/idk/ngo-medicine-system/mobile
+14 verbose os Darwin 25.2.0
+15 verbose node v23.11.0
+16 verbose npm  v11.2.0
+17 notice
+17 notice New [33mminor[39m version of npm available! [33m11.2.0[39m -> [34m11.12.1[39m
+17 notice Changelog: [34mhttps://github.com/npm/cli/releases/tag/v11.12.1[39m
+17 notice To update run: [4mnpm install -g npm@11.12.1[24m
+17 notice  { force: true, [Symbol(proc-log.meta)]: true }
+18 verbose exit 0
+19 info ok

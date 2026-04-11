@@ -6,7 +6,7 @@ import {
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import HomeScreen from './src/screens/HomeScreen';
@@ -103,11 +103,11 @@ function HeaderMenuButton({ onPress }: { onPress: () => void }) {
     );
 }
 
-function HeaderMoreButton() {
+function HeaderMoreButton({ onPress }: { onPress?: () => void }) {
     return (
-        <View style={{ marginRight: 16 }}>
+        <TouchableOpacity onPress={onPress} style={{ marginRight: 16 }}>
             <Text style={{ fontSize: 20, color: COLORS.textSecondary }}>⋮</Text>
-        </View>
+        </TouchableOpacity>
     );
 }
 
@@ -144,10 +144,7 @@ function SchedulesStack() {
                     headerLeft: () => <HeaderMenuButton onPress={drawer.openDrawer} />,
                     headerRight: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TouchableOpacity style={{ marginRight: 16 }}>
-                                <Text style={{ fontSize: 20, color: COLORS.primary }}>🔍</Text>
-                            </TouchableOpacity>
-                            <HeaderMoreButton />
+                            <HeaderMoreButton onPress={drawer.openDrawer} />
                         </View>
                     ),
                 }}
@@ -172,6 +169,8 @@ function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
 
 function MainTabs({ onSwipe }: { onSwipe?: (dir: 'left' | 'right') => void }) {
     const [unreadCount, setUnreadCount] = useState(0);
+    const insets = useSafeAreaInsets();
+    const drawer = React.useContext(DrawerContext);
 
     useEffect(() => {
         fetchUnread();
@@ -198,7 +197,7 @@ function MainTabs({ onSwipe }: { onSwipe?: (dir: 'left' | 'right') => void }) {
                 tabBarInactiveTintColor: COLORS.textLight,
                 tabBarStyle: {
                     position: 'absolute',
-                    bottom: 16,
+                    bottom: Math.max(insets.bottom, 8),
                     left: 16,
                     right: 16,
                     height: 68,
@@ -249,10 +248,7 @@ function MainTabs({ onSwipe }: { onSwipe?: (dir: 'left' | 'right') => void }) {
                     headerTitle: () => <ClinicalCuratorTitle />,
                     headerRight: () => (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TouchableOpacity style={{ marginRight: 16 }}>
-                                <Text style={{ fontSize: 20, color: COLORS.primary }}>🔍</Text>
-                            </TouchableOpacity>
-                            <HeaderMoreButton />
+                            <HeaderMoreButton onPress={drawer.openDrawer} />
                         </View>
                     ),
                     tabBarLabel: 'PATIENTS',
@@ -265,7 +261,7 @@ function MainTabs({ onSwipe }: { onSwipe?: (dir: 'left' | 'right') => void }) {
                 options={{
                     headerShown: true,
                     headerTitle: () => <ClinicalCuratorTitle />,
-                    headerRight: () => <HeaderMoreButton />,
+                    headerRight: () => <HeaderMoreButton onPress={drawer.openDrawer} />,
                     tabBarLabel: 'STOCK',
                     tabBarIcon: ({ focused }) => <TabIcon emoji="💊" focused={focused} />,
                 }}
@@ -276,7 +272,7 @@ function MainTabs({ onSwipe }: { onSwipe?: (dir: 'left' | 'right') => void }) {
                 options={{
                     headerShown: true,
                     headerTitle: () => <ClinicalCuratorTitle />,
-                    headerRight: () => <HeaderMoreButton />,
+                    headerRight: () => <HeaderMoreButton onPress={drawer.openDrawer} />,
                     tabBarLabel: 'WORKERS',
                     tabBarIcon: ({ focused }) => <TabIcon emoji="👷" focused={focused} />,
                 }}

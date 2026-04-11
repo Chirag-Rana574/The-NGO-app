@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ApiService from '../services/api.service';
 import {
     COLORS, SPACING, FONT_SIZES,
-    BORDER_RADIUS, CARD_SHADOW, SECTION_HEADER_STYLE,
+    BORDER_RADIUS, CARD_SHADOW, SECTION_HEADER_STYLE, LETTER_SPACING,
 } from '../constants/theme';
 
 export default function SettingsScreen({ navigation, onLogout }: any) {
@@ -62,11 +62,24 @@ export default function SettingsScreen({ navigation, onLogout }: any) {
     }
 
     return (
-        <ScrollView style={styles.container}>
-            {/* User Profile */}
+        <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.contentContainer}
+            showsVerticalScrollIndicator={false}
+        >
+            {/* Hero Header */}
+            <View style={styles.headerSection}>
+                <Text style={styles.sectionLabel}>CONFIGURATION</Text>
+                <Text style={styles.heroTitle}>Settings</Text>
+                <Text style={styles.heroSubtitle}>
+                    Manage your account, security preferences, and application configuration.
+                </Text>
+            </View>
+
+            {/* User Profile Card */}
             {user && (
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Account</Text>
+                    <Text style={styles.settingSectionLabel}>ACCOUNT</Text>
                     <View style={styles.profileCard}>
                         <View style={styles.avatar}>
                             <Text style={styles.avatarText}>
@@ -77,34 +90,77 @@ export default function SettingsScreen({ navigation, onLogout }: any) {
                             <Text style={styles.profileName}>{user.name}</Text>
                             <Text style={styles.profileEmail}>{user.email}</Text>
                         </View>
+                        <View style={styles.roleBadge}>
+                            <Text style={styles.roleBadgeText}>ADMIN</Text>
+                        </View>
                     </View>
                 </View>
             )}
 
-            {/* Timezone */}
+            {/* App Settings */}
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>App Settings</Text>
-                <View style={styles.settingRow}>
-                    <Text style={styles.settingLabel}>Timezone</Text>
-                    <Text style={styles.settingValue}>{timezone}</Text>
+                <Text style={styles.settingSectionLabel}>APP SETTINGS</Text>
+                <View style={styles.settingsGroup}>
+                    <View style={styles.settingRow}>
+                        <View style={styles.settingLeft}>
+                            <Text style={styles.settingIcon}>🌍</Text>
+                            <View>
+                                <Text style={styles.settingLabel}>Timezone</Text>
+                                <Text style={styles.settingDesc}>Regional time display</Text>
+                            </View>
+                        </View>
+                        <View style={styles.settingValueContainer}>
+                            <Text style={styles.settingValue}>{timezone}</Text>
+                        </View>
+                    </View>
                 </View>
             </View>
 
             {/* Security */}
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Security</Text>
-                <TouchableOpacity style={styles.settingRow}>
-                    <Text style={styles.settingLabel}>Change Master PIN</Text>
-                    <Text style={styles.settingArrow}>›</Text>
-                </TouchableOpacity>
+                <Text style={styles.settingSectionLabel}>SECURITY</Text>
+                <View style={styles.settingsGroup}>
+                    <TouchableOpacity style={styles.settingRow} activeOpacity={0.7}>
+                        <View style={styles.settingLeft}>
+                            <Text style={styles.settingIcon}>🔐</Text>
+                            <View>
+                                <Text style={styles.settingLabel}>Change Master PIN</Text>
+                                <Text style={styles.settingDesc}>Update your 4-digit security key</Text>
+                            </View>
+                        </View>
+                        <Text style={styles.settingArrow}>›</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            {/* About */}
+            <View style={styles.section}>
+                <Text style={styles.settingSectionLabel}>ABOUT</Text>
+                <View style={styles.settingsGroup}>
+                    <View style={styles.settingRow}>
+                        <View style={styles.settingLeft}>
+                            <Text style={styles.settingIcon}>📱</Text>
+                            <View>
+                                <Text style={styles.settingLabel}>App Version</Text>
+                                <Text style={styles.settingDesc}>Clinical Curator</Text>
+                            </View>
+                        </View>
+                        <View style={styles.settingValueContainer}>
+                            <Text style={styles.settingValue}>v2.4.0</Text>
+                        </View>
+                    </View>
+                </View>
             </View>
 
             {/* Logout */}
-            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.7}>
+                <Text style={styles.logoutIcon}>🚪</Text>
                 <Text style={styles.logoutText}>Sign Out</Text>
             </TouchableOpacity>
 
-            <Text style={styles.versionText}>NGO Medicine System v1.0.0</Text>
+            <Text style={styles.versionText}>
+                Clinical Curator v2.4.0 • Vitalis NGO
+            </Text>
         </ScrollView>
     );
 }
@@ -114,22 +170,54 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: COLORS.background,
     },
+    contentContainer: {
+        paddingBottom: 100,
+    },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: COLORS.background,
     },
+
+    // ─── Header Section ─────────────────────────────────────────
+    headerSection: {
+        paddingHorizontal: SPACING.lg,
+        paddingTop: SPACING.md,
+        paddingBottom: SPACING.sm,
+    },
+    sectionLabel: {
+        ...SECTION_HEADER_STYLE,
+        color: COLORS.textSecondary,
+    },
+    heroTitle: {
+        fontSize: 32,
+        fontWeight: '800',
+        color: COLORS.text,
+        marginBottom: SPACING.xs,
+        letterSpacing: LETTER_SPACING.tight,
+    },
+    heroSubtitle: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.textSecondary,
+        lineHeight: 20,
+    },
+
+    // ─── Section ────────────────────────────────────────────────
     section: {
         marginTop: SPACING.lg,
         marginHorizontal: SPACING.md,
     },
-    sectionTitle: {
-        ...SECTION_HEADER_STYLE,
+    settingSectionLabel: {
+        fontSize: FONT_SIZES.xxs,
+        fontWeight: '700',
         color: COLORS.textSecondary,
+        letterSpacing: 1,
         marginBottom: SPACING.sm,
-        marginLeft: SPACING.sm,
+        marginLeft: SPACING.xs,
     },
+
+    // ─── Profile Card ───────────────────────────────────────────
     profileCard: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -139,16 +227,16 @@ const styles = StyleSheet.create({
         ...CARD_SHADOW,
     },
     avatar: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
+        width: 52,
+        height: 52,
+        borderRadius: 26,
         backgroundColor: COLORS.primary,
         justifyContent: 'center',
         alignItems: 'center',
     },
     avatarText: {
-        fontSize: 20,
-        fontWeight: 'bold',
+        fontSize: 22,
+        fontWeight: '700',
         color: COLORS.white,
     },
     profileInfo: {
@@ -156,8 +244,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     profileName: {
-        fontSize: FONT_SIZES.md,
-        fontWeight: '600',
+        fontSize: FONT_SIZES.lg,
+        fontWeight: '700',
         color: COLORS.text,
     },
     profileEmail: {
@@ -165,35 +253,83 @@ const styles = StyleSheet.create({
         color: COLORS.textLight,
         marginTop: 2,
     },
+    roleBadge: {
+        backgroundColor: COLORS.primary + '15',
+        paddingHorizontal: SPACING.sm,
+        paddingVertical: 4,
+        borderRadius: BORDER_RADIUS.full,
+    },
+    roleBadgeText: {
+        fontSize: 9,
+        fontWeight: '700',
+        color: COLORS.primary,
+        letterSpacing: 0.5,
+    },
+
+    // ─── Settings Group ─────────────────────────────────────────
+    settingsGroup: {
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.xl,
+        overflow: 'hidden',
+        ...CARD_SHADOW,
+    },
     settingRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: COLORS.white,
-        borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.lg,
-        marginBottom: 2,
-        ...CARD_SHADOW,
+    },
+    settingLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    settingIcon: {
+        fontSize: 22,
+        marginRight: SPACING.md,
+        width: 28,
     },
     settingLabel: {
         fontSize: FONT_SIZES.md,
+        fontWeight: '600',
         color: COLORS.text,
     },
-    settingValue: {
-        fontSize: FONT_SIZES.sm,
+    settingDesc: {
+        fontSize: FONT_SIZES.xs,
         color: COLORS.textLight,
+        marginTop: 1,
+    },
+    settingValueContainer: {
+        backgroundColor: COLORS.surfaceContainerLow,
+        paddingHorizontal: SPACING.sm,
+        paddingVertical: 4,
+        borderRadius: BORDER_RADIUS.full,
+    },
+    settingValue: {
+        fontSize: FONT_SIZES.xs,
+        color: COLORS.textSecondary,
+        fontWeight: '600',
     },
     settingArrow: {
-        fontSize: 22,
+        fontSize: 24,
         color: COLORS.textLight,
+        fontWeight: '300',
     },
+
+    // ─── Logout Button ──────────────────────────────────────────
     logoutButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
         marginHorizontal: SPACING.md,
         marginTop: SPACING.xl * 2,
         backgroundColor: COLORS.redLight,
         paddingVertical: 16,
         borderRadius: BORDER_RADIUS.xl,
-        alignItems: 'center',
+    },
+    logoutIcon: {
+        fontSize: 18,
+        marginRight: SPACING.sm,
     },
     logoutText: {
         fontSize: FONT_SIZES.md,
@@ -205,7 +341,7 @@ const styles = StyleSheet.create({
         color: COLORS.textLight,
         fontSize: FONT_SIZES.xs,
         marginTop: SPACING.lg,
-        marginBottom: SPACING.xl * 2,
+        fontWeight: '500',
         letterSpacing: 0.5,
     },
 });

@@ -22,7 +22,7 @@ import {
 } from '../constants/theme';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const DAY_WIDTH = (SCREEN_WIDTH - 48) / 7;
+const DAY_WIDTH = (SCREEN_WIDTH - 96) / 7;
 
 export default function SchedulesScreen({ navigation }: any) {
     const [schedules, setSchedules] = useState<Schedule[]>([]);
@@ -53,11 +53,16 @@ export default function SchedulesScreen({ navigation }: any) {
         const appStateSub = AppState.addEventListener('change', (state) => {
             if (state === 'active') loadSchedules();
         });
+        // Reload data when screen comes back into focus (e.g., after creating/editing)
+        const focusSub = navigation.addListener('focus', () => {
+            loadSchedules();
+        });
         return () => {
             clearInterval(interval);
             appStateSub.remove();
+            focusSub();
         };
-    }, [loadSchedules]);
+    }, [loadSchedules, navigation]);
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -276,47 +281,70 @@ export default function SchedulesScreen({ navigation }: any) {
             <View style={styles.titleSection}>
                 <Text style={styles.heroTitle}>Daily Schedules</Text>
                 <Text style={styles.heroSubtitle}>
-                    Regional District A • {format(weekDays[3], 'MMMM yyyy')}
+                    {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                 </Text>
             </View>
 
-            {/* ─── Week Strip ──────────────────────────────────────── */}
-            <View style={styles.weekStrip}>
-                {weekDays.map((day, i) => {
-                    const isSelected = isSameDay(day, selectedDate);
-                    const isToday = isSameDay(day, new Date());
-                    const count = getScheduleCountForDate(day);
-                    return (
-                        <TouchableOpacity
-                            key={i}
-                            style={[
-                                styles.dayPill,
-                                isSelected && styles.dayPillSelected,
-                                isToday && !isSelected && styles.dayPillToday,
-                            ]}
-                            onPress={() => setSelectedDate(day)}
-                            activeOpacity={0.7}
-                        >
-                            <Text style={[
-                                styles.dayLabel,
-                                isSelected && styles.dayLabelSelected,
-                            ]}>
-                                {format(day, 'EEE').toUpperCase()}
-                            </Text>
-                            <Text style={[
-                                styles.dayNumber,
-                                isSelected && styles.dayNumberSelected,
-                                isToday && !isSelected && styles.dayNumberToday,
-                            ]}>
-                                {format(day, 'd')}
-                            </Text>
-                            {count > 0 && !isSelected && (
-                                <View style={styles.dotIndicator} />
-                            )}
-                        </TouchableOpacity>
-                    );
-                })}
+            {/* ─── Week Strip with Navigation ──────────────────────── */}
+            <View style={styles.weekNav}>
+                <TouchableOpacity
+                    style={styles.weekNavBtn}
+                    onPress={() => setWeekOffset(prev => prev - 1)}
+                >
+                    <Text style={styles.weekNavBtnText}>‹</Text>
+                </TouchableOpacity>
+
+                <View style={styles.weekStripInner}>
+                    {weekDays.map((day, i) => {
+                        const isSelected = isSameDay(day, selectedDate);
+                        const isToday = isSameDay(day, new Date());
+                        const count = getScheduleCountForDate(day);
+                        return (
+                            <TouchableOpacity
+                                key={i}
+                                style={[
+                                    styles.dayPill,
+                                    isSelected && styles.dayPillSelected,
+                                    isToday && !isSelected && styles.dayPillToday,
+                                ]}
+                                onPress={() => setSelectedDate(day)}
+                                activeOpacity={0.7}
+                            >
+                                <Text style={[
+                                    styles.dayLabel,
+                                    isSelected && styles.dayLabelSelected,
+                                ]}>  
+                                    {format(day, 'EEE').toUpperCase()}
+                                </Text>
+                                <Text style={[
+                                    styles.dayNumber,
+                                    isSelected && styles.dayNumberSelected,
+                                    isToday && !isSelected && styles.dayNumberToday,
+                                ]}>
+                                    {format(day, 'd')}
+                                </Text>
+                                {count > 0 && !isSelected && (
+                                    <View style={styles.dotIndicator} />
+                                )}
+                            </TouchableOpacity>
+                        );
+                    })}
+                </View>
+
+                <TouchableOpacity
+                    style={styles.weekNavBtn}
+                    onPress={() => setWeekOffset(prev => prev + 1)}
+                >
+                    <Text style={styles.weekNavBtnText}>›</Text>
+                </TouchableOpacity>
             </View>
+
+            {/* Today Reset Button */}
+            {weekOffset !== 0 && (
+                <TouchableOpacity style={styles.todayBtn} onPress={goToToday}>
+                    <Text style={styles.todayBtnText}>↻ Back to Today</Text>
+                </TouchableOpacity>
+            )}
 
             {/* ─── Schedule List ────────────────────────────────────── */}
             <SectionList
@@ -383,13 +411,46 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
 
-    // ─── Week Strip ────────────────────────────────────────────
-    weekStrip: {
+    // ─── Week Navigation ───────────────────────────────────
+    weekNav: {
         flexDirection: 'row',
-        paddingHorizontal: SPACING.md,
-        paddingVertical: SPACING.md,
+        alignItems: 'center',
         backgroundColor: COLORS.white,
+        paddingVertical: SPACING.sm,
+        paddingHorizontal: SPACING.xs,
+    },
+    weekNavBtn: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: COLORS.grayLight,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    weekNavBtnText: {
+        fontSize: 22,
+        fontWeight: '700',
+        color: COLORS.primary,
+        marginTop: -2,
+    },
+    weekStripInner: {
+        flex: 1,
+        flexDirection: 'row',
         justifyContent: 'space-between',
+        paddingHorizontal: SPACING.xs,
+    },
+    todayBtn: {
+        alignSelf: 'center',
+        backgroundColor: COLORS.blueLight,
+        paddingHorizontal: SPACING.lg,
+        paddingVertical: SPACING.xs,
+        borderRadius: BORDER_RADIUS.full,
+        marginVertical: SPACING.xs,
+    },
+    todayBtnText: {
+        fontSize: FONT_SIZES.xs,
+        fontWeight: '700',
+        color: COLORS.primary,
     },
     dayPill: {
         width: DAY_WIDTH,

@@ -17,7 +17,10 @@ import ApiService from '../services/api.service';
 import PasskeyModal from '../components/PasskeyModal';
 import SuccessToast from '../components/SuccessToast';
 import { Worker, Medicine, Patient, Schedule } from '../types';
-import { COLORS, SPACING, FONT_SIZES, MIN_TOUCH_TARGET, BORDER_RADIUS } from '../constants/theme';
+import {
+    COLORS, SPACING, FONT_SIZES, MIN_TOUCH_TARGET,
+    BORDER_RADIUS, CARD_SHADOW, SECTION_HEADER_STYLE, LETTER_SPACING,
+} from '../constants/theme';
 
 export default function EditScheduleScreen({ route, navigation }: any) {
     const { schedule } = route.params as { schedule: Schedule };
@@ -37,7 +40,6 @@ export default function EditScheduleScreen({ route, navigation }: any) {
     const [medicines, setMedicines] = useState<Medicine[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // Check if this schedule is within 24 hours
     const isWithin24Hours = differenceInHours(new Date(schedule.scheduled_time), new Date()) < 24;
 
     useEffect(() => {
@@ -74,7 +76,6 @@ export default function EditScheduleScreen({ route, navigation }: any) {
             return;
         }
 
-        // If within 24 hours and no master key yet, show the passkey modal
         if (isWithin24Hours && !masterKey) {
             setShowPasskeyModal(true);
             return;
@@ -106,7 +107,6 @@ export default function EditScheduleScreen({ route, navigation }: any) {
     };
 
     const handlePasskeySuccess = () => {
-        // Use the ref which holds the verified PIN (avoids stale closure)
         setShowPasskeyModal(false);
         const pin = verifiedPinRef.current;
         if (pin) {
@@ -126,7 +126,7 @@ export default function EditScheduleScreen({ route, navigation }: any) {
     }
 
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
             <SuccessToast
                 visible={showSuccessToast}
                 message="Schedule updated successfully!"
@@ -147,30 +147,48 @@ export default function EditScheduleScreen({ route, navigation }: any) {
                 title="Master Key Required"
             />
 
-            {/* 24-hour warning */}
-            {isWithin24Hours && (
-                <View style={styles.warningBanner}>
-                    <Text style={styles.warningText}>
-                        ⚠️ This schedule is within 24 hours. Master key required to save changes.
-                    </Text>
-                </View>
-            )}
-
-            {/* Date Display */}
-            <View style={styles.dateSection}>
-                <Text style={styles.dateLabel}>Date</Text>
-                <Text style={styles.dateValue}>
-                    {format(new Date(schedule.scheduled_time), 'EEEE, MMMM d, yyyy')}
+            {/* Hero Header */}
+            <View style={styles.headerSection}>
+                <Text style={styles.sectionLabel}>MODIFY ENTRY</Text>
+                <Text style={styles.heroTitle}>Edit Schedule</Text>
+                <Text style={styles.heroSubtitle}>
+                    Update the details of this medicine delivery assignment.
                 </Text>
             </View>
 
+            {/* 24-hour warning */}
+            {isWithin24Hours && (
+                <View style={styles.warningBanner}>
+                    <Text style={styles.warningIcon}>⚠️</Text>
+                    <View style={styles.warningContent}>
+                        <Text style={styles.warningTitle}>Protected Schedule</Text>
+                        <Text style={styles.warningText}>
+                            This schedule is within 24 hours. Master key required to save changes.
+                        </Text>
+                    </View>
+                </View>
+            )}
+
+            {/* Date Display Card */}
+            <View style={styles.dateCard}>
+                <View style={styles.dateCardAccent} />
+                <View style={styles.dateCardContent}>
+                    <Text style={styles.dateCardLabel}>SCHEDULED DATE</Text>
+                    <Text style={styles.dateCardValue}>
+                        {format(new Date(schedule.scheduled_time), 'EEEE, MMMM d, yyyy')}
+                    </Text>
+                </View>
+            </View>
+
             {/* Time Picker */}
-            <View style={styles.section}>
-                <Text style={styles.label}>Time</Text>
+            <View style={styles.formSection}>
+                <Text style={styles.formLabel}>SCHEDULED TIME</Text>
                 <TouchableOpacity
                     style={styles.timeButton}
                     onPress={() => setShowTimePicker(true)}
+                    activeOpacity={0.7}
                 >
+                    <Text style={styles.timeIcon}>🕐</Text>
                     <Text style={styles.timeText}>{format(time, 'h:mm a')}</Text>
                 </TouchableOpacity>
                 {showTimePicker && (
@@ -185,9 +203,9 @@ export default function EditScheduleScreen({ route, navigation }: any) {
             </View>
 
             {/* Patient Selection */}
-            <View style={styles.section}>
-                <Text style={styles.label}>👤 Patient</Text>
-                <View style={styles.pickerContainer}>
+            <View style={styles.formSection}>
+                <Text style={styles.formLabel}>👤  PATIENT</Text>
+                <View style={styles.pickerCard}>
                     <RNPickerSelect
                         onValueChange={(value) => setSelectedPatient(value)}
                         value={selectedPatient}
@@ -200,9 +218,9 @@ export default function EditScheduleScreen({ route, navigation }: any) {
             </View>
 
             {/* Worker Selection */}
-            <View style={styles.section}>
-                <Text style={styles.label}>👨‍⚕️ Assigned Worker</Text>
-                <View style={styles.pickerContainer}>
+            <View style={styles.formSection}>
+                <Text style={styles.formLabel}>👨‍⚕️  ASSIGNED WORKER</Text>
+                <View style={styles.pickerCard}>
                     <RNPickerSelect
                         onValueChange={(value) => setSelectedWorker(value)}
                         value={selectedWorker}
@@ -215,9 +233,9 @@ export default function EditScheduleScreen({ route, navigation }: any) {
             </View>
 
             {/* Medicine Selection */}
-            <View style={styles.section}>
-                <Text style={styles.label}>💊 Medicine</Text>
-                <View style={styles.pickerContainer}>
+            <View style={styles.formSection}>
+                <Text style={styles.formLabel}>💊  MEDICINE</Text>
+                <View style={styles.pickerCard}>
                     <RNPickerSelect
                         onValueChange={(value) => setSelectedMedicine(value)}
                         value={selectedMedicine}
@@ -233,24 +251,26 @@ export default function EditScheduleScreen({ route, navigation }: any) {
             </View>
 
             {/* Dosage Input */}
-            <View style={styles.section}>
-                <Text style={styles.label}>
-                    💉 Dosage {selectedMedicineObj ? `(${selectedMedicineObj.dosage_unit})` : ''}
+            <View style={styles.formSection}>
+                <Text style={styles.formLabel}>
+                    💉  DOSAGE {selectedMedicineObj ? `(${selectedMedicineObj.dosage_unit})` : ''}
                 </Text>
-                <TextInput
-                    style={styles.input}
-                    value={dosage}
-                    onChangeText={setDosage}
-                    placeholder="Enter dosage amount"
-                    placeholderTextColor={COLORS.textLight}
-                    keyboardType="decimal-pad"
-                />
+                <View style={styles.inputCard}>
+                    <TextInput
+                        style={styles.input}
+                        value={dosage}
+                        onChangeText={setDosage}
+                        placeholder="Enter dosage amount"
+                        placeholderTextColor={COLORS.textHint}
+                        keyboardType="decimal-pad"
+                    />
+                </View>
             </View>
 
             {/* Save Button */}
-            <TouchableOpacity style={styles.saveButton} onPress={() => handleSave()}>
+            <TouchableOpacity style={styles.saveButton} onPress={() => handleSave()} activeOpacity={0.85}>
                 <Text style={styles.saveButtonText}>
-                    {isWithin24Hours ? '🔐 Save with Master Key' : 'Save Changes'}
+                    {isWithin24Hours ? '🔐  Save with Master Key' : '✓  Save Changes'}
                 </Text>
             </TouchableOpacity>
         </ScrollView>
@@ -263,98 +283,176 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.background,
     },
     contentContainer: {
-        padding: SPACING.md,
+        paddingBottom: 100,
     },
     centerContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
+
+    // ─── Header Section ─────────────────────────────────────────
+    headerSection: {
+        paddingHorizontal: SPACING.lg,
+        paddingTop: SPACING.md,
+        paddingBottom: SPACING.sm,
+    },
+    sectionLabel: {
+        ...SECTION_HEADER_STYLE,
+        color: COLORS.textSecondary,
+    },
+    heroTitle: {
+        fontSize: 32,
+        fontWeight: '800',
+        color: COLORS.text,
+        marginBottom: SPACING.xs,
+        letterSpacing: LETTER_SPACING.tight,
+    },
+    heroSubtitle: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.textSecondary,
+        lineHeight: 20,
+    },
+
+    // ─── Warning Banner ─────────────────────────────────────────
     warningBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#FEF3C7',
         borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.lg,
-        marginBottom: SPACING.md,
+        marginHorizontal: SPACING.md,
+        marginTop: SPACING.md,
+        borderLeftWidth: 4,
+        borderLeftColor: '#F59E0B',
     },
-    warningText: {
+    warningIcon: {
+        fontSize: 24,
+        marginRight: SPACING.md,
+    },
+    warningContent: {
+        flex: 1,
+    },
+    warningTitle: {
         fontSize: FONT_SIZES.sm,
+        fontWeight: '700',
         color: '#92400E',
-        textAlign: 'center',
-        fontWeight: '600',
-    },
-    dateSection: {
-        backgroundColor: COLORS.primary,
-        borderRadius: BORDER_RADIUS.xl,
-        padding: SPACING.lg,
-        marginBottom: SPACING.lg,
-        alignItems: 'center',
-    },
-    dateLabel: {
-        fontSize: FONT_SIZES.sm,
-        color: COLORS.white,
-        opacity: 0.9,
         marginBottom: 2,
     },
-    dateValue: {
-        fontSize: FONT_SIZES.md,
-        fontWeight: 'bold',
-        color: COLORS.white,
-        textAlign: 'center',
+    warningText: {
+        fontSize: FONT_SIZES.xs,
+        color: '#92400E',
+        lineHeight: 16,
     },
-    section: {
-        marginBottom: SPACING.md,
+
+    // ─── Date Card ──────────────────────────────────────────────
+    dateCard: {
+        flexDirection: 'row',
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.xl,
+        marginHorizontal: SPACING.md,
+        marginTop: SPACING.lg,
+        overflow: 'hidden',
+        ...CARD_SHADOW,
     },
-    label: {
-        fontSize: FONT_SIZES.md,
+    dateCardAccent: {
+        width: 4,
+        backgroundColor: COLORS.primary,
+    },
+    dateCardContent: {
+        flex: 1,
+        padding: SPACING.lg,
+    },
+    dateCardLabel: {
+        fontSize: FONT_SIZES.xxs,
         fontWeight: '700',
-        color: COLORS.text,
+        color: COLORS.textSecondary,
+        letterSpacing: 1,
         marginBottom: SPACING.xs,
     },
+    dateCardValue: {
+        fontSize: FONT_SIZES.lg,
+        fontWeight: '700',
+        color: COLORS.text,
+    },
+
+    // ─── Form Section ───────────────────────────────────────────
+    formSection: {
+        marginHorizontal: SPACING.md,
+        marginTop: SPACING.lg,
+    },
+    formLabel: {
+        fontSize: FONT_SIZES.xxs,
+        fontWeight: '700',
+        color: COLORS.textSecondary,
+        letterSpacing: 1,
+        marginBottom: SPACING.sm,
+        marginLeft: SPACING.xs,
+    },
+
+    // ─── Time Button ────────────────────────────────────────────
     timeButton: {
-        backgroundColor: COLORS.surfaceContainerLow,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: COLORS.white,
         borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.lg,
-        alignItems: 'center',
         minHeight: MIN_TOUCH_TARGET,
-        justifyContent: 'center',
+        ...CARD_SHADOW,
+    },
+    timeIcon: {
+        fontSize: 22,
+        marginRight: SPACING.sm,
     },
     timeText: {
         fontSize: 28,
-        fontWeight: 'bold',
+        fontWeight: '800',
         color: COLORS.primary,
     },
-    pickerContainer: {
-        backgroundColor: COLORS.surfaceContainerLow,
+
+    // ─── Picker Card ────────────────────────────────────────────
+    pickerCard: {
+        backgroundColor: COLORS.white,
         borderRadius: BORDER_RADIUS.xl,
         minHeight: MIN_TOUCH_TARGET,
+        ...CARD_SHADOW,
+    },
+
+    // ─── Input Card ─────────────────────────────────────────────
+    inputCard: {
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.xl,
+        ...CARD_SHADOW,
     },
     input: {
-        backgroundColor: COLORS.surfaceContainerLow,
-        borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.lg,
         fontSize: FONT_SIZES.lg,
         color: COLORS.text,
         minHeight: MIN_TOUCH_TARGET,
         textAlign: 'center',
+        fontWeight: '600',
     },
+
+    // ─── Save Button ────────────────────────────────────────────
     saveButton: {
         backgroundColor: COLORS.primary,
         borderRadius: BORDER_RADIUS.xl,
-        padding: SPACING.lg,
+        paddingVertical: 16,
         alignItems: 'center',
-        marginTop: SPACING.md,
-        marginBottom: SPACING.lg,
+        marginHorizontal: SPACING.md,
+        marginTop: SPACING.xl,
         minHeight: MIN_TOUCH_TARGET,
         justifyContent: 'center',
         shadowColor: COLORS.primary,
-        shadowOffset: { width: 0, height: 4 },
+        shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 4,
+        shadowRadius: 12,
+        elevation: 6,
     },
     saveButtonText: {
         fontSize: FONT_SIZES.lg,
-        fontWeight: 'bold',
+        fontWeight: '700',
         color: COLORS.white,
     },
 });
@@ -363,19 +461,19 @@ const pickerSelectStyles = StyleSheet.create({
     inputIOS: {
         fontSize: FONT_SIZES.md,
         paddingVertical: SPACING.md,
-        paddingHorizontal: SPACING.md,
+        paddingHorizontal: SPACING.lg,
         color: COLORS.text,
         minHeight: MIN_TOUCH_TARGET,
     },
     inputAndroid: {
         fontSize: FONT_SIZES.md,
         paddingVertical: SPACING.md,
-        paddingHorizontal: SPACING.md,
+        paddingHorizontal: SPACING.lg,
         color: COLORS.text,
         minHeight: MIN_TOUCH_TARGET,
     },
     placeholder: {
-        color: COLORS.textLight,
+        color: COLORS.textHint,
         fontSize: FONT_SIZES.md,
     },
 });

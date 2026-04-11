@@ -66,11 +66,15 @@ export default function HomeScreen({ navigation }: any) {
         const appStateSub = AppState.addEventListener('change', (state) => {
             if (state === 'active') loadTodaySchedules();
         });
+        const focusSub = navigation.addListener('focus', () => {
+            loadTodaySchedules();
+        });
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
             appStateSub.remove();
+            focusSub();
         };
-    }, [loadTodaySchedules]);
+    }, [loadTodaySchedules, navigation]);
 
     const onRefresh = () => {
         setRefreshing(true);

@@ -132,13 +132,14 @@ export default function MedicinesScreen() {
 
     const handleStockAdjustment = async () => {
         if (!selectedMedicine) return;
-        if (!stockData.adjustment || parseInt(stockData.adjustment) === 0) {
-            Alert.alert('Validation Error', 'Please enter stock adjustment amount');
+        const trimmed = stockData.adjustment.trim();
+        if (!trimmed || isNaN(parseInt(trimmed)) || parseInt(trimmed) === 0) {
+            Alert.alert('Validation Error', 'Please enter a valid stock adjustment amount (e.g. 5 or -3)');
             return;
         }
         try {
             await ApiService.adjustStock(selectedMedicine.id, {
-                amount: parseInt(stockData.adjustment),
+                amount: parseInt(trimmed),
                 notes: stockData.notes || 'Stock adjustment',
                 created_by: 'Admin',
             });
@@ -151,6 +152,11 @@ export default function MedicinesScreen() {
             const errorMsg = error.response?.data?.detail || 'Failed to update stock';
             Alert.alert('Error', errorMsg);
         }
+    };
+
+    const stepAdjustment = (delta: number) => {
+        const current = parseInt(stockData.adjustment) || 0;
+        setStockData({ ...stockData, adjustment: (current + delta).toString() });
     };
 
     const handleDeleteRequest = (medicine: Medicine) => {
@@ -494,18 +500,41 @@ export default function MedicinesScreen() {
                         <Text style={styles.helpText}>
                             Use positive numbers to add stock, negative to remove
                         </Text>
-                        <View style={styles.inputContainer}>
-                            <TextInput
-                                style={styles.input}
-                                value={stockData.adjustment}
-                                onChangeText={(text) => setStockData({ ...stockData, adjustment: text })}
-                                placeholder="e.g., +50 or -20"
-                                placeholderTextColor={COLORS.textHint}
-                                keyboardType="numeric"
-                            />
+                        <View style={styles.stepperRow}>
+                            <TouchableOpacity
+                                style={styles.stepperBtn}
+                                onPress={() => stepAdjustment(-1)}
+                            >
+                                <Text style={styles.stepperBtnText}>−</Text>
+                            </TouchableOpacity>
+                            <View style={[styles.inputContainer, { flex: 1, marginBottom: 0, marginHorizontal: SPACING.sm }]}>
+                                <TextInput
+                                    style={[styles.input, { textAlign: 'center', fontSize: 22, fontWeight: '700' }]}
+                                    value={stockData.adjustment}
+                                    onChangeText={(text) => {
+                                        // Allow digits, minus sign, and empty string
+                                        const cleaned = text.replace(/[^0-9-]/g, '');
+                                        setStockData({ ...stockData, adjustment: cleaned });
+                                    }}
+                                    placeholder="0"
+                                    placeholderTextColor={COLORS.textHint}
+                                    keyboardType="numbers-and-punctuation"
+                                />
+                            </View>
+                            <TouchableOpacity
+                                style={[styles.stepperBtn, { backgroundColor: COLORS.primary }]}
+                                onPress={() => stepAdjustment(1)}
+                            >
+                                <Text style={[styles.stepperBtnText, { color: COLORS.white }]}>+</Text>
+                            </TouchableOpacity>
                         </View>
+                        {stockData.adjustment && parseInt(stockData.adjustment) !== 0 && selectedMedicine && (
+                            <Text style={styles.stockPreview}>
+                                New stock: {selectedMedicine.current_stock + (parseInt(stockData.adjustment) || 0)} {selectedMedicine.dosage_unit}
+                            </Text>
+                        )}
 
-                        <Text style={styles.formLabel}>NOTES</Text>
+                        <Text style={[styles.formLabel, { marginTop: SPACING.lg }]}>NOTES</Text>
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
@@ -839,6 +868,32 @@ const styles = StyleSheet.create({
     helpText: {
         fontSize: FONT_SIZES.xs,
         color: COLORS.textLight,
+        marginBottom: SPACING.sm,
+    },
+    stepperRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: SPACING.sm,
+    },
+    stepperBtn: {
+        width: 52,
+        height: 52,
+        borderRadius: BORDER_RADIUS.md,
+        backgroundColor: COLORS.grayLight,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    stepperBtnText: {
+        fontSize: 28,
+        fontWeight: '600',
+        color: COLORS.text,
+    },
+    stockPreview: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.primary,
+        fontWeight: '600',
+        textAlign: 'center',
+        marginTop: SPACING.xs,
         marginBottom: SPACING.sm,
     },
     inputContainer: {

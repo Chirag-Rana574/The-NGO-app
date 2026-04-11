@@ -11,12 +11,12 @@ Audited every file: 14 backend modules, 14 backend routers, 16 mobile screens, 3
 | 🔴 **Critical Security** | 8 | Must fix before any real use |
 | 🟠 **Infrastructure & Deployment** | 7 | Must fix before hosting |
 | 🟡 **Backend Code Quality** | 6 | Bugs & maintainability |
-| 🔵 **Mobile App Issues** | 6 | Breaks device testing |
+| 🔵 **Mobile App Issues** | 8 | Breaks device testing / UX |
 | ⚪ **Dead Code & Cleanup** | 4 | Remove before production |
 | 🟣 **Testing & Monitoring** | 3 | Risk without them |
 | 📝 **Documentation** | 1 | Professional delivery |
 
-**Total: 35 items**
+**Total: 37 items**
 
 ---
 
@@ -299,6 +299,24 @@ The Google Client ID is hardcoded in the source. Should be in app.json `extra` c
 No `icon`, `splash`, or `adaptiveIcon` config. App shows default Expo icon — looks unprofessional.
 
 **Fix:** Design icon + splash screen, add to app.json. **15 min.**
+
+---
+
+### M7. Stock Editing Keyboard Missing Plus/Minus
+**Impact:** 🔵 High UX Issue
+
+When editing stock, the keyboard doesn't have `+` or `-` keys. This prevents users from easily incrementing or decrementing stock or entering negative adjustments if needed (though adjustments are usually positive, the keyboard should be appropriate for numerical input).
+
+**Fix:** Change `keyboardType` from `"numeric"` to `"numbers-and-punctuation"` or `"decimal-pad"` depending on needs. **2 min.**
+
+---
+
+### M8. Calendar Navigation is Not Slidable
+**Impact:** 🔵 Critical UX Issue
+
+The current week-strip calendar is fixed. Users cannot slide left/right to see previous or next days. This makes it impossible to view older schedules or plan far ahead in the mobile UI.
+
+**Fix:** Replace the static week strip with a `FlatList` or `ScrollView` based horizontal horizontal calendar or integrate a proper slidable week view library. **30-60 min.**
 
 ---
 

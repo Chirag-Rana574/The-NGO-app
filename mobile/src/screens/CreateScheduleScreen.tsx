@@ -8,6 +8,7 @@ import {
     TextInput,
     Alert,
     Platform,
+    ActivityIndicator,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
@@ -15,7 +16,10 @@ import { format, parseISO } from 'date-fns';
 import ApiService from '../services/api.service';
 import SuccessToast from '../components/SuccessToast';
 import { Worker, Medicine, Patient } from '../types';
-import { COLORS, SPACING, FONT_SIZES, MIN_TOUCH_TARGET, BORDER_RADIUS } from '../constants/theme';
+import {
+    COLORS, SPACING, FONT_SIZES, MIN_TOUCH_TARGET,
+    BORDER_RADIUS, CARD_SHADOW, SECTION_HEADER_STYLE, LETTER_SPACING,
+} from '../constants/theme';
 
 export default function CreateScheduleScreen({ route, navigation }: any) {
     const date = route?.params?.date || format(new Date(), 'yyyy-MM-dd');
@@ -26,11 +30,11 @@ export default function CreateScheduleScreen({ route, navigation }: any) {
     const [selectedMedicine, setSelectedMedicine] = useState<number | null>(null);
     const [dosage, setDosage] = useState('');
     const [showSuccessToast, setShowSuccessToast] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const [patients, setPatients] = useState<Patient[]>([]);
     const [workers, setWorkers] = useState<Worker[]>([]);
     const [medicines, setMedicines] = useState<Medicine[]>([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         loadData();
@@ -61,7 +65,6 @@ export default function CreateScheduleScreen({ route, navigation }: any) {
     };
 
     const handleSave = async () => {
-        // Validation
         if (!selectedPatient) {
             Alert.alert('Validation Error', 'Please select a patient');
             return;
@@ -80,7 +83,6 @@ export default function CreateScheduleScreen({ route, navigation }: any) {
         }
 
         try {
-            // Combine date and time
             const scheduledDateTime = new Date(date);
             scheduledDateTime.setHours(time.getHours());
             scheduledDateTime.setMinutes(time.getMinutes());
@@ -106,27 +108,49 @@ export default function CreateScheduleScreen({ route, navigation }: any) {
 
     const selectedMedicineObj = medicines.find(m => m.id === selectedMedicine);
 
+    if (loading) {
+        return (
+            <View style={styles.centerContainer}>
+                <ActivityIndicator size="large" color={COLORS.primary} />
+            </View>
+        );
+    }
+
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
             <SuccessToast
                 visible={showSuccessToast}
                 message="Schedule created successfully!"
                 onHide={() => setShowSuccessToast(false)}
             />
 
-            {/* Date Display */}
-            <View style={styles.dateSection}>
-                <Text style={styles.dateLabel}>Date</Text>
-                <Text style={styles.dateValue}>{format(parseISO(date), 'EEEE, MMMM d, yyyy')}</Text>
+            {/* Hero Header */}
+            <View style={styles.headerSection}>
+                <Text style={styles.sectionLabel}>NEW ENTRY</Text>
+                <Text style={styles.heroTitle}>Create Schedule</Text>
+                <Text style={styles.heroSubtitle}>
+                    Assign a medicine delivery to a worker for a specific patient and time.
+                </Text>
+            </View>
+
+            {/* Date Display Card */}
+            <View style={styles.dateCard}>
+                <View style={styles.dateCardAccent} />
+                <View style={styles.dateCardContent}>
+                    <Text style={styles.dateCardLabel}>SCHEDULED DATE</Text>
+                    <Text style={styles.dateCardValue}>{format(parseISO(date), 'EEEE, MMMM d, yyyy')}</Text>
+                </View>
             </View>
 
             {/* Time Picker */}
-            <View style={styles.section}>
-                <Text style={styles.label}>Time</Text>
+            <View style={styles.formSection}>
+                <Text style={styles.formLabel}>SCHEDULED TIME</Text>
                 <TouchableOpacity
                     style={styles.timeButton}
                     onPress={() => setShowTimePicker(true)}
+                    activeOpacity={0.7}
                 >
+                    <Text style={styles.timeIcon}>🕐</Text>
                     <Text style={styles.timeText}>{format(time, 'h:mm a')}</Text>
                 </TouchableOpacity>
                 {showTimePicker && (
@@ -141,9 +165,9 @@ export default function CreateScheduleScreen({ route, navigation }: any) {
             </View>
 
             {/* Patient Selection */}
-            <View style={styles.section}>
-                <Text style={styles.label}>👤 Patient</Text>
-                <View style={styles.pickerContainer}>
+            <View style={styles.formSection}>
+                <Text style={styles.formLabel}>👤  PATIENT</Text>
+                <View style={styles.pickerCard}>
                     <RNPickerSelect
                         onValueChange={(value) => setSelectedPatient(value)}
                         items={patients.map(p => ({ label: p.name, value: p.id }))}
@@ -155,9 +179,9 @@ export default function CreateScheduleScreen({ route, navigation }: any) {
             </View>
 
             {/* Worker Selection */}
-            <View style={styles.section}>
-                <Text style={styles.label}>👨‍⚕️ Assigned Worker</Text>
-                <View style={styles.pickerContainer}>
+            <View style={styles.formSection}>
+                <Text style={styles.formLabel}>👨‍⚕️  ASSIGNED WORKER</Text>
+                <View style={styles.pickerCard}>
                     <RNPickerSelect
                         onValueChange={(value) => setSelectedWorker(value)}
                         items={workers.map(w => ({ label: w.name, value: w.id }))}
@@ -169,9 +193,9 @@ export default function CreateScheduleScreen({ route, navigation }: any) {
             </View>
 
             {/* Medicine Selection */}
-            <View style={styles.section}>
-                <Text style={styles.label}>💊 Medicine</Text>
-                <View style={styles.pickerContainer}>
+            <View style={styles.formSection}>
+                <Text style={styles.formLabel}>💊  MEDICINE</Text>
+                <View style={styles.pickerCard}>
                     <RNPickerSelect
                         onValueChange={(value) => setSelectedMedicine(value)}
                         items={medicines.map(m => ({
@@ -186,23 +210,25 @@ export default function CreateScheduleScreen({ route, navigation }: any) {
             </View>
 
             {/* Dosage Input */}
-            <View style={styles.section}>
-                <Text style={styles.label}>
-                    💉 Dosage {selectedMedicineObj ? `(${selectedMedicineObj.dosage_unit})` : ''}
+            <View style={styles.formSection}>
+                <Text style={styles.formLabel}>
+                    💉  DOSAGE {selectedMedicineObj ? `(${selectedMedicineObj.dosage_unit})` : ''}
                 </Text>
-                <TextInput
-                    style={styles.input}
-                    value={dosage}
-                    onChangeText={setDosage}
-                    placeholder="Enter dosage amount"
-                    placeholderTextColor={COLORS.textLight}
-                    keyboardType="decimal-pad"
-                />
+                <View style={styles.inputCard}>
+                    <TextInput
+                        style={styles.input}
+                        value={dosage}
+                        onChangeText={setDosage}
+                        placeholder="Enter dosage amount"
+                        placeholderTextColor={COLORS.textHint}
+                        keyboardType="decimal-pad"
+                    />
+                </View>
             </View>
 
             {/* Save Button */}
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                <Text style={styles.saveButtonText}>Save Schedule</Text>
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave} activeOpacity={0.85}>
+                <Text style={styles.saveButtonText}>✓  Create Schedule</Text>
             </TouchableOpacity>
         </ScrollView>
     );
@@ -214,81 +240,145 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.background,
     },
     contentContainer: {
-        padding: SPACING.md,
+        paddingBottom: 100,
     },
-    dateSection: {
-        backgroundColor: COLORS.primary,
-        borderRadius: BORDER_RADIUS.xl,
-        padding: SPACING.lg,
-        marginBottom: SPACING.lg,
+    centerContainer: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
     },
-    dateLabel: {
-        fontSize: FONT_SIZES.sm,
-        color: COLORS.white,
-        opacity: 0.9,
-        marginBottom: 2,
+
+    // ─── Header Section ─────────────────────────────────────────
+    headerSection: {
+        paddingHorizontal: SPACING.lg,
+        paddingTop: SPACING.md,
+        paddingBottom: SPACING.sm,
     },
-    dateValue: {
-        fontSize: FONT_SIZES.md,
-        fontWeight: 'bold',
-        color: COLORS.white,
-        textAlign: 'center',
+    sectionLabel: {
+        ...SECTION_HEADER_STYLE,
+        color: COLORS.textSecondary,
     },
-    section: {
-        marginBottom: SPACING.md,
-    },
-    label: {
-        fontSize: FONT_SIZES.md,
-        fontWeight: '700',
+    heroTitle: {
+        fontSize: 32,
+        fontWeight: '800',
         color: COLORS.text,
         marginBottom: SPACING.xs,
+        letterSpacing: LETTER_SPACING.tight,
     },
+    heroSubtitle: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.textSecondary,
+        lineHeight: 20,
+    },
+
+    // ─── Date Card ──────────────────────────────────────────────
+    dateCard: {
+        flexDirection: 'row',
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.xl,
+        marginHorizontal: SPACING.md,
+        marginTop: SPACING.lg,
+        overflow: 'hidden',
+        ...CARD_SHADOW,
+    },
+    dateCardAccent: {
+        width: 4,
+        backgroundColor: COLORS.primary,
+    },
+    dateCardContent: {
+        flex: 1,
+        padding: SPACING.lg,
+    },
+    dateCardLabel: {
+        fontSize: FONT_SIZES.xxs,
+        fontWeight: '700',
+        color: COLORS.textSecondary,
+        letterSpacing: 1,
+        marginBottom: SPACING.xs,
+    },
+    dateCardValue: {
+        fontSize: FONT_SIZES.lg,
+        fontWeight: '700',
+        color: COLORS.text,
+    },
+
+    // ─── Form Section ───────────────────────────────────────────
+    formSection: {
+        marginHorizontal: SPACING.md,
+        marginTop: SPACING.lg,
+    },
+    formLabel: {
+        fontSize: FONT_SIZES.xxs,
+        fontWeight: '700',
+        color: COLORS.textSecondary,
+        letterSpacing: 1,
+        marginBottom: SPACING.sm,
+        marginLeft: SPACING.xs,
+    },
+
+    // ─── Time Button ────────────────────────────────────────────
     timeButton: {
-        backgroundColor: COLORS.surfaceContainerLow,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: COLORS.white,
         borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.lg,
-        alignItems: 'center',
         minHeight: MIN_TOUCH_TARGET,
-        justifyContent: 'center',
+        ...CARD_SHADOW,
+    },
+    timeIcon: {
+        fontSize: 22,
+        marginRight: SPACING.sm,
     },
     timeText: {
         fontSize: 28,
-        fontWeight: 'bold',
+        fontWeight: '800',
         color: COLORS.primary,
     },
-    pickerContainer: {
-        backgroundColor: COLORS.surfaceContainerLow,
+
+    // ─── Picker Card ────────────────────────────────────────────
+    pickerCard: {
+        backgroundColor: COLORS.white,
         borderRadius: BORDER_RADIUS.xl,
         minHeight: MIN_TOUCH_TARGET,
+        ...CARD_SHADOW,
+    },
+
+    // ─── Input Card ─────────────────────────────────────────────
+    inputCard: {
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.xl,
+        ...CARD_SHADOW,
     },
     input: {
-        backgroundColor: COLORS.surfaceContainerLow,
-        borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.lg,
         fontSize: FONT_SIZES.lg,
         color: COLORS.text,
         minHeight: MIN_TOUCH_TARGET,
         textAlign: 'center',
+        fontWeight: '600',
     },
+
+    // ─── Save Button ────────────────────────────────────────────
     saveButton: {
         backgroundColor: COLORS.primary,
         borderRadius: BORDER_RADIUS.xl,
-        padding: SPACING.lg,
+        paddingVertical: 16,
         alignItems: 'center',
-        marginTop: SPACING.md,
-        marginBottom: SPACING.lg,
+        marginHorizontal: SPACING.md,
+        marginTop: SPACING.xl,
         minHeight: MIN_TOUCH_TARGET,
         justifyContent: 'center',
         shadowColor: COLORS.primary,
-        shadowOffset: { width: 0, height: 4 },
+        shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 4,
+        shadowRadius: 12,
+        elevation: 6,
     },
     saveButtonText: {
         fontSize: FONT_SIZES.lg,
-        fontWeight: 'bold',
+        fontWeight: '700',
         color: COLORS.white,
     },
 });
@@ -297,19 +387,19 @@ const pickerSelectStyles = StyleSheet.create({
     inputIOS: {
         fontSize: FONT_SIZES.md,
         paddingVertical: SPACING.md,
-        paddingHorizontal: SPACING.md,
+        paddingHorizontal: SPACING.lg,
         color: COLORS.text,
         minHeight: MIN_TOUCH_TARGET,
     },
     inputAndroid: {
         fontSize: FONT_SIZES.md,
         paddingVertical: SPACING.md,
-        paddingHorizontal: SPACING.md,
+        paddingHorizontal: SPACING.lg,
         color: COLORS.text,
         minHeight: MIN_TOUCH_TARGET,
     },
     placeholder: {
-        color: COLORS.textLight,
+        color: COLORS.textHint,
         fontSize: FONT_SIZES.md,
     },
 });

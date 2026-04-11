@@ -6,22 +6,19 @@ import {
     TouchableOpacity,
     Alert,
     ActivityIndicator,
-    Share,
-    Platform,
+    ScrollView,
 } from 'react-native';
 import { Linking } from 'react-native';
-import ApiService from '../services/api.service';
+import { API_BASE_URL } from '../services/api.service';
 import {
     COLORS, SPACING, FONT_SIZES,
-    BORDER_RADIUS, CARD_SHADOW, LETTER_SPACING,
+    BORDER_RADIUS, CARD_SHADOW, SECTION_HEADER_STYLE, LETTER_SPACING,
 } from '../constants/theme';
 
-const API_BASE = 'http://10.248.163.249:8000/api';
-
 const EXPORT_TYPES = [
-    { key: 'schedules', label: 'Schedules', icon: '📅', desc: 'All schedule data' },
-    { key: 'stock', label: 'Stock Transactions', icon: '💊', desc: 'Stock in/out history' },
-    { key: 'audit', label: 'Audit Log', icon: '📋', desc: 'All system activity' },
+    { key: 'schedules', label: 'Schedules', icon: '📅', desc: 'All schedule data including status and timestamps' },
+    { key: 'stock', label: 'Stock Transactions', icon: '💊', desc: 'Complete stock in/out history with audit trail' },
+    { key: 'audit', label: 'Audit Log', icon: '📋', desc: 'All system activity and permission changes' },
 ];
 
 const MONTHS = (() => {
@@ -45,8 +42,7 @@ export default function ExportScreen() {
     const handleExport = async () => {
         setLoading(true);
         try {
-            // Open the CSV download URL in the browser → user can share from there
-            const url = `${API_BASE}/exports/${selectedType}?month=${selectedMonth}`;
+            const url = `${API_BASE_URL}/exports/${selectedType}?month=${selectedMonth}`;
             await Linking.openURL(url);
             Alert.alert(
                 'Export Started',
@@ -60,35 +56,57 @@ export default function ExportScreen() {
         }
     };
 
+    const selectedTypeObj = EXPORT_TYPES.find(t => t.key === selectedType);
+
     return (
-        <View style={styles.container}>
-            {/* Export Type */}
-            <Text style={styles.sectionTitle}>Export Type</Text>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
+            {/* Hero Header */}
+            <View style={styles.headerSection}>
+                <Text style={styles.sectionLabel}>DATA MANAGEMENT</Text>
+                <Text style={styles.heroTitle}>Export & Share</Text>
+                <Text style={styles.heroSubtitle}>
+                    Download clinical records as CSV files for reporting, compliance, and offline analysis.
+                </Text>
+            </View>
+
+            {/* Export Type Selection */}
+            <Text style={styles.formSectionLabel}>EXPORT TYPE</Text>
             {EXPORT_TYPES.map((type) => (
                 <TouchableOpacity
                     key={type.key}
                     style={[styles.typeCard, selectedType === type.key && styles.typeCardSelected]}
                     onPress={() => setSelectedType(type.key)}
+                    activeOpacity={0.7}
                 >
-                    <Text style={styles.typeIcon}>{type.icon}</Text>
+                    <View style={[
+                        styles.typeIconContainer,
+                        { backgroundColor: selectedType === type.key ? COLORS.primary + '15' : COLORS.grayLight }
+                    ]}>
+                        <Text style={styles.typeIcon}>{type.icon}</Text>
+                    </View>
                     <View style={styles.typeInfo}>
                         <Text style={[styles.typeLabel, selectedType === type.key && styles.typeLabelSelected]}>
                             {type.label}
                         </Text>
                         <Text style={styles.typeDesc}>{type.desc}</Text>
                     </View>
-                    {selectedType === type.key && <Text style={styles.checkmark}>✓</Text>}
+                    {selectedType === type.key && (
+                        <View style={styles.checkCircle}>
+                            <Text style={styles.checkmark}>✓</Text>
+                        </View>
+                    )}
                 </TouchableOpacity>
             ))}
 
             {/* Month Selector */}
-            <Text style={styles.sectionTitle}>Month</Text>
+            <Text style={styles.formSectionLabel}>SELECT PERIOD</Text>
             <View style={styles.monthGrid}>
                 {MONTHS.map((m) => (
                     <TouchableOpacity
                         key={m.value}
                         style={[styles.monthChip, selectedMonth === m.value && styles.monthChipSelected]}
                         onPress={() => setSelectedMonth(m.value)}
+                        activeOpacity={0.7}
                     >
                         <Text style={[styles.monthText, selectedMonth === m.value && styles.monthTextSelected]}>
                             {m.label}
@@ -97,23 +115,33 @@ export default function ExportScreen() {
                 ))}
             </View>
 
+            {/* Preview card */}
+            <View style={styles.previewCard}>
+                <Text style={styles.previewLabel}>EXPORT PREVIEW</Text>
+                <Text style={styles.previewValue}>
+                    {selectedTypeObj?.label} — {MONTHS.find(m => m.value === selectedMonth)?.label}
+                </Text>
+                <Text style={styles.previewFormat}>Format: CSV (comma-separated values)</Text>
+            </View>
+
             {/* Export Button */}
             <TouchableOpacity
                 style={[styles.exportButton, loading && styles.exportButtonDisabled]}
                 onPress={handleExport}
                 disabled={loading}
+                activeOpacity={0.85}
             >
                 {loading ? (
                     <ActivityIndicator color={COLORS.white} />
                 ) : (
-                    <Text style={styles.exportButtonText}>📤 Export & Share via Email</Text>
+                    <Text style={styles.exportButtonText}>📤  Export & Share via Email</Text>
                 )}
             </TouchableOpacity>
 
             <Text style={styles.footerText}>
                 CSV files can be shared via email, WhatsApp, or saved to Files.
             </Text>
-        </View>
+        </ScrollView>
     );
 }
 
@@ -121,65 +149,120 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.background,
-        padding: SPACING.md,
     },
-    sectionTitle: {
-        fontSize: FONT_SIZES.lg,
-        fontWeight: '700',
+    contentContainer: {
+        paddingBottom: 100,
+    },
+
+    // ─── Header Section ─────────────────────────────────────────
+    headerSection: {
+        paddingHorizontal: SPACING.lg,
+        paddingTop: SPACING.md,
+        paddingBottom: SPACING.md,
+    },
+    sectionLabel: {
+        ...SECTION_HEADER_STYLE,
+        color: COLORS.textSecondary,
+    },
+    heroTitle: {
+        fontSize: 32,
+        fontWeight: '800',
         color: COLORS.text,
+        marginBottom: SPACING.xs,
+        letterSpacing: LETTER_SPACING.tight,
+    },
+    heroSubtitle: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.textSecondary,
+        lineHeight: 20,
+    },
+
+    // ─── Form Section Labels ─────────────────────────────────────
+    formSectionLabel: {
+        fontSize: FONT_SIZES.xxs,
+        fontWeight: '700',
+        color: COLORS.textSecondary,
+        letterSpacing: 1,
+        paddingHorizontal: SPACING.lg,
         marginTop: SPACING.lg,
         marginBottom: SPACING.sm,
     },
+
+    // ─── Type Cards ──────────────────────────────────────────────
     typeCard: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: COLORS.white,
         borderRadius: BORDER_RADIUS.xl,
         padding: SPACING.lg,
+        marginHorizontal: SPACING.md,
         marginBottom: SPACING.sm,
         ...CARD_SHADOW,
     },
     typeCardSelected: {
-        backgroundColor: COLORS.blueLight,
+        borderLeftWidth: 4,
+        borderLeftColor: COLORS.primary,
+    },
+    typeIconContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: BORDER_RADIUS.md,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: SPACING.md,
     },
     typeIcon: {
-        fontSize: 28,
-        marginRight: SPACING.md,
+        fontSize: 24,
     },
     typeInfo: {
         flex: 1,
     },
     typeLabel: {
         fontSize: FONT_SIZES.md,
-        fontWeight: '600',
+        fontWeight: '700',
         color: COLORS.text,
+        marginBottom: 2,
     },
     typeLabelSelected: {
         color: COLORS.primary,
     },
     typeDesc: {
         fontSize: FONT_SIZES.xs,
-        color: COLORS.textLight,
-        marginTop: 2,
+        color: COLORS.textSecondary,
+        lineHeight: 16,
+    },
+    checkCircle: {
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        backgroundColor: COLORS.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: SPACING.sm,
     },
     checkmark: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: COLORS.primary,
+        fontSize: 14,
+        fontWeight: '800',
+        color: COLORS.white,
     },
+
+    // ─── Month Grid ──────────────────────────────────────────────
     monthGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: SPACING.sm,
+        paddingHorizontal: SPACING.md,
     },
     monthChip: {
         paddingHorizontal: SPACING.md,
         paddingVertical: SPACING.sm + 2,
         borderRadius: BORDER_RADIUS.full,
-        backgroundColor: COLORS.surfaceContainerLow,
+        backgroundColor: COLORS.white,
+        ...CARD_SHADOW,
     },
     monthChipSelected: {
         backgroundColor: COLORS.primary,
+        shadowOpacity: 0.3,
     },
     monthText: {
         fontSize: FONT_SIZES.sm,
@@ -188,14 +271,46 @@ const styles = StyleSheet.create({
     },
     monthTextSelected: {
         color: COLORS.white,
-        fontWeight: '600',
+        fontWeight: '700',
     },
+
+    // ─── Preview Card ────────────────────────────────────────────
+    previewCard: {
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.xl,
+        padding: SPACING.lg,
+        marginHorizontal: SPACING.md,
+        marginTop: SPACING.xl,
+        borderLeftWidth: 4,
+        borderLeftColor: COLORS.primary,
+        ...CARD_SHADOW,
+    },
+    previewLabel: {
+        fontSize: FONT_SIZES.xxs,
+        fontWeight: '700',
+        color: COLORS.textSecondary,
+        letterSpacing: 1,
+        marginBottom: SPACING.xs,
+    },
+    previewValue: {
+        fontSize: FONT_SIZES.lg,
+        fontWeight: '700',
+        color: COLORS.text,
+        marginBottom: 4,
+    },
+    previewFormat: {
+        fontSize: FONT_SIZES.xs,
+        color: COLORS.textLight,
+    },
+
+    // ─── Export Button ───────────────────────────────────────────
     exportButton: {
         backgroundColor: COLORS.primary,
         paddingVertical: 16,
         borderRadius: BORDER_RADIUS.xl,
         alignItems: 'center',
-        marginTop: SPACING.xl * 2,
+        marginHorizontal: SPACING.md,
+        marginTop: SPACING.xl,
         shadowColor: COLORS.primary,
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.3,
@@ -215,5 +330,7 @@ const styles = StyleSheet.create({
         color: COLORS.textLight,
         fontSize: FONT_SIZES.xs,
         marginTop: SPACING.md,
+        marginBottom: SPACING.xl,
+        paddingHorizontal: SPACING.lg,
     },
 });
