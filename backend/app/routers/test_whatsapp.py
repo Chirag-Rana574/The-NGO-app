@@ -16,8 +16,9 @@ from ..utils import format_whatsapp_number
 from ..state_machine import StateMachine
 from datetime import timezone
 from zoneinfo import ZoneInfo
+from .google_auth import get_current_user
 
-router = APIRouter(prefix="/test-whatsapp", tags=["WhatsApp Testing"])
+router = APIRouter(prefix="/test-whatsapp", tags=["WhatsApp Testing"], dependencies=[Depends(get_current_user)])
 logger = logging.getLogger(__name__)
 settings = get_settings()
 

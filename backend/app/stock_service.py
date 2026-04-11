@@ -1,7 +1,7 @@
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 from .models import Medicine, StockTransaction, TransactionReason, AuditLog, AuditAction, Schedule
 
@@ -80,7 +80,7 @@ class StockService:
         # Update medicine stock
         old_stock = medicine.current_stock
         medicine.current_stock = new_stock
-        medicine.updated_at = datetime.utcnow()
+        medicine.updated_at = datetime.now(timezone.utc)
         
         # Create audit log
         audit_entry = AuditLog(

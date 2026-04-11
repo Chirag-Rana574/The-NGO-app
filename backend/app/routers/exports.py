@@ -107,7 +107,7 @@ async def export_stock(
         StockTransaction.created_at < end,
     ).order_by(StockTransaction.created_at).all()
     
-    headers = ["ID", "Date", "Medicine", "Amount", "Reason", "Notes", "Created By", "Stock After"]
+    headers = ["ID", "Date", "Medicine", "Amount", "Reason", "Notes", "Created By"]
     rows = []
     for t in txns:
         rows.append([
@@ -118,7 +118,6 @@ async def export_stock(
             t.reason.value if t.reason else "",
             t.notes or "",
             t.created_by or "",
-            t.stock_after,
         ])
     db.add(AuditLog(
         entity_type="EXPORT",

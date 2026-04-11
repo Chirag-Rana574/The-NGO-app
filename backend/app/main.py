@@ -21,15 +21,20 @@ app = FastAPI(
 )
 
 # CORS middleware for mobile app
-# In production, replace with actual frontend/mobile origins
 ALLOWED_ORIGINS = [
     "http://localhost:3000",          # Local development
     "http://localhost:8081",          # React Native Metro
     "http://127.0.0.1:8000",         # Backend self
     "http://10.248.163.249:8081",    # React Native on phone
     "http://10.248.163.249:8000",    # API from LAN
-    "*",                              # Allow all for dev
+    "http://192.168.0.104:8081",     # React Native (home LAN)
 ]
+
+# In debug mode, allow all origins for development convenience
+from .config import get_settings as _get_settings
+_startup_settings = _get_settings()
+if _startup_settings.debug:
+    ALLOWED_ORIGINS = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -131,8 +136,17 @@ async def root():
 @app.get("/health")
 async def health_check():
     """Detailed health check"""
+    from .database import SessionLocal
+    from sqlalchemy import text
+    db_status = "disconnected"
+    try:
+        db = SessionLocal()
+        db.execute(text("SELECT 1"))
+        db.close()
+        db_status = "connected"
+    except Exception:
+        pass
     return {
-        "status": "healthy",
-        "database": "connected",
-        "redis": "connected"
+        "status": "healthy" if db_status == "connected" else "degraded",
+        "database": db_status,
     }

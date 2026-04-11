@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 from .models import Schedule, ScheduleStatus, AuditLog, AuditAction
 
@@ -88,7 +88,7 @@ class StateMachine:
         
         # Update schedule status
         schedule.status = target_status
-        schedule.updated_at = datetime.utcnow()
+        schedule.updated_at = datetime.now(timezone.utc)
         
         # Add additional data if provided
         if additional_data:

@@ -3,3 +3,11 @@ node_modules/
 __pycache__/
 *.pyc
 .DS_Store
+.env
+.env.*
+*.env
+venv/
+*.log
+*.png
+.viminfo
+expo_out.log

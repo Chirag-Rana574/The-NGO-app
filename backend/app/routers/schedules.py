@@ -179,14 +179,14 @@ def update_schedule(
         Schedule.deleted_at.is_(None)
     ).first()
     
+    if not schedule:
+        raise HTTPException(status_code=404, detail="Schedule not found")
+    
     old_values = {
         "scheduled_time": str(schedule.scheduled_time),
         "dose_amount": schedule.dose_amount,
         "worker_id": schedule.worker_id
     }
-    
-    if not schedule:
-        raise HTTPException(status_code=404, detail="Schedule not found")
     
     # Check if schedule is in terminal state
     if schedule.status in [
@@ -267,11 +267,7 @@ def update_schedule(
         entity_id=schedule.id,
         action=AuditAction.UPDATE,
         performed_by=current_user.email,
-        old_value=json.dumps({
-        "scheduled_time": str(schedule.scheduled_time),
-        "dose_amount": schedule.dose_amount,
-        "worker_id": schedule.worker_id
-    }),
+        old_value=json.dumps(old_values),
         details="Updated schedule (Override used if within 24h)"
     ))
     db.commit()

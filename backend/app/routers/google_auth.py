@@ -72,8 +72,9 @@ def get_current_user(
     
     token = authorization.split(" ", 1)[1]
     
-    # Dev Bypass Hook
-    if token == "dev-bypass-token":
+    # Dev Bypass Hook — ONLY ACTIVE IN DEBUG MODE
+    if settings.debug and token == "dev-bypass-token":
+        logger.warning("⚠️ Dev bypass token used — this must be disabled in production!")
         user = db.query(User).filter(User.email == "admin@ngo.org").first()
         if not user:
             user = User(email="admin@ngo.org", name="Admin", google_id="dev-bypass-123")

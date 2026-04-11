@@ -8,8 +8,9 @@ from ..schemas import WorkerCreate, WorkerUpdate, WorkerResponse, SuccessRespons
 from ..utils import normalize_phone_number
 import logging
 import json
+from .google_auth import get_current_user
 
-router = APIRouter(prefix="/workers", tags=["Workers"])
+router = APIRouter(prefix="/workers", tags=["Workers"], dependencies=[Depends(get_current_user)])
 logger = logging.getLogger(__name__)
 
 

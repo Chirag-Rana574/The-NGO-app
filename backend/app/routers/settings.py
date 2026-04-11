@@ -8,10 +8,11 @@ from typing import Optional
 import logging
 
 from ..database import get_db
-from ..models import SystemConfig
+from ..models import SystemConfig, User
 from ..config import get_settings
+from .google_auth import get_current_user
 
-router = APIRouter(prefix="/settings", tags=["Settings"])
+router = APIRouter(prefix="/settings", tags=["Settings"], dependencies=[Depends(get_current_user)])
 logger = logging.getLogger(__name__)
 settings = get_settings()
 
