@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, Component } from 'react';
 import {
     ActivityIndicator, View, Text, StyleSheet, TouchableOpacity,
     AppState, Animated, Dimensions, TouchableWithoutFeedback, ScrollView,
+    DeviceEventEmitter,
 } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -614,6 +615,15 @@ function App() {
 
     useEffect(() => {
         checkAuthState();
+
+        // Listen for forced logout from API 401 interceptor
+        const logoutSub = DeviceEventEmitter.addListener('auth:logout', () => {
+            console.warn('Force logout triggered by API 401');
+            setIsLoggedIn(false);
+            setIsKeySetup(null);
+        });
+
+        return () => logoutSub.remove();
     }, []);
 
     useEffect(() => {

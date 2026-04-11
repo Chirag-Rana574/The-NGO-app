@@ -268,7 +268,7 @@ def update_schedule(
         action=AuditAction.UPDATE,
         performed_by=current_user.email,
         old_value=json.dumps(old_values),
-        details="Updated schedule (Override used if within 24h)"
+        reason="Updated schedule (Override used if within 24h)"
     ))
     db.commit()
 
@@ -337,7 +337,7 @@ def override_schedule(
         entity_id=schedule.id,
         action=AuditAction.UPDATE,
         performed_by=current_user.email,
-        details=f"FORCE OVERRIDE: {override_data.reason}"
+        reason=f"FORCE OVERRIDE: {override_data.reason}"
     ))
     db.commit()
     

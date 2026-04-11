@@ -77,9 +77,9 @@ async def export_schedules(
     db.add(AuditLog(
         entity_type="EXPORT",
         entity_id=0,
-        action=AuditAction.UPDATE, # Using UPDATE or a custom EXPORT action
+        action=AuditAction.UPDATE,
         performed_by=current_user.email,
-        details=f"Exported schedules for {month}"
+        reason=f"Exported schedules for {month}"
     ))
     db.commit()
     
@@ -114,7 +114,7 @@ async def export_stock(
             t.id,
             t.created_at.strftime("%d/%m/%Y %I:%M %p") if t.created_at else "",
             t.medicine.name if t.medicine else "",
-            t.amount,
+            t.change_amount,
             t.reason.value if t.reason else "",
             t.notes or "",
             t.created_by or "",
@@ -122,9 +122,9 @@ async def export_stock(
     db.add(AuditLog(
         entity_type="EXPORT",
         entity_id=0,
-        action=AuditAction.UPDATE, # Using UPDATE or a custom EXPORT action
+        action=AuditAction.UPDATE,
         performed_by=current_user.email,
-        details=f"Exported stock transactions for {month}"
+        reason=f"Exported stock transactions for {month}"
     ))
     db.commit()
     
@@ -160,14 +160,14 @@ async def export_audit(
             l.entity_id or "",
             l.action.value if l.action else "",
             l.performed_by or "",
-            l.details or "",
+            l.reason or "",
         ])
     db.add(AuditLog(
         entity_type="EXPORT",
         entity_id=0,
-        action=AuditAction.UPDATE, # Using UPDATE or a custom EXPORT action
+        action=AuditAction.UPDATE,
         performed_by=current_user.email,
-        details=f"Exported audit logs for {month}"
+        reason=f"Exported audit logs for {month}"
     ))
     db.commit()
     

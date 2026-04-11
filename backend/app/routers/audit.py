@@ -5,8 +5,9 @@ from datetime import datetime
 from ..database import get_db
 from ..models import AuditLog, AuditAction
 from ..schemas import AuditLogResponse
+from .google_auth import get_current_user
 
-router = APIRouter(prefix="/audit", tags=["Audit"])
+router = APIRouter(prefix="/audit", tags=["Audit"], dependencies=[Depends(get_current_user)])
 
 
 @router.get("", response_model=List[AuditLogResponse])

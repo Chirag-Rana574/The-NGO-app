@@ -1,7 +1,10 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DeviceEventEmitter } from 'react-native';
 
-export const API_BASE_URL = 'http://192.168.0.104:8000/api';
+// Default API URL — override via Settings screen or AsyncStorage key 'api_base_url'
+const DEFAULT_API_URL = 'http://192.168.0.104:8000/api';
+export let API_BASE_URL = DEFAULT_API_URL;
 
 class ApiService {
     private client: AxiosInstance;
@@ -9,11 +12,14 @@ class ApiService {
     constructor() {
         this.client = axios.create({
             baseURL: API_BASE_URL,
-            timeout: 10000,
+            timeout: 15000,
             headers: {
                 'Content-Type': 'application/json',
             },
         });
+
+        // On init, try to load saved API URL
+        this.loadSavedApiUrl();
 
         // Request interceptor: attach JWT token
         this.client.interceptors.request.use(
@@ -30,11 +36,48 @@ class ApiService {
         // Response interceptor for error handling
         this.client.interceptors.response.use(
             (response) => response,
-            (error: AxiosError) => {
+            async (error: AxiosError) => {
+                // Auto-logout on 401
+                if (error.response?.status === 401) {
+                    console.warn('401 Unauthorized — clearing token and redirecting to login');
+                    await AsyncStorage.multiRemove(['jwt_token', 'user']);
+                    DeviceEventEmitter.emit('auth:logout');
+                }
                 this.handleError(error);
                 return Promise.reject(error);
             }
         );
+    }
+
+    /**
+     * Load saved API URL from AsyncStorage (if user changed it in Settings).
+     */
+    private async loadSavedApiUrl() {
+        try {
+            const savedUrl = await AsyncStorage.getItem('api_base_url');
+            if (savedUrl) {
+                API_BASE_URL = savedUrl;
+                this.client.defaults.baseURL = savedUrl;
+            }
+        } catch {
+            // Use default
+        }
+    }
+
+    /**
+     * Update the API base URL at runtime.
+     */
+    async setApiUrl(url: string) {
+        API_BASE_URL = url;
+        this.client.defaults.baseURL = url;
+        await AsyncStorage.setItem('api_base_url', url);
+    }
+
+    /**
+     * Get the current API base URL.
+     */
+    getApiUrl(): string {
+        return this.client.defaults.baseURL || API_BASE_URL;
     }
 
     private handleError(error: AxiosError) {
@@ -52,6 +95,8 @@ class ApiService {
                 console.error('Not found:', detail);
             } else if (status === 422) {
                 console.error('Validation error:', detail);
+            } else if (status === 429) {
+                console.error('Too many requests:', detail);
             } else if (status >= 500) {
                 console.error('Server error. Please try again later.');
             } else {
