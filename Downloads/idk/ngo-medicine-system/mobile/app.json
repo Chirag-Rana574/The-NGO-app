@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "NGO Medicine System",
+    "slug": "ngo-medicine-system",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "ngomedicine",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "android": {
+      "package": "com.ngomedicinesystem"
+    },
+    "ios": {
+      "bundleIdentifier": "com.ngomedicinesystem"
+    },
+    "plugins": [
+      "expo-web-browser"
+    ]
+  }
+}

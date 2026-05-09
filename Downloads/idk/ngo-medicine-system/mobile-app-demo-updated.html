@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Medicine System - Mobile App Demo (Updated)</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8B5CF6;
+            --bg: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .phone {
+            width: 375px;
+            height: 812px;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            border: 8px solid #334155;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            background: var(--bg);
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 60px 20px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .nav-card {
+            padding: 20px;
+            border-radius: 20px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            aspect-ratio: 1/1;
+        }
+
+        .nav-card:active {
+            transform: scale(0.95);
+        }
+
+        .nav-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .nav-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .list-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary);
+        }
+
+        .list-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .list-subtitle {
+            color: var(--secondary);
+            font-size: 14px;
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--secondary);
+            cursor: pointer;
+            font-size: 12px;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .add-btn {
+            background: white;
+            color: var(--primary);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Calendar Styles */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .calendar-day.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 4px;
+            height: 4px;
+            background: var(--warning);
+            border-radius: 50%;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="phone">
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen active">
+            <div class="header">
+                <div class="header-title">NGO Medicine System</div>
+            </div>
+            <div class="content">
+                <div
+                    style="background: white; padding: 20px; border-radius: 20px; margin-bottom: 25px; text-align: center;">
+                    <div style="font-size: 40px; margin-bottom: 10px;">✅</div>
+                    <h3 style="margin-bottom: 5px;">All clear for today!</h3>
+                    <p style="color: var(--secondary);">No pending medicine deliveries.</p>
+                </div>
+
+                <h4 style="margin-bottom: 15px; color: #475569;">Quick Access</h4>
+                <div class="nav-grid">
+                    <div class="nav-card" onclick="showScreen('patients-screen')" style="background: #3B82F6;">
+                        <span class="nav-icon">👤</span>
+                        <span class="nav-title">Patients</span>
+                    </div>
+                    <div class="nav-card" onclick="showScreen('workers-screen')" style="background: #10B981;">
+                        <span class="nav-icon">👷</span>
+                        <span class="nav-title">Workers</span>
+                    </div>
+                    <div class="nav-card" onclick="showScreen('medicines-screen')" style="background: #8B5CF6;">
+                        <span class="nav-icon">💊</span>
+                        <span class="nav-title">Stock</span>
+                    </div>
+                    <div class="nav-card" onclick="showScreen('calendar-screen')" style="background: #F59E0B;">
+                        <span class="nav-icon">📅</span>
+                        <span class="nav-title">Schedules</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patients Screen -->
+        <div id="patients-screen" class="screen">
+            <div class="header">
+                <div class="header-title">Patients</div>
+                <button class="add-btn" onclick="toast('Add patient form would open')">+ Add</button>
+            </div>
+            <div class="content">
+                <div class="list-card" style="border-left-color: #3B82F6;">
+                    <div class="list-title">John Doe</div>
+                    <div class="list-subtitle">Patient ID: PAT-001</div>
+                </div>
+                <div class="list-card" style="border-left-color: #3B82F6;">
+                    <div class="list-title">Jane Smith</div>
+                    <div class="list-subtitle">Patient ID: PAT-002</div>
+                </div>
+                <div class="list-card" style="border-left-color: #3B82F6;">
+                    <div class="list-title">Robert Johnson</div>
+                    <div class="list-subtitle">Patient ID: PAT-003</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workers Screen -->
+        <div id="workers-screen" class="screen">
+            <div class="header">
+                <div class="header-title">Workers</div>
+                <button class="add-btn" onclick="toast('Add worker form would open')">+ Add</button>
+            </div>
+            <div class="content">
+                <div class="list-card" style="border-left-color: #10B981;">
+                    <div class="list-title">Dr. Sarah Wilson</div>
+                    <div class="list-subtitle">Mobile: +1 (555) 123-4567</div>
+                </div>
+                <div class="list-card" style="border-left-color: #10B981;">
+                    <div class="list-title">Nurse Emily Brown</div>
+                    <div class="list-subtitle">Mobile: +1 (555) 987-6543</div>
+                </div>
+                <div class="list-card" style="border-left-color: #10B981;">
+                    <div class="list-title">Dr. Michael Chen</div>
+                    <div class="list-subtitle">Mobile: +1 (555) 456-7890</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medicines Screen -->
+        <div id="medicines-screen" class="screen">
+            <div class="header">
+                <div class="header-title">Medicine Stock</div>
+                <button class="add-btn" onclick="toast('Add stock form would open')">+ Add</button>
+            </div>
+            <div class="content">
+                <div class="list-card" style="border-left-color: #8B5CF6;">
+                    <div class="list-title">Aspirin</div>
+                    <div class="list-subtitle">100 tablets available</div>
+                </div>
+                <div class="list-card" style="border-left-color: #8B5CF6;">
+                    <div class="list-title">Ibuprofen</div>
+                    <div class="list-subtitle">75 tablets available</div>
+                </div>
+                <div class="list-card" style="border-left-color: #8B5CF6;">
+                    <div class="list-title">Paracetamol</div>
+                    <div class="list-subtitle">150 tablets available</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar Screen -->
+        <div id="calendar-screen" class="screen">
+            <div class="header">
+                <div class="header-title">Schedules</div>
+                <button class="add-btn" onclick="showScreen('add-schedule-screen')">+ Add</button>
+            </div>
+            <div class="content">
+                <div class="calendar-grid">
+                    <!-- Simple Calendar Mock -->
+                    <div class="calendar-day">1</div>
+                    <div class="calendar-day">2</div>
+                    <div class="calendar-day">3</div>
+                    <div class="calendar-day">4</div>
+                    <div class="calendar-day">5</div>
+                    <div class="calendar-day">6</div>
+                    <div class="calendar-day">7</div>
+                    <div class="calendar-day">8</div>
+                    <div class="calendar-day">9</div>
+                    <div class="calendar-day">10</div>
+                    <div class="calendar-day">11</div>
+                    <div class="calendar-day">12</div>
+                    <div class="calendar-day">13</div>
+                    <div class="calendar-day active">14</div>
+                    <div class="calendar-day">15</div>
+                    <div class="calendar-day">16</div>
+                    <div class="calendar-day">17</div>
+                    <div class="calendar-day">18</div>
+                    <div class="calendar-day">19</div>
+                    <div class="calendar-day">20</div>
+                    <div class="calendar-day">21</div>
+                </div>
+                <h4 style="margin-bottom: 10px;">Today's Deliveries</h4>
+                <div class="list-card" style="border-left-color: #F59E0B;">
+                    <div class="list-title">9:00 AM - John Doe</div>
+                    <div class="list-subtitle">Medicine: Aspirin (2 tablets)</div>
+                </div>
+                <div class="list-card" style="border-left-color: #F59E0B;">
+                    <div class="list-title">1:00 PM - Robert Johnson</div>
+                    <div class="list-subtitle">Medicine: Paracetamol (1 tablet)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Schedule Screen -->
+        <div id="add-schedule-screen" class="screen">
+            <div class="header">
+                <div class="header-title">Add Schedule</div>
+                <button class="add-btn" onclick="showScreen('calendar-screen')">Cancel</button>
+            </div>
+            <div class="content">
+                <div class="form-group">
+                    <label class="label">Patient</label>
+                    <select>
+                        <option>Select Patient</option>
+                        <option>John Doe</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="label">Health Worker</label>
+                    <select>
+                        <option>Select Worker</option>
+                        <option>Dr. Sarah Wilson</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="label">Medicine</label>
+                    <select>
+                        <option>Select Medicine</option>
+                        <option>Aspirin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="label">Dosage Amount</label>
+                    <input type="number" placeholder="Enter dosage (e.g., 2 tablets)" min="1" step="0.5">
+                </div>
+                <button class="submit-btn"
+                    onclick="toast('Schedule saved successfully!'); showScreen('calendar-screen')">Save
+                    Schedule</button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="showScreen('home-screen')">
+                <i>🏠</i>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('patients-screen')">
+                <i>👤</i>
+                <span>Patients</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('workers-screen')">
+                <i>👷</i>
+                <span>Workers</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('medicines-screen')">
+                <i>💊</i>
+                <span>Stock</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('calendar-screen')">
+                <i>📅</i>
+                <span>Schedules</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            // Show selected screen
+            document.getElementById(screenId).classList.add('active');
+
+            // Update bottom nav active state
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                const icon = item.querySelector('i').innerText;
+                if (screenId === 'home-screen' && icon === '🏠') item.classList.add('active');
+                if (screenId === 'patients-screen' && icon === '👤') item.classList.add('active');
+                if (screenId === 'workers-screen' && icon === '👷') item.classList.add('active');
+                if (screenId === 'medicines-screen' && icon === '💊') item.classList.add('active');
+                if (screenId === 'calendar-screen' && icon === '📅') item.classList.add('active');
+            });
+        }
+
+        function toast(message) {
+            alert(message);
+        }
+    </script>
+
+</body>
+
+</html>

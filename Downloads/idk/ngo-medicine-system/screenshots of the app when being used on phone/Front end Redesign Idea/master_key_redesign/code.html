@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Master Key Setup - Clinical Curator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed": "#23005c",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "tertiary-container": "#8455ef",
+                        "surface-dim": "#d9dadb",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#6b38d4",
+                        "primary-fixed-dim": "#adc6ff",
+                        "surface-container": "#edeeef",
+                        "primary": "#0058be",
+                        "secondary-fixed-dim": "#c0c7d6",
+                        "background": "#f8f9fa",
+                        "on-primary-container": "#fefcff",
+                        "inverse-surface": "#2e3132",
+                        "surface-variant": "#e1e3e4",
+                        "surface": "#f8f9fa",
+                        "secondary": "#585f6c",
+                        "outline": "#727785",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-bright": "#f8f9fa",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#191c1d",
+                        "secondary-container": "#dce2f3",
+                        "primary-container": "#2170e4",
+                        "on-secondary-container": "#5e6572",
+                        "primary-fixed": "#d8e2ff",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#404754",
+                        "on-secondary-fixed": "#151c27",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary-fixed-variant": "#004395",
+                        "inverse-primary": "#adc6ff",
+                        "secondary-fixed": "#dce2f3",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-container-low": "#f3f4f5",
+                        "on-surface-variant": "#424754",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "tertiary-fixed": "#e9ddff",
+                        "outline-variant": "#c2c6d6",
+                        "on-background": "#191c1d",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#005ac2",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#001a42"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-glass {
+            background: rgba(248, 249, 250, 0.85);
+            backdrop-filter: blur(12px);
+        }
+        .active-scale:active {
+            transform: scale(0.92);
+        }
+        .keypad-shadow {
+            box-shadow: 0 4px 12px rgba(0, 88, 190, 0.04);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col">
+<!-- Top Navigation Bar (Close Action) -->
+<header class="w-full top-0 sticky z-50 bg-[#F8F9FA] dark:bg-slate-900 flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-on-surface" data-icon="close">close</span>
+</button>
+</div>
+<div class="font-['Manrope'] font-bold text-xl tracking-tight text-slate-900 dark:text-slate-50">
+            Clinical Curator
+        </div>
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="professional medical staff portrait with a warm approachable smile in a clean modern clinic setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC1HV8F4ajKN-eZdNtzMlW6Q83A4nbOptxqdDF-A6dmJRJYpmUzd8r7-QU6Bo1nRcCFvQVhQflkQs4l98y7HoW4VuZKMpptZLKhHGFLXn7qrdAL8aczhUoset-st_jt1e4guQax4Pp8JQcrx0daiW9ThiKNlGpOgO4Sd2C6PX9l48ANX1eaVe0lCgAbNOYIFrnmAaOnVctXSJjN0rx4UEhMuRPB7dQtim_4tUsooyiUDTlYsrEF4IgOS5_MqwIpjFu8EuAEgC_3A"/>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center justify-center px-6 max-w-lg mx-auto w-full py-12">
+<!-- Header Section -->
+<div class="text-center mb-12">
+<h1 class="font-headline text-4xl font-extrabold text-on-surface tracking-tight mb-4">
+                Security Key
+            </h1>
+<p class="text-secondary font-body text-base max-w-[280px] mx-auto leading-relaxed">
+                Create a 4-digit master key to secure patient records and sensitive data.
+            </p>
+</div>
+<!-- PIN Display Section -->
+<div class="flex justify-center items-center gap-6 mb-16">
+<!-- Filled Dot -->
+<div class="w-5 h-5 rounded-full bg-primary ring-4 ring-primary/10 shadow-sm transition-all duration-300"></div>
+<!-- Filled Dot -->
+<div class="w-5 h-5 rounded-full bg-primary ring-4 ring-primary/10 shadow-sm transition-all duration-300"></div>
+<!-- Empty Dot -->
+<div class="w-5 h-5 rounded-full border-2 border-outline-variant bg-surface-container-low transition-all duration-300"></div>
+<!-- Empty Dot -->
+<div class="w-5 h-5 rounded-full border-2 border-outline-variant bg-surface-container-low transition-all duration-300"></div>
+</div>
+<!-- Numeric Keypad -->
+<div class="grid grid-cols-3 gap-x-12 gap-y-8 w-full max-w-[320px]">
+<!-- Row 1 -->
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center bg-surface-container-lowest keypad-shadow text-2xl font-headline font-bold text-on-surface hover:bg-surface-container-high transition-all">1</button>
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center bg-surface-container-lowest keypad-shadow text-2xl font-headline font-bold text-on-surface hover:bg-surface-container-high transition-all">2</button>
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center bg-surface-container-lowest keypad-shadow text-2xl font-headline font-bold text-on-surface hover:bg-surface-container-high transition-all">3</button>
+<!-- Row 2 -->
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center bg-surface-container-lowest keypad-shadow text-2xl font-headline font-bold text-on-surface hover:bg-surface-container-high transition-all">4</button>
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center bg-surface-container-lowest keypad-shadow text-2xl font-headline font-bold text-on-surface hover:bg-surface-container-high transition-all">5</button>
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center bg-surface-container-lowest keypad-shadow text-2xl font-headline font-bold text-on-surface hover:bg-surface-container-high transition-all">6</button>
+<!-- Row 3 -->
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center bg-surface-container-lowest keypad-shadow text-2xl font-headline font-bold text-on-surface hover:bg-surface-container-high transition-all">7</button>
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center bg-surface-container-lowest keypad-shadow text-2xl font-headline font-bold text-on-surface hover:bg-surface-container-high transition-all">8</button>
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center bg-surface-container-lowest keypad-shadow text-2xl font-headline font-bold text-on-surface hover:bg-surface-container-high transition-all">9</button>
+<!-- Row 4 -->
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-all group">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary" data-icon="fingerprint">fingerprint</span>
+</button>
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center bg-surface-container-lowest keypad-shadow text-2xl font-headline font-bold text-on-surface hover:bg-surface-container-high transition-all">0</button>
+<button class="active-scale w-20 h-20 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-all group">
+<span class="material-symbols-outlined text-secondary group-hover:text-error" data-icon="backspace">backspace</span>
+</button>
+</div>
+<!-- Secondary Action -->
+<div class="mt-16 w-full">
+<button class="w-full h-14 rounded-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline font-semibold text-lg flex items-center justify-center shadow-lg active-scale transition-all">
+                Confirm Security Key
+            </button>
+<button class="w-full mt-4 h-12 text-secondary font-label font-medium tracking-wider uppercase text-xs hover:text-primary transition-colors">
+                I forgot my previous key
+            </button>
+</div>
+</main>
+<!-- Contextual Information Card (Editorial Style) -->
+<aside class="px-6 mb-24 max-w-lg mx-auto w-full">
+<div class="bg-surface-container-lowest rounded-3xl p-6 relative overflow-hidden">
+<!-- Left Accent Bar -->
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-tertiary"></div>
+<div class="flex gap-4 items-start">
+<div class="w-12 h-12 rounded-2xl bg-tertiary/10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-tertiary" data-icon="shield_lock">shield_lock</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-on-surface mb-1">Why a Security Key?</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                        This key encrypts your local database session, ensuring patient confidentiality even if the device is shared between NGO shifts.
+                    </p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Navigation Suppressed for Focused Journey (Successor Task Flow) -->
+<!-- But keeping bottom spacing for visual balance as per 'BottomNavBar' positioning logic if it were present -->
+<footer class="pb-12 text-center text-outline-variant text-[10px] font-label uppercase tracking-widest">
+        Clinical Curator Security Protocol v2.4.0
+    </footer>
+</body></html>
