@@ -1,0 +1,2272 @@
+[
+    {
+        "NAME": "SHASTRI PARK",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870723",
+            "011-22688505",
+            "011-22170106"
+        ],
+        "ADDRESS": "M7G8+P5C, Block A, Goutampuri, Shahdara, Ghaziabad, Delhi, 110053"
+    },
+    {
+        "NAME": "NEW USMAN PUR",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870722",
+            "011-22175468",
+            "011-22172410"
+        ],
+        "ADDRESS": "M7F6+3MQ, Grand Trunk Rd, New Usmanpur, Shahdara, New Delhi, Delhi, 110054"
+    },
+    {
+        "NAME": "SEELAMPUR",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870721",
+            "011-22562035"
+        ],
+        "ADDRESS": "M7F9+Q28, New Seelampur Phase II, New Seelampur, Phase III, Shahdara, Delhi, 110053"
+    },
+    {
+        "NAME": "GOKALPURI",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870724",
+            "011-22562112",
+            "011-22561215"
+        ],
+        "ADDRESS": "P72P+XHJ, Mangal Pandey Marg, Gokalpur, New Delhi, Delhi, 110094"
+    },
+    {
+        "NAME": "JAFRABAD",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870732",
+            "011-22560455",
+            "011-22560192"
+        ],
+        "ADDRESS": "M7HC+RC5, Maj, Asha Ram Tyagi Marg, Block C1, Jafrabad, Shahdara, Delhi, 110053"
+    },
+    {
+        "NAME": "WELCOME",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870731",
+            "011-22822746",
+            "011-22826808"
+        ],
+        "ADDRESS": "D-29, New Jaffrabad, Shahdara, New Delhi, Delhi, 110032"
+    },
+    {
+        "NAME": "BHAJANPURA",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870730",
+            "011-22560741",
+            "011-22560771"
+        ],
+        "ADDRESS": "3, Block C 2, Bhajanpura, Tukhmirpur, Delhi, 110053"
+    },
+    {
+        "NAME": "SONIA VIHAR",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870729",
+            "011-24533174"
+        ],
+        "ADDRESS": "P6WW+98C, Sabhapur Extension, Sabhapur, Sonia Vihar, Delhi, 110090"
+    },
+    {
+        "NAME": "NANDNAGRI",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870733",
+            "011-22583307",
+            "011-22131093"
+        ],
+        "ADDRESS": "A-1/203, Nand Nagri, Mandoli, New Delhi, Delhi, 110093"
+    },
+    {
+        "NAME": "HARSH VIHAR",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870734",
+            "011-22342073",
+            "011-22342074"
+        ],
+        "ADDRESS": "Harsh Vihar Extension, Block D, Harsh Vihar, Mandoli, Delhi, 110093"
+    },
+    {
+        "NAME": "KARAWAL NAGAR",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870728",
+            "011-22932231"
+        ],
+        "ADDRESS": "P7MG+53C, Kamal Vihar Extn, Kamal Vihar, Karawal Nagar, Delhi, 110090"
+    },
+    {
+        "NAME": "DAYALPUR",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870725",
+            "011-22800216",
+            "011-22800215"
+        ],
+        "ADDRESS": "P72P+RGF, Metro Station, Mangal Pandey Marg, Wazirabad Rd, near Gokalpuri, Gokalpur, Delhi 110094"
+    },
+    {
+        "NAME": "JYOTI NAGAR",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870726",
+            "011-22814186"
+        ],
+        "ADDRESS": "C-324, Loni Rd, Kardam Puri Extension, Kardam Puri, Shahdara, Delhi, 110093"
+    },
+    {
+        "NAME": "KHAJOURI KHAS",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "8750870727",
+            "011-22962735",
+            "011-22966851"
+        ],
+        "ADDRESS": "P773+7WH, opposite Govt. School Khajuri, Sonia Vihar, New Delhi, Delhi, 110090"
+    },
+    {
+        "NAME": "G.T.B. ENCLAVE",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "7065036031",
+            "011-22580946"
+        ],
+        "ADDRESS": "M8P8+67P, Taharpur Village, Dilshad Garden, Delhi, 110095"
+    },
+    {
+        "NAME": "MANSAROVER PARK",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "7065036029",
+            "011-22599374",
+            "011-22599275"
+        ],
+        "ADDRESS": "M7MX+5CJ, Dda Market, Mansarovar Park, Shahdara, New Delhi, Delhi, 110032"
+    },
+    {
+        "NAME": "GEETA COLONY",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "7065036026",
+            "011-22506665",
+            "011-22508164"
+        ],
+        "ADDRESS": "M74G+6G3, Geeta Colony Rd, Block 12, Geeta Colony, New Delhi, Delhi, 110051"
+    },
+    {
+        "NAME": "KRISHNA NAGAR",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "7065036025",
+            "011-22093224",
+            "011-22093887"
+        ],
+        "ADDRESS": "B-81, Gali No. 3, Kanti Nagar South, Seelampur, Shahdara, Delhi, 110051"
+    },
+    {
+        "NAME": "SEEMAPURI",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "7065036030",
+            "011-22599394",
+            "011-22599397"
+        ],
+        "ADDRESS": "M8H8+4H8, Zulfe Bengal, Dilshad Garden, New Delhi, Delhi, 110095"
+    },
+    {
+        "NAME": "GANDHI NAGAR",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "7065036024",
+            "011-22082235",
+            "011-22072235"
+        ],
+        "ADDRESS": "M758+XVC, Gandhi Nagar Main Rd, Gandhi Nagar, Seelampur, Shahdara, New Delhi, Delhi, 110031"
+    },
+    {
+        "NAME": "JAGAT PURI",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "7065036023",
+            "011-22420363",
+            "011-22420364"
+        ],
+        "ADDRESS": "538/A, East Laxmi Market, Block C, Brij Puri, Krishna Nagar, Delhi, 110051"
+    },
+    {
+        "NAME": "ANAND VIHAR",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "7065036022",
+            "011-22384300",
+            "011-22384301"
+        ],
+        "ADDRESS": "M73V+M97, Maharaja Surajmal Marg, Road, opposite to BML Bhardwaj, Karkardooma, Shahdara, Delhi, 110032"
+    },
+    {
+        "NAME": "SHAHDARA",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "7065036027",
+            "011-22831783",
+            "011-22832087"
+        ],
+        "ADDRESS": "M7FP+Q3C, Grand Trunk Rd, Navin Shahdara, Shahdara, Delhi, 110032"
+    },
+    {
+        "NAME": "FARSH BAZAR",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "7065036028",
+            "011-22303600",
+            "011-22385817"
+        ],
+        "ADDRESS": "M77P+XGM, Sunder Park, Shahdara, New Delhi, Delhi, 110032"
+    },
+    {
+        "NAME": "VIVEK VIHAR",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "7065036021",
+            "011-22150370"
+        ],
+        "ADDRESS": "M884+QH8, Rd Number 71, Block E, Jhilmil Colony, New Delhi, Delhi, 110095"
+    },
+    {
+        "NAME": "NEW ASHOK NAGAR",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "8750870631",
+            "011-22610839"
+        ],
+        "ADDRESS": "D-74, Gharoli Main Rd, Mayur Vihar Phase III, Vasundhara Enclave, New Delhi, Delhi, 110096"
+    },
+    {
+        "NAME": "KALYANPURI",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "8750871830",
+            "011-22772251",
+            "011-22772287"
+        ],
+        "ADDRESS": "J878+8WJ, Kalyanpuri, Mayur Vihar Phase-I, near Chand Cinema, Kalyan Puri, Delhi, 110091"
+    },
+    {
+        "NAME": "PANDAV NAGAR",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "8750870629",
+            "011-22780090",
+            "011-22780100"
+        ],
+        "ADDRESS": "J8C3+34M, Ram Kumar Gautam Marg, near Bimla Devi Hospital, Mayur Vihar Phase I, Mayur Vihar, New Delhi, Delhi, 110091"
+    },
+    {
+        "NAME": "MANDAWALI",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "8750870628",
+            "011-22720808",
+            "011-22787614"
+        ],
+        "ADDRESS": "J8F4+WHJ, Mother Dairy Marg, Vinod Nagar, I.P.Extension, Patparganj, Patparganj, New Delhi, Delhi 110092"
+    },
+    {
+        "NAME": "MAYUR VIHAR",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "8750870627",
+            "011-22710335"
+        ],
+        "ADDRESS": "J843+VJ3, Trilok Puri Rd, Himmatpuri, Mayur Vihar, Trilokpuri, New Delhi, Delhi 110091"
+    },
+    {
+        "NAME": "PATPARGANJ IND.",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "8750870626",
+            "011-22146490",
+            "011-22146491"
+        ],
+        "ADDRESS": "J8W8+28P, Isbt Anand Vihar, Anand Vihar, Delhi, 110092"
+    },
+    {
+        "NAME": "GAZIPUR",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "8750870625",
+            "011-22610068",
+            "011-22610100"
+        ],
+        "ADDRESS": "J8FJ+QXX, Integrated Freight Complex, Mayur Vihar Phase III, Ghazipur, Delhi, 110096"
+    },
+    {
+        "NAME": "LAXMI NAGAR",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "8750870622",
+            "011-22542992",
+            "011-22542441"
+        ],
+        "ADDRESS": "J7PC+W6G, Vishwakarma Park, Laxmi Nagar, Delhi, 110092"
+    },
+    {
+        "NAME": "SHAKARPUR",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "8750870623",
+            "011-22542992",
+            "011-22554441"
+        ],
+        "ADDRESS": "J7PC+X7X, Gali No. 10, Block N, Ramesh Park, Laxmi Nagar, New Delhi, Delhi, 110092"
+    },
+    {
+        "NAME": "MADHU VIHAR",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "8750870624",
+            "011-22732427",
+            "011-22732429"
+        ],
+        "ADDRESS": "J8F4+WHJ, Mother Dairy Marg, Vinod Nagar, I.P.Extension, Patparganj, Patparganj, New Delhi, Delhi 110092"
+    },
+    {
+        "NAME": "PREET VIHAR",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "8750870621",
+            "011-22013655",
+            "011-22510291"
+        ],
+        "ADDRESS": "J7QW+P56, Aditya Arcade, Acharya Nag Raj Marg, Nirman Vihar, C Block, Preet Vihar, Preet Vihar, Delhi, 110092"
+    },
+    {
+        "NAME": "KALINDI KUNJ",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870922",
+            "011-28945322"
+        ],
+        "ADDRESS": "Veer Vijay Singh Pathik Marg, D Block, Madanpur Khadar, Delhi - 110044"
+    },
+    {
+        "NAME": "BADARPUR",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870933",
+            "011-29894753",
+            "011-29894754"
+        ],
+        "ADDRESS": "Opposite Badarpur Metro Station, Main Mathura Road, Badarpur, Delhi - 110044"
+    },
+    {
+        "NAME": "OKHLA INDL AREA",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750871623",
+            "011-26816677",
+            "011-26818572"
+        ],
+        "ADDRESS": "Ma Anandmayee Marg, Pocket A, Okhla Phase I, Delhi - 110020"
+    },
+    {
+        "NAME": "SARITA VIHAR",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870921",
+            "011-26825554"
+        ],
+        "ADDRESS": "Opposite Apollo Hospital, Sarita Vihar, Delhi - 110076"
+    },
+    {
+        "NAME": "KALKAJI",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870930",
+            "011-26430607",
+            "011-26460100"
+        ],
+        "ADDRESS": "Near Deshbandhu College, Kalkaji Main Road, Delhi - 110019"
+    },
+    {
+        "NAME": "AMAR COLONY",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870931",
+            "011-26412194"
+        ],
+        "ADDRESS": "Opposite Indian Oil Petrol Pump, Kalka Devi Marg, Lajpat Nagar IV, Delhi - 110024"
+    },
+    {
+        "NAME": "GOVINDPURI",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870932",
+            "011-29980049"
+        ],
+        "ADDRESS": "Baba Fatehsingh Marg, Kalkaji Extension, Block A 14, Govindpuri, Delhi - 110019"
+    },
+    {
+        "NAME": "SHAHEEN BAGH",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870926",
+            "011-26940691",
+            "011-26940693"
+        ],
+        "ADDRESS": "Thokar No-6, Allama Shibli Nomani Road, Jamia Nagar, Delhi - 110025"
+    },
+    {
+        "NAME": "JAMIA NAGAR",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870925",
+            "011-26945563"
+        ],
+        "ADDRESS": "Kalindi Kunj Rd, near Okhla Head Bridge, Jamia Nagar, Delhi - 110025"
+    },
+    {
+        "NAME": "NEW FRIENDS COL.",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870924",
+            "011-26834563"
+        ],
+        "ADDRESS": "Behind CC Market Community Centre, Mathura Road, NFC, Delhi - 110025"
+    },
+    {
+        "NAME": "H. NIZAMUDDIN",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870926",
+            "011-24356565",
+            "011-24355758"
+        ],
+        "ADDRESS": "Near Sabz Burj, Mathura Road, Nizamuddin, Delhi - 110013"
+    },
+    {
+        "NAME": "SUNLIGHT COLONY",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870928",
+            "011-26347482",
+            "011-26347481"
+        ],
+        "ADDRESS": "Dharamvir Mann Marg, Near Jeevan Hospital, Sunlight Colony, Delhi - 110014"
+    },
+    {
+        "NAME": "LAJPAT NAGAR",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870927",
+            "011-29832456"
+        ],
+        "ADDRESS": "Feroze Gandhi Road, Lajpat Nagar 3, Delhi - 110024"
+    },
+    {
+        "NAME": "PUL PRAHLADPUR",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870934",
+            "011-26366800",
+            "011-26366801"
+        ],
+        "ADDRESS": "Mehrauli – Badarpur Rd, Tughlaqabad Extension, Block A, Delhi - 110044"
+    },
+    {
+        "NAME": "MOHAN GARDEN",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "8750871029",
+            "011-25351003",
+            "011-25351005"
+        ],
+        "ADDRESS": "Rama Park Road, Block A, Mohan Garden, New Delhi - 110059"
+    },
+    {
+        "NAME": "BABA HARIDAS NAG.",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "8750871028",
+            "011-25315302",
+            "011-25315211"
+        ],
+        "ADDRESS": "Main Road, Jharoda Kalan, Najafgarh, New Delhi - 110072"
+    },
+    {
+        "NAME": "NAJAFGARH",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "8750871027",
+            "011-25016500"
+        ],
+        "ADDRESS": "Main Firni Road, Najafgarh, New Delhi - 110043"
+    },
+    {
+        "NAME": "CHHAWLA",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "8750871631",
+            "011-25316300"
+        ],
+        "ADDRESS": "Near BSF Camp, Chhawla, New Delhi - 110071"
+    },
+    {
+        "NAME": "JAFFAPUR KALAN",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "8750871030",
+            "011-25318081"
+        ],
+        "ADDRESS": "Near Rao Tula Ram Hospital, Jaffapur Kalan, New Delhi - 110073"
+    },
+    {
+        "NAME": "DWARKA SOUTH",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "8750871023",
+            "011-25089326"
+        ],
+        "ADDRESS": "Sector 9, Dwarka, New Delhi - 110077"
+    },
+    {
+        "NAME": "DWARKA NORTH",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "8750871022",
+            "011-28031878",
+            "011-28031879"
+        ],
+        "ADDRESS": "Sector 17, Dwarka, New Delhi - 110078"
+    },
+    {
+        "NAME": "SECTOR 23 DWARKA",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "8750871021",
+            "011-28051584",
+            "011-28051585"
+        ],
+        "ADDRESS": "Sector 23, Dwarka, New Delhi - 110077"
+    },
+    {
+        "NAME": "UTTAM NAGAR",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "8750871026",
+            "011-25377425"
+        ],
+        "ADDRESS": "Najafgarh Road, Near Uttam Nagar West Metro, New Delhi - 110059"
+    },
+    {
+        "NAME": "BINDAPUR",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "8750871025",
+            "011-25633525",
+            "011-25633526"
+        ],
+        "ADDRESS": "Pocket 3, Bindapur, New Delhi - 110059"
+    },
+    {
+        "NAME": "DABRI",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "8750871024",
+            "011-25639350"
+        ],
+        "ADDRESS": "Pankha Road, Near C-1 Janakpuri, New Delhi - 110045"
+    },
+    {
+        "NAME": "KIRTI NAGAR",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871126",
+            "011-25438719"
+        ],
+        "ADDRESS": "Mansarover Garden, Kirti Nagar, New Delhi - 110015"
+    },
+    {
+        "NAME": "MOTI NAGAR",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871125",
+            "011-25101150"
+        ],
+        "ADDRESS": "Shivaji Marg, Moti Nagar, New Delhi - 110015"
+    },
+    {
+        "NAME": "PUNJABI BAGH",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871124",
+            "011-25224162",
+            "011-25225616"
+        ],
+        "ADDRESS": "Rohtak Road, Near Ring Road, Punjabi Bagh, New Delhi - 110026"
+    },
+    {
+        "NAME": "RAJOURI GARDEN",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871127",
+            "011-25453990",
+            "011-25448885"
+        ],
+        "ADDRESS": "Ring Road, Near Rajouri Garden Metro, New Delhi - 110027"
+    },
+    {
+        "NAME": "HARI NAGAR",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871128",
+            "011-28255719",
+            "011-28525719"
+        ],
+        "ADDRESS": "Jail Road, Near Hari Nagar Depot, New Delhi - 110064"
+    },
+    {
+        "NAME": "JANAKPURI",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871129",
+            "011-25553166",
+            "011-25551410"
+        ],
+        "ADDRESS": "B-Block, Janakpuri, New Delhi - 110058"
+    },
+    {
+        "NAME": "KHYALA",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871132",
+            "011-25435550"
+        ],
+        "ADDRESS": "Raghubir Nagar, Near Tagore Garden, New Delhi - 110027"
+    },
+    {
+        "NAME": "VIKAS PURI",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871131",
+            "011-25592600",
+            "011-25551213"
+        ],
+        "ADDRESS": "G-Block, Near PVR Vikas Puri, New Delhi - 110018"
+    },
+    {
+        "NAME": "TILAK NAGAR",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871130",
+            "011-25400290",
+            "011-25407800"
+        ],
+        "ADDRESS": "Najafgarh Road, Tilak Nagar, New Delhi - 110018"
+    },
+    {
+        "NAME": "NARAINA",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871122",
+            "011-25891181"
+        ],
+        "ADDRESS": "Naraina Vihar, Ring Road, New Delhi - 110028"
+    },
+    {
+        "NAME": "INDERPURI",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871123",
+            "011-25832201"
+        ],
+        "ADDRESS": "Block A, Inderpuri, New Delhi - 110012"
+    },
+    {
+        "NAME": "MAYAPURI",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "8750871121",
+            "011-28116097",
+            "011-28117644"
+        ],
+        "ADDRESS": "Phase 1, Mayapuri Industrial Area, New Delhi - 110064"
+    },
+    {
+        "NAME": "NIHAL VIHAR",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "7065036129",
+            "011-25946710",
+            "011-25946700"
+        ],
+        "ADDRESS": "Gali No. 11, Near G Block Zameedar Property, Nihal Vihar, Delhi - 110041"
+    },
+    {
+        "NAME": "P. VIHAR WEST",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "7065036130",
+            "011-25268394"
+        ],
+        "ADDRESS": "Outer Ring Road, Near Peeragarhi, New Delhi - 110063"
+    },
+    {
+        "NAME": "P. VIHAR EAST",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "7065036131",
+            "011-25263471"
+        ],
+        "ADDRESS": "Near A-2 Block & Jwala Heri Market, Paschim Vihar, Delhi - 110063"
+    },
+    {
+        "NAME": "RANHOLA",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "7065036128",
+            "011-28363001",
+            "011-28363002"
+        ],
+        "ADDRESS": "Main Road, Near Petrol Pump, Ranhola, Delhi - 110041"
+    },
+    {
+        "NAME": "MUNDKA",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "7065036126",
+            "011-25280979"
+        ],
+        "ADDRESS": "PVC Market Road, Near Village Hiran Kuda, Mundka, Delhi - 110041"
+    },
+    {
+        "NAME": "NANGLOI",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "7065036127",
+            "011-28949470",
+            "011-28949570"
+        ],
+        "ADDRESS": "Ground Floor, Near Nangloi Metro Station & Nangloi Chowk, Delhi - 110041"
+    },
+    {
+        "NAME": "RAJ PARK",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "7065036123",
+            "011-27923709",
+            "011-27910071"
+        ],
+        "ADDRESS": "Opposite Sanjay Gandhi Hospital, Raj Park, Delhi - 110086"
+    },
+    {
+        "NAME": "SULTANPURI",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "7065036134",
+            "011-25472410",
+            "011-25472166"
+        ],
+        "ADDRESS": "Police Station Rd, Block P3, Sultanpuri, Delhi - 110086"
+    },
+    {
+        "NAME": "RANI BAGH",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "7065036121",
+            "011-2701593"
+        ],
+        "ADDRESS": "Deepali Chowk, Outer Ring Road, Rani Bagh, Delhi - 110034"
+    },
+    {
+        "NAME": "MANGOLPURI",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "7065036122",
+            "011-27922168"
+        ],
+        "ADDRESS": "D-904 Maharishi Valmiki Marg, Mangolpuri, Delhi - 110083"
+    },
+    {
+        "NAME": "MIANWALI NAGAR",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "7065036132",
+            "011-25286588"
+        ],
+        "ADDRESS": "Behind Petrol Pump, Mianwali Nagar, Delhi - 110087"
+    },
+    {
+        "NAME": "BEGAMPUR",
+        "CATEGORY": "ROHINI",
+        "PHONE": [
+            "8750870323",
+            "011-27579033",
+            "011-27581117"
+        ],
+        "ADDRESS": "100 Futa Road, Near Rohini Sector 23, Begum Pur, Delhi - 110086"
+    },
+    {
+        "NAME": "KANJHAWALA",
+        "CATEGORY": "ROHINI",
+        "PHONE": [
+            "8750870324",
+            "011-25951486",
+            "011-25952485"
+        ],
+        "ADDRESS": "Opposite DTC Depot, Ghewra Narela Road, Kanjhawala, Delhi - 110081"
+    },
+    {
+        "NAME": "PREM NAGAR",
+        "CATEGORY": "ROHINI",
+        "PHONE": [
+            "8750870322",
+            "011-25489080"
+        ],
+        "ADDRESS": "Mubarakpur X-Ing, Phase I, Baljit Vihar, Delhi - 110086"
+    },
+    {
+        "NAME": "AMAN VIHAR",
+        "CATEGORY": "ROHINI",
+        "PHONE": [
+            "8750870321",
+            "011-27581223",
+            "011-25961600"
+        ],
+        "ADDRESS": "Pocket 3, Police Station Road, Sector 22, Rohini, Delhi - 110086"
+    },
+    {
+        "NAME": "BUDH VIHAR",
+        "CATEGORY": "ROHINI",
+        "PHONE": [
+            "8750870326",
+            "011-27052772"
+        ],
+        "ADDRESS": "Rohini Institutional Area, Sector 5, Rohini, Delhi - 110085"
+    },
+    {
+        "NAME": "VIJAY VIHAR",
+        "CATEGORY": "ROHINI",
+        "PHONE": [
+            "8750870329",
+            "011-27521295",
+            "011-27502773"
+        ],
+        "ADDRESS": "Pocket A, Sector 1, Rohini, Delhi - 110085"
+    },
+    {
+        "NAME": "PRASHANT VIHAR",
+        "CATEGORY": "ROHINI",
+        "PHONE": [
+            "8750870325",
+            "011-27557184"
+        ],
+        "ADDRESS": "Shaheed Colonel Guruveer Singh Sarna Marg, Sector 9, Rohini, Delhi - 110085"
+    },
+    {
+        "NAME": "K.N. KATJU MARG",
+        "CATEGORY": "ROHINI",
+        "PHONE": [
+            "8750870327",
+            "011-27571171"
+        ],
+        "ADDRESS": "Block G-3, Sector 16, Rohini, Delhi - 110085"
+    },
+    {
+        "NAME": "NORTH ROHINI",
+        "CATEGORY": "ROHINI",
+        "PHONE": [
+            "8750870330",
+            "011-27048211"
+        ],
+        "ADDRESS": "Shiva Rd, Sector 7, Rohini, Delhi - 110085"
+    },
+    {
+        "NAME": "SOUTH ROHINI",
+        "CATEGORY": "ROHINI",
+        "PHONE": [
+            "8750870328",
+            "011-27510515",
+            "011-27512189"
+        ],
+        "ADDRESS": "Yogashram Marg, Near Mangalam Place, Sector 3, Rohini, Delhi - 110085"
+    },
+    {
+        "NAME": "SWAROOP NAGAR",
+        "CATEGORY": "OUTER NORTH",
+        "PHONE": [
+            "7065036327",
+            "011-27811415",
+            "011-27811416"
+        ],
+        "ADDRESS": "Shiv Mandir Road, Near Radha Krishan Mandir, Delhi - 110042"
+    },
+    {
+        "NAME": "BHALSWA DAIRY",
+        "CATEGORY": "OUTER NORTH",
+        "PHONE": [
+            "7065036328",
+            "011-27811934",
+            "011-27811933"
+        ],
+        "ADDRESS": "Gurudwara Road, Bhalswa Dairy, Delhi - 110042"
+    },
+    {
+        "NAME": "BAWANA",
+        "CATEGORY": "OUTER NORTH",
+        "PHONE": [
+            "7065036321",
+            "011-27751949"
+        ],
+        "ADDRESS": "Main Bawana Road, Near Bawana Chowk, Delhi - 110039"
+    },
+    {
+        "NAME": "SAMAI PUR BADLI",
+        "CATEGORY": "OUTER NORTH",
+        "PHONE": [
+            "7065036326",
+            "011-27845757",
+            "011-27854799"
+        ],
+        "ADDRESS": "Outer Ring Road, Near Rohini Jail and Passport Office, Delhi - 110042"
+    },
+    {
+        "NAME": "ALIPUR",
+        "CATEGORY": "OUTER NORTH",
+        "PHONE": [
+            "7065036325",
+            "011-27202265"
+        ],
+        "ADDRESS": "Main G.T. Road, Alipur, Delhi - 110036"
+    },
+    {
+        "NAME": "NARELA IND. AREA",
+        "CATEGORY": "OUTER NORTH",
+        "PHONE": [
+            "7065036324",
+            "011-27787593"
+        ],
+        "ADDRESS": "Sector A-10, Pocket 4, Narela Industrial Area, Delhi - 110040"
+    },
+    {
+        "NAME": "NARELA",
+        "CATEGORY": "OUTER NORTH",
+        "PHONE": [
+            "7065036323",
+            "011-27280435",
+            "011-27282350"
+        ],
+        "ADDRESS": "Near Ram Leela Ground, Sector A-10, Narela, Delhi - 110040"
+    },
+    {
+        "NAME": "SHAHBAD DAIRY",
+        "CATEGORY": "OUTER NORTH",
+        "PHONE": [
+            "7065036322",
+            "011-27821047",
+            "011-27822207"
+        ],
+        "ADDRESS": "Shahbad Daulatpur, Near Pehladpur Banger, Delhi - 110042"
+    },
+    {
+        "NAME": "ADARSH NAGAR",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "8750870229",
+            "011-27672452",
+            "011-27674452"
+        ],
+        "ADDRESS": "Mahatma Gandhi Road, Near Azadpur Flyover, Delhi - 110033"
+    },
+    {
+        "NAME": "JAHANGIRPURI",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "8750870228",
+            "011-27631600",
+            "011-27636000"
+        ],
+        "ADDRESS": "Near Babu Jagjivan Ram Hospital, Jahangirpuri, Delhi - 110033"
+    },
+    {
+        "NAME": "MAHENDRA PARK",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "8750870227",
+            "011-27632501",
+            "011-27632502"
+        ],
+        "ADDRESS": "Main Road, Near Jahangir Puri Metro Station, Delhi - 110034"
+    },
+    {
+        "NAME": "SHALIMAR BAGH",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "8750870226",
+            "011-27495198",
+            "011-27497179"
+        ],
+        "ADDRESS": "Gyan Shakti Mandir Marg, Opposite B H Block, Delhi - 110088"
+    },
+    {
+        "NAME": "MODEL TOWN",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "8750870230",
+            "011-27466062",
+            "011-27456072"
+        ],
+        "ADDRESS": "Near Alpana Cinema, Model Town, Delhi - 110009"
+    },
+    {
+        "NAME": "MUKHERJEE NAGAR",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "8750870231",
+            "011-27654675"
+        ],
+        "ADDRESS": "Banda Bahadur Marg, Near New Life Hospital, Delhi - 110009"
+    },
+    {
+        "NAME": "MAURYA ENCLAVE",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "8750870225",
+            "011-27322353",
+            "011-23325006"
+        ],
+        "ADDRESS": "Maurya Enclave, Pitampura, Delhi - 110034"
+    },
+    {
+        "NAME": "SUBHASH PLACE",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "8750870224",
+            "011-27356336",
+            "011-27353014"
+        ],
+        "ADDRESS": "Netaji Subhash Place, Pitampura, Delhi - 110034"
+    },
+    {
+        "NAME": "KESHAV PURAM",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "8750870223",
+            "011-27181325"
+        ],
+        "ADDRESS": "Lawrence Road, Keshav Puram, Delhi - 110035"
+    },
+    {
+        "NAME": "BHARAT NAGAR",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "8750870222",
+            "011-27301800",
+            "011-27301200"
+        ],
+        "ADDRESS": "Near Deep Chand Bandhu Hospital, Kothi Wala Bagh, Delhi - 110052"
+    },
+    {
+        "NAME": "ASHOK VIHAR",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "8750870221",
+            "011-27243066",
+            "011-27242917"
+        ],
+        "ADDRESS": "Deep Cinema Road, Near Deep Cinema, Ashok Vihar Phase 1, Delhi - 110052"
+    },
+    {
+        "NAME": "KOTWALI",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870121",
+            "011-23977100",
+            "011-23953442"
+        ],
+        "ADDRESS": "Darya Ganj Road, Near Happy School, Delhi - 110006"
+    },
+    {
+        "NAME": "SUBZI MANDI",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870186",
+            "011-23827354"
+        ],
+        "ADDRESS": "Ghanta Ghar Road, Subzi Mandi, Delhi - 110007"
+    },
+    {
+        "NAME": "SARAI ROHILLA",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870133",
+            "011-23691335",
+            "011-23691106"
+        ],
+        "ADDRESS": "Near Liberty Cinema, New Rohtak Road, Delhi - 110005"
+    },
+    {
+        "NAME": "GULABI BAGH",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750871634",
+            "011-23651692",
+            "011-23651917"
+        ],
+        "ADDRESS": "Near Gulabi Bagh Chowk, Delhi - 110007"
+    },
+    {
+        "NAME": "SADAR BAZAR",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870124",
+            "011-23512411",
+            "011-23512412"
+        ],
+        "ADDRESS": "Sadar Thana Road, Sadar Bazar, Delhi - 110006"
+    },
+    {
+        "NAME": "BARA HINDU RAO",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870125",
+            "011-23529707",
+            "011-23528060"
+        ],
+        "ADDRESS": "Near Bara Hindu Rao Hospital, Delhi - 110006"
+    },
+    {
+        "NAME": "WAZIRABAD",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870131",
+            "011-23812734",
+            "011-23810076"
+        ],
+        "ADDRESS": "Indra Basti, Near Timarpur, Delhi - 110054"
+    },
+    {
+        "NAME": "BURARI",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870132",
+            "011-27616844",
+            "011-27616845"
+        ],
+        "ADDRESS": "Sant Nagar Marg, Near Authority Office, Burari, Delhi - 110084"
+    },
+    {
+        "NAME": "TIMARPUR",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870130",
+            "011-23812734",
+            "011-23814421"
+        ],
+        "ADDRESS": "Chaudhary Fateh Singh Marg, Timarpur, Delhi - 110054"
+    },
+    {
+        "NAME": "CIVIL LINES",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870127",
+            "011-23810683",
+            "011-23810633"
+        ],
+        "ADDRESS": "Near Delhi Vidhan Sabha, Civil Lines, Delhi - 110054"
+    },
+    {
+        "NAME": "MAURICE NAGAR",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870128",
+            "011-27666332",
+            "011-27667178"
+        ],
+        "ADDRESS": "University Enclave, North Campus, Delhi - 110007"
+    },
+    {
+        "NAME": "ROOP NAGAR",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870129",
+            "011-23844632",
+            "011-23849120"
+        ],
+        "ADDRESS": "Satyawati Marg, Near Fire Station, Roop Nagar, Delhi - 110007"
+    },
+    {
+        "NAME": "KASHMERE GATE",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870123",
+            "011-23968730"
+        ],
+        "ADDRESS": "Opposite Old Delhi Railway Station, Delhi - 110006"
+    },
+    {
+        "NAME": "LAHORI GATE",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "8750870122",
+            "011-23953776",
+            "011-23958234"
+        ],
+        "ADDRESS": "S.N. Marg, Near Lahori Gate Chowk, Delhi - 110006"
+    },
+    {
+        "NAME": "ANAND PARBAT",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870435",
+            "011-28762468",
+            "011-28764807"
+        ],
+        "ADDRESS": "Military Road, Near Gali No. 10, Anand Parbat, Delhi - 110005"
+    },
+    {
+        "NAME": "RANJEET NAGAR",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870436",
+            "011-25704008",
+            "011-25704009"
+        ],
+        "ADDRESS": "Commercial Complex, Near Satyam Cinema, Ranjeet Nagar, Delhi - 110008"
+    },
+    {
+        "NAME": "PRASAD NAGAR",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870432",
+            "011-25751048",
+            "011-25725652"
+        ],
+        "ADDRESS": "Dev Nagar, Near Khalsa College, Karol Bagh, Delhi - 110005"
+    },
+    {
+        "NAME": "RAJENDER NAGAR",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870431",
+            "011-28744012",
+            "011-28744057"
+        ],
+        "ADDRESS": "Plot No. 5, Old Rajender Nagar, New Delhi - 110060"
+    },
+    {
+        "NAME": "PATEL NAGAR",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870434",
+            "011-25874034"
+        ],
+        "ADDRESS": "Main Road, Near Patel Nagar Metro Station, New Delhi - 110008"
+    },
+    {
+        "NAME": "KAROL BAGH",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870430",
+            "011-28726870",
+            "011-28700482"
+        ],
+        "ADDRESS": "Gurudwara Road, Near Pusa Road, Karol Bagh, Delhi - 110005"
+    },
+    {
+        "NAME": "DBG ROAD",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870429",
+            "011-23537374",
+            "011-23537274"
+        ],
+        "ADDRESS": "Desh Bandhu Gupta Road, Paharganj, Delhi - 110055"
+    },
+    {
+        "NAME": "I.P. ESTATE",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870426",
+            "011-23370928",
+            "011-23378487"
+        ],
+        "ADDRESS": "Near Vikas Minar, ITO, New Delhi - 110002"
+    },
+    {
+        "NAME": "PAHARGANJ",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870427",
+            "011-23520787"
+        ],
+        "ADDRESS": "Main Bazaar, Opposite New Delhi Railway Station, Delhi - 110055"
+    },
+    {
+        "NAME": "NABI KARIM",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870428",
+            "011-23621045",
+            "011-23521081"
+        ],
+        "ADDRESS": "Near Qutub Road, Paharganj, Delhi - 110055"
+    },
+    {
+        "NAME": "HAUZ QAZI",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870425",
+            "011-23210414"
+        ],
+        "ADDRESS": "Chawri Bazar, Near Metro Station, Delhi - 110006"
+    },
+    {
+        "NAME": "DARYAGANJ",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870421",
+            "011-23274682",
+            "011-23279331"
+        ],
+        "ADDRESS": "Netaji Subhash Marg, Near Mahavir Vatika, Daryaganj, Delhi - 110002"
+    },
+    {
+        "NAME": "CHANDNI MAHAL",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870423",
+            "011-23271715",
+            "011-23279338"
+        ],
+        "ADDRESS": "Near Jama Masjid Metro Station, Delhi - 110006"
+    },
+    {
+        "NAME": "JAMA MASJID",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870422",
+            "011-23261625",
+            "011-23269777"
+        ],
+        "ADDRESS": "Gate No. 1, Jama Masjid, Delhi - 110006"
+    },
+    {
+        "NAME": "KAMLA MARKET",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "8750870424",
+            "011-23230623"
+        ],
+        "ADDRESS": "Near Ajmeri Gate and New Delhi Rly Station, Delhi - 110006"
+    },
+    {
+        "NAME": "SOUTH AVENUE",
+        "CATEGORY": "NEW DELHI",
+        "PHONE": [
+            "9818542888",
+            "011-23013336",
+            "011-23019289"
+        ],
+        "ADDRESS": "Near Rashtrapati Bhavan, South Avenue, New Delhi - 110011"
+    },
+    {
+        "NAME": "TUGLAK ROAD",
+        "CATEGORY": "NEW DELHI",
+        "PHONE": [
+            "8750870524",
+            "011-23012100",
+            "011-23012878"
+        ],
+        "ADDRESS": "Near Lodhi Garden, Tughlak Road, New Delhi - 110011"
+    },
+    {
+        "NAME": "CHANAKYAPURI",
+        "CATEGORY": "NEW DELHI",
+        "PHONE": [
+            "8750870523",
+            "011-23012003",
+            "011-23011100"
+        ],
+        "ADDRESS": "Kautilya Marg, Near Nehru Park, Chanakyapuri, New Delhi - 110021"
+    },
+    {
+        "NAME": "TILAK MARG",
+        "CATEGORY": "NEW DELHI",
+        "PHONE": [
+            "8750870526",
+            "011-23385571",
+            "011-23382100"
+        ],
+        "ADDRESS": "Bhagwan Das Road, Near Supreme Court, New Delhi - 110001"
+    },
+    {
+        "NAME": "BARAKHAMBA RD.",
+        "CATEGORY": "NEW DELHI",
+        "PHONE": [
+            "8750870527",
+            "011-23413800",
+            "011-23413999"
+        ],
+        "ADDRESS": "Barakhamba Road, Near Metro Station, New Delhi - 110001"
+    },
+    {
+        "NAME": "MANDIR MARG",
+        "CATEGORY": "NEW DELHI",
+        "PHONE": [
+            "8750870522",
+            "011-23366730",
+            "011-23364100"
+        ],
+        "ADDRESS": "Near Birla Mandir (Lakshmi Narayan Temple), New Delhi - 110001"
+    },
+    {
+        "NAME": "CONNAUGHT PLACE",
+        "CATEGORY": "NEW DELHI",
+        "PHONE": [
+            "8750870525",
+            "011-23364139",
+            "011-23747100"
+        ],
+        "ADDRESS": "Block-B, Inner Circle, Near Palika Bazaar, New Delhi - 110001"
+    },
+    {
+        "NAME": "NORTH AVENUE",
+        "CATEGORY": "NEW DELHI",
+        "PHONE": [
+            "8750870528",
+            "011-23094010"
+        ],
+        "ADDRESS": "Near Rashtrapati Bhavan, North Avenue, New Delhi - 110001"
+    },
+    {
+        "NAME": "PARLIAMENT ST.",
+        "CATEGORY": "NEW DELHI",
+        "PHONE": [
+            "8750870521",
+            "011-23342700",
+            "011-23361100"
+        ],
+        "ADDRESS": "Near Jantar Mantar, Sansad Marg, New Delhi - 110001"
+    },
+    {
+        "NAME": "KISHANGARH",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036232",
+            "011-26510085",
+            "011-26510075"
+        ],
+        "ADDRESS": "Near Qutab Institutional Area, Kishangarh, Vasant Kunj, New Delhi - 110070"
+    },
+    {
+        "NAME": "SAROJINI NAGAR",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036230",
+            "011-24122165",
+            "011-24671281"
+        ],
+        "ADDRESS": "Shri Vinayak Mandir Marg, Near Sarojini Nagar Metro, New Delhi - 110023"
+    },
+    {
+        "NAME": "SAFDARJUNG ENCL.",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036232",
+            "011-24106347",
+            "011-24106346"
+        ],
+        "ADDRESS": "Block B 1, Near Kamal Cinema, Safdarjung Enclave, New Delhi - 110029"
+    },
+    {
+        "NAME": "KAPASHERA",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036226",
+            "011-25066105"
+        ],
+        "ADDRESS": "Plot No. 324, Near D Block Red Light, Old Delhi Gurgaon Road, Delhi - 110037"
+    },
+    {
+        "NAME": "VASANT KUNJ S.",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036225",
+            "011-26139362",
+            "011-26139360"
+        ],
+        "ADDRESS": "Nelson Mandela Marg, Pocket 4, Sector C, Vasant Kunj, New Delhi - 110070"
+    },
+    {
+        "NAME": "VASANT KUNJ N.",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036224",
+            "011-26892530",
+            "011-26123990"
+        ],
+        "ADDRESS": "Nelson Mandela Marg, Pocket 4, Sector C, Vasant Kunj, New Delhi - 110070"
+    },
+    {
+        "NAME": "VASANT VIHAR",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036221",
+            "011-26152699"
+        ],
+        "ADDRESS": "Nelson Mandela Rd, Near Basant Lok Market, Munirka, New Delhi - 110057"
+    },
+    {
+        "NAME": "R.K. PURAM",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036222",
+            "011-26186963",
+            "011-26185222"
+        ],
+        "ADDRESS": "872, Kaifi Azmi Marg, Sector 12, Rama Krishna Puram, New Delhi - 110022"
+    },
+    {
+        "NAME": "SOUTH CAMPUS",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036223",
+            "011-26177178"
+        ],
+        "ADDRESS": "Near Sangam Cinema, Sector 12, R.K. Puram, New Delhi - 110022"
+    },
+    {
+        "NAME": "SAGARPUR",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036228",
+            "011-25035356",
+            "011-28522653"
+        ],
+        "ADDRESS": "62, Pankha Road, Near DDA Flats Manglapuri, New Delhi - 110045"
+    },
+    {
+        "NAME": "PALAM VILLAGE",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036227",
+            "011-25365981",
+            "011-25365979"
+        ],
+        "ADDRESS": "Palam Village Road, Near Palam Metro Station Gate No. 1, Delhi - 110045"
+    },
+    {
+        "NAME": "DELHI CANTT.",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "7065036229",
+            "011-25694444",
+            "011-25683764"
+        ],
+        "ADDRESS": "Sadar Bazar Road, Sadar Bazaar, Delhi Cantonment, New Delhi - 110010"
+    },
+    {
+        "NAME": "HAUZ KHAS",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870821",
+            "011-26510077",
+            "011-26867878"
+        ],
+        "ADDRESS": "Near Axis Bank ATM, Hauz Khas Enclave, New Delhi - 110016"
+    },
+    {
+        "NAME": "MALVIYA NAGAR",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870822",
+            "011-26691863",
+            "011-26691862"
+        ],
+        "ADDRESS": "Main Road, Near Aurobindo College, Malviya Nagar, New Delhi - 110017"
+    },
+    {
+        "NAME": "SAKET",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870823",
+            "011-29561300",
+            "011-29562300"
+        ],
+        "ADDRESS": "Court Chowk Road, Near Select Citywalk Mall, Saket, New Delhi - 110017"
+    },
+    {
+        "NAME": "MEHRAULI",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870824",
+            "011-26146133",
+            "011-26643200"
+        ],
+        "ADDRESS": "Near Qutub Minar, Kaluram Chowk, Mehrauli, New Delhi - 110030"
+    },
+    {
+        "NAME": "FATEHPUR BERI",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870826",
+            "011-26659411",
+            "011-26659611"
+        ],
+        "ADDRESS": "Jonapur Village, Chhattarpur-Mandi Road, Fatehpur Beri, Delhi - 110030"
+    },
+    {
+        "NAME": "MAIDAN GARHI",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870825",
+            "011-26645050"
+        ],
+        "ADDRESS": "Near Indira Gandhi National Open University (IGNOU), Delhi - 110068"
+    },
+    {
+        "NAME": "DEFENCE COLONY",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870827",
+            "011-26253402",
+            "011-26190634"
+        ],
+        "ADDRESS": "Ring Road, Near Moolchand Hospital, New Delhi - 110024"
+    },
+    {
+        "NAME": "KOTLA M. PUR",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870828",
+            "011-24620106"
+        ],
+        "ADDRESS": "Ring Road, Near South Extension, Kotla Mubarakpur, New Delhi - 110003"
+    },
+    {
+        "NAME": "LODHI COLONY",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870829",
+            "011-24617008",
+            "011-26620283"
+        ],
+        "ADDRESS": "Fifth Avenue Road, Near India Habitat Centre, New Delhi - 110003"
+    },
+    {
+        "NAME": "GREATER KAILASH",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870831",
+            "011-29235815",
+            "011-29235817"
+        ],
+        "ADDRESS": "M Block Main Market, Greater Kailash 1, New Delhi - 110048"
+    },
+    {
+        "NAME": "C.R. PARK",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870830",
+            "011-26271587",
+            "011-26271374"
+        ],
+        "ADDRESS": "A-69, CR Park Main Road, Block I, Chittaranjan Park, New Delhi - 110019"
+    },
+    {
+        "NAME": "AMBEDKAR NAGAR",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870832",
+            "011-29052304",
+            "011-29051917"
+        ],
+        "ADDRESS": "Sector 5, Pushp Vihar (Near Dakshinpuri), New Delhi - 110062"
+    },
+    {
+        "NAME": "SANGAM VIHAR",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870833",
+            "011-26042188",
+            "011-26044546"
+        ],
+        "ADDRESS": "D Block, Mangal Bazar Road, Near Batra Hospital, Delhi - 110080"
+    },
+    {
+        "NAME": "NEB SARAI",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "87508708395",
+            "011-29551597",
+            "011-29551326"
+        ],
+        "ADDRESS": "Sector 5, Near South Sainik Farm, Neb Sarai, Delhi - 110068"
+    },
+    {
+        "NAME": "TIGRI",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "8750870834",
+            "011-26041472",
+            "011-26041473"
+        ],
+        "ADDRESS": "Block C, Devli Road, Sangam Vihar, New Delhi - 110080"
+    },
+    {
+        "NAME": "JAITPUR",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "8750870961",
+            "011-26665711"
+        ],
+        "ADDRESS": "Jaitpur Road, Near Hari Nagar Extension, Delhi - 110044"
+    },
+    {
+        "NAME": "CYBER CENTRAL",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "6828401937",
+            "011-28210885"
+        ],
+        "ADDRESS": "Old Building, PS Kamla Market, New Delhi - 110002"
+    },
+    {
+        "NAME": "CYBER NEW DELHI",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "011-23361880"
+        ],
+        "ADDRESS": "Room No. 206, PS Mandir Marg, New Delhi - 110001"
+    },
+    {
+        "NAME": "CYBER SOUTH",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "8750870864"
+        ],
+        "ADDRESS": "2nd Floor, PS Saket Building, Saket, New Delhi - 110017"
+    },
+    {
+        "NAME": "CYBER SOUTH EAST",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "6828401537"
+        ],
+        "ADDRESS": "PS C.R. Park Complex, New Delhi - 110019"
+    },
+    {
+        "NAME": "CYBER SOUTH WEST",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "6828402537"
+        ],
+        "ADDRESS": "DCP Office Complex, Sector 19, Dwarka, New Delhi - 110075"
+    },
+    {
+        "NAME": "CYBER WEST",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "8750871174"
+        ],
+        "ADDRESS": "2nd Floor, PS Hari Nagar Building, New Delhi - 110064"
+    },
+    {
+        "NAME": "CYBER EAST",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "6828401137"
+        ],
+        "ADDRESS": "DCP Office, I.P. Extension, Mandawali, Delhi - 110092"
+    },
+    {
+        "NAME": "CYBER NORTH EAST",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "8750870788"
+        ],
+        "ADDRESS": "3rd Floor, DCP Office, Seelampur, Delhi - 110053"
+    },
+    {
+        "NAME": "CYBER NORTH",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "6828402037",
+            "011-27666436"
+        ],
+        "ADDRESS": "Maurice Nagar, Behind Daulat Ram College, Delhi University, Delhi - 110007"
+    },
+    {
+        "NAME": "CYBER NORTH WEST",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "6828402137"
+        ],
+        "ADDRESS": "DCP Office Complex, Ashok Vihar Phase-I, Delhi - 110052"
+    },
+    {
+        "NAME": "CYBER DWARKA",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "8287513200"
+        ],
+        "ADDRESS": "Sector 19, Dwarka (DCP Office Complex), New Delhi - 110075"
+    },
+    {
+        "NAME": "CYBER ROHINI",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "011-20879316"
+        ],
+        "ADDRESS": "Rohini District Lines, PS Begumpur, Delhi - 110086"
+    },
+    {
+        "NAME": "CYBER SHAHDARA",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "6828401337"
+        ],
+        "ADDRESS": "Old DCP Office, GTB Enclave, Dilshad Garden, Delhi - 110095"
+    },
+    {
+        "NAME": "CYBER OUTER",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "6828401837"
+        ],
+        "ADDRESS": "Cyber Cell, Kanjhawala Road, Mangolpuri, Delhi - 110083"
+    },
+    {
+        "NAME": "CYBER OUTER NORTH",
+        "CATEGORY": "CYBER",
+        "PHONE": [
+            "7065036388"
+        ],
+        "ADDRESS": "PS Samaypur Badli Complex, Outer North District, Delhi - 110042"
+    },
+    {
+        "NAME": "NEW DELHI RLY.",
+        "CATEGORY": "RAILWAYS",
+        "PHONE": [
+            "9999287352",
+            "011-23219009"
+        ],
+        "ADDRESS": "Inside New Delhi Railway Station (Ajmeri Gate Side), Delhi - 110002"
+    },
+    {
+        "NAME": "OLD DELHI RLY.",
+        "CATEGORY": "RAILWAYS",
+        "PHONE": [
+            "8750871301",
+            "011-23994004"
+        ],
+        "ADDRESS": "Inside Old Delhi Railway Station (Platform No. 1), Delhi - 110006"
+    },
+    {
+        "NAME": "H. NIZAMUDDIN RLY.",
+        "CATEGORY": "RAILWAYS",
+        "PHONE": [
+            "011-24352122"
+        ],
+        "ADDRESS": "Inside Hazrat Nizamuddin Railway Station, Delhi - 110013"
+    },
+    {
+        "NAME": "ANAND VIHAR RLY.",
+        "CATEGORY": "RAILWAYS",
+        "PHONE": [
+            "011-22141444"
+        ],
+        "ADDRESS": "Inside Anand Vihar Railway Terminal, Delhi - 110092"
+    },
+    {
+        "NAME": "SARAI ROHILLA RLY.",
+        "CATEGORY": "RAILWAYS",
+        "PHONE": [
+            "011-23652611"
+        ],
+        "ADDRESS": "Near Sarai Rohilla Railway Station, Delhi - 110005"
+    },
+    {
+        "NAME": "DELHI CANTT RLY.",
+        "CATEGORY": "RAILWAYS",
+        "PHONE": [
+            "011-25682811"
+        ],
+        "ADDRESS": "Near Delhi Cantt Railway Station, New Delhi - 110010"
+    },
+    {
+        "NAME": "SABZI MANDI RLY.",
+        "CATEGORY": "RAILWAYS",
+        "PHONE": [
+            "011-23820611"
+        ],
+        "ADDRESS": "Near Sabzi Mandi Railway Station, Delhi - 110007"
+    },
+    {
+        "NAME": "KISHANGANJ RLY.",
+        "CATEGORY": "RAILWAYS",
+        "PHONE": [
+            "011-23611111"
+        ],
+        "ADDRESS": "Near Delhi Kishanganj Railway Station, Delhi - 110007"
+    },
+    {
+        "NAME": "KASHMERE GATE M.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-23963310"
+        ],
+        "ADDRESS": "Inside Kashmere Gate Metro Station (Interchange Hub), Delhi - 110006"
+    },
+    {
+        "NAME": "SHASTRI PARK MET.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-22180844"
+        ],
+        "ADDRESS": "M69X+GCC शास्त्री पार्क, Station Approach Road, Metro Vihar, Shastri Park, Jagjit Nagar, Delhi, 110053"
+    },
+    {
+        "NAME": "RAJIV CHOWK MET.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-23279036"
+        ],
+        "ADDRESS": "Inside Rajiv Chowk Metro Station, Concourse Level, New Delhi - 110001"
+    },
+    {
+        "NAME": "YAMUNA BANK MET.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-22486281"
+        ],
+        "ADDRESS": "Inside Yamuna Bank Metro Station Complex, Delhi - 110092"
+    },
+    {
+        "NAME": "RITHALA METRO",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-27043811"
+        ],
+        "ADDRESS": "Inside Rithala Metro Station, Sector 5, Rohini, Delhi - 110085"
+    },
+    {
+        "NAME": "KALKAJI MANDIR M.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-26213111"
+        ],
+        "ADDRESS": "Inside Kalkaji Mandir Metro Station, New Delhi - 110019"
+    },
+    {
+        "NAME": "QUTUB MINAR MET.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-26564611"
+        ],
+        "ADDRESS": "Inside Qutub Minar Metro Station, Mehrauli, New Delhi - 110030"
+    },
+    {
+        "NAME": "IGI AIRPORT MET.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "8750871326"
+        ],
+        "ADDRESS": "Inside IGI Airport Metro Station (Terminal 3), New Delhi - 110037"
+    },
+    {
+        "NAME": "JANAKPURI METRO",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "6828400579"
+        ],
+        "ADDRESS": "Inside Janakpuri West Metro Station, New Delhi - 110058"
+    },
+    {
+        "NAME": "RAJOURI GARDEN M.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "8750871327",
+            "011-25150008"
+        ],
+        "ADDRESS": "Inside Rajouri Garden Metro Station, New Delhi - 110027"
+    },
+    {
+        "NAME": "SUPREME COURT M.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-22480480"
+        ],
+        "ADDRESS": "Inside Supreme Court Metro Station (formerly Pragati Maidan), New Delhi - 110001"
+    },
+    {
+        "NAME": "KIRTI NAGAR MET.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-25100100"
+        ],
+        "ADDRESS": "Inside Kirti Nagar Metro Station, New Delhi - 110015"
+    },
+    {
+        "NAME": "HAUZ KHAS METRO",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-26561111"
+        ],
+        "ADDRESS": "Inside Hauz Khas Metro Station, New Delhi - 110016"
+    },
+    {
+        "NAME": "NEW DELHI METRO",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-23341111"
+        ],
+        "ADDRESS": "Inside New Delhi Metro Station (Yellow Line/Airport Line Hub), Delhi - 110002"
+    },
+    {
+        "NAME": "MANDI HOUSE MET.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-23381111"
+        ],
+        "ADDRESS": "Inside Mandi House Metro Station, New Delhi - 110001"
+    },
+    {
+        "NAME": "NETAJI SUBHASH PL.",
+        "CATEGORY": "METRO",
+        "PHONE": [
+            "011-20871254"
+        ],
+        "ADDRESS": "Inside Netaji Subhash Place Metro Station, Pitampura, Delhi - 110034"
+    },
+    {
+        "NAME": "IGI AIRPORT (INTL)",
+        "CATEGORY": "AIRPORT",
+        "PHONE": [
+            "8750871365"
+        ],
+        "ADDRESS": "Terminal 3, IGI Airport, New Delhi - 110037"
+    },
+    {
+        "NAME": "DOMESTIC AIRPORT",
+        "CATEGORY": "AIRPORT",
+        "PHONE": [
+            "8750871366"
+        ],
+        "ADDRESS": "Terminal 1, IGI Airport, Palam, New Delhi - 110037"
+    },
+    {
+        "NAME": "CRIME BRANCH",
+        "CATEGORY": "SPECIAL",
+        "PHONE": [
+            "9818099006"
+        ],
+        "ADDRESS": "2nd Floor, PS Kamla Market, Near New Delhi Rly Station, Delhi - 110006"
+    },
+    {
+        "NAME": "E.O.W.",
+        "CATEGORY": "SPECIAL",
+        "PHONE": [
+            "011-23361991"
+        ],
+        "ADDRESS": "Economic Offences Wing, Old PS Mandir Marg, New Delhi - 110001"
+    },
+    {
+        "NAME": "SPECIAL CELL",
+        "CATEGORY": "SPECIAL",
+        "PHONE": [
+            "9818099002"
+        ],
+        "ADDRESS": "Lodhi Colony Police Station Building, New Delhi - 110003"
+    },
+    {
+        "NAME": "SPUWAC",
+        "CATEGORY": "SPECIAL",
+        "PHONE": [
+            "1091",
+            "011-24121234"
+        ],
+        "ADDRESS": "PTS Malviya Nagar, Nanakpura, New Delhi - 110017"
+    },
+    {
+        "NAME": "VIGILANCE",
+        "CATEGORY": "SPECIAL",
+        "PHONE": [
+            "1064",
+            "011-23213358"
+        ],
+        "ADDRESS": "8th Floor, Police Headquarters, Jai Singh Road, New Delhi - 110001"
+    },
+    {
+        "NAME": "IFSO (CYBER OPS)",
+        "CATEGORY": "SPECIAL",
+        "PHONE": [
+            "011-20810019"
+        ],
+        "ADDRESS": "Special Cell, Sector 14, Dwarka, New Delhi - 110078"
+    },
+    {
+        "NAME": "DCP NEW DELHI HQ",
+        "CATEGORY": "NEW DELHI",
+        "PHONE": [
+            "011-23340050"
+        ],
+        "ADDRESS": "PS Parliament Street Complex, New Delhi - 110001"
+    },
+    {
+        "NAME": "DCP SOUTH HQ",
+        "CATEGORY": "SOUTH",
+        "PHONE": [
+            "011-26525796"
+        ],
+        "ADDRESS": "PS Hauz Khas Complex, New Delhi - 110016"
+    },
+    {
+        "NAME": "DCP WEST HQ",
+        "CATEGORY": "WEST",
+        "PHONE": [
+            "011-25512232"
+        ],
+        "ADDRESS": "DCP Office Complex, Janak Puri, New Delhi - 110058"
+    },
+    {
+        "NAME": "DCP EAST HQ",
+        "CATEGORY": "EAST",
+        "PHONE": [
+            "011-22232103"
+        ],
+        "ADDRESS": "DCP Office Complex, IP Extension, Patparganj, Delhi - 110092"
+    },
+    {
+        "NAME": "DCP CENTRAL HQ",
+        "CATEGORY": "CENTRAL",
+        "PHONE": [
+            "011-23274717"
+        ],
+        "ADDRESS": "Netaji Subhash Marg, Daryaganj, Delhi - 110002"
+    },
+    {
+        "NAME": "DCP NORTH HQ",
+        "CATEGORY": "NORTH",
+        "PHONE": [
+            "011-23910018"
+        ],
+        "ADDRESS": "PS Civil Lines Complex, Delhi - 110054"
+    },
+    {
+        "NAME": "DCP NORTH EAST HQ",
+        "CATEGORY": "NORTH EAST",
+        "PHONE": [
+            "011-22829325"
+        ],
+        "ADDRESS": "Weaver Complex, Nand Nagri, Delhi - 110093"
+    },
+    {
+        "NAME": "DCP SOUTH WEST HQ",
+        "CATEGORY": "SOUTH WEST",
+        "PHONE": [
+            "011-26152183"
+        ],
+        "ADDRESS": "PS Vasant Vihar Complex, New Delhi - 110057"
+    },
+    {
+        "NAME": "DCP SOUTH EAST HQ",
+        "CATEGORY": "SOUTH EAST",
+        "PHONE": [
+            "011-26825544"
+        ],
+        "ADDRESS": "PS Sarita Vihar Complex, New Delhi - 110076"
+    },
+    {
+        "NAME": "DCP NORTH WEST HQ",
+        "CATEGORY": "NORTH WEST",
+        "PHONE": [
+            "011-27132338"
+        ],
+        "ADDRESS": "PS Ashok Vihar Complex, Delhi - 110052"
+    },
+    {
+        "NAME": "DCP SHAHDARA HQ",
+        "CATEGORY": "SHAHDARA",
+        "PHONE": [
+            "011-22122732"
+        ],
+        "ADDRESS": "Shalimar Park, Bhola Nath Nagar, Shahdara, Delhi - 110032"
+    },
+    {
+        "NAME": "DCP ROHINI HQ",
+        "CATEGORY": "ROHINI",
+        "PHONE": [
+            "011-27050101"
+        ],
+        "ADDRESS": "PS Begumpur Complex, Sector-23, Rohini, Delhi - 110086"
+    },
+    {
+        "NAME": "DCP DWARKA HQ",
+        "CATEGORY": "DWARKA",
+        "PHONE": [
+            "011-28042984"
+        ],
+        "ADDRESS": "Sector-19, Dwarka, New Delhi - 110075"
+    },
+    {
+        "NAME": "DCP OUTER HQ",
+        "CATEGORY": "OUTER",
+        "PHONE": [
+            "011-27034873"
+        ],
+        "ADDRESS": "Pushpanjali, Pitampura, Delhi - 110034"
+    },
+    {
+        "NAME": "DCP OUTER NORTH HQ",
+        "CATEGORY": "OUTER NORTH",
+        "PHONE": [
+            "011-27854080"
+        ],
+        "ADDRESS": "PS Samaypur Badli Complex, Delhi - 110042"
+    },
+    {
+        "NAME": "TRAFFIC POLICE HQ",
+        "CATEGORY": "SPECIAL",
+        "PHONE": [
+            "011-25844444"
+        ],
+        "ADDRESS": "Dev Prakash Shastri Marg, Todapur, Delhi - 110012"
+    },
+    {
+        "NAME": "DCP NEW DELHI HQ",
+        "CATEGORY": "NEW DELHI",
+        "PHONE": [
+            "011-23340050"
+        ],
+        "ADDRESS": "PS Parliament Street Complex, New Delhi - 110001"
+    },
+    {
+        "NAME": "ANTF (ANTI-NARCOTICS)",
+        "CATEGORY": "SPECIAL",
+        "PHONE": [
+            "011-23237799"
+        ],
+        "ADDRESS": "PTS Malviya Nagar, New Delhi - 110017"
+    },
+    {
+        "NAME": "AHTU (HUMAN TRAFFICKING)",
+        "CATEGORY": "SPECIAL",
+        "PHONE": [
+            "011-23276300"
+        ],
+        "ADDRESS": "Pushp Vihar, Sector 4, New Delhi - 110017"
+    }
+]

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'route_names.dart';
-import '../../features/home/presentation/home_screen.dart';
+import '../../screens/home_screen.dart';
 import '../../screens/splash_screen.dart';
 import '../../features/legal_updates/presentation/legal_updates_screen.dart';
 import '../../features/judgments/presentation/judgments_screen.dart';
@@ -101,12 +101,12 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.causeListsSupreme,
           parentNavigatorKey: _rootNavigatorKey,
-          builder: (context, state) => const CauseListsScreen(),
+          builder: (context, state) => const CauseListsScreen(defaultCourt: 'Supreme Court of India'),
         ),
         GoRoute(
           path: AppRoutes.causeListsHigh,
           parentNavigatorKey: _rootNavigatorKey,
-          builder: (context, state) => const CauseListsScreen(),
+          builder: (context, state) => const CauseListsScreen(defaultCourt: 'Delhi High Court'),
         ),
         GoRoute(
           path: AppRoutes.courtFeeCalculator,
@@ -172,7 +172,7 @@ class AppRouter {
             GoRoute(
               path: AppRoutes.documentBuilder,
               builder: (context, state) {
-                final formId = state.extra as String? ?? 'vakalatnama';
+                final formId = state.extra as String? ?? state.uri.queryParameters['formId'] ?? 'vakalatnama';
                 return DocumentBuilderScreen(formId: formId);
               },
             ),
