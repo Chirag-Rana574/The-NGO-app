@@ -36,50 +36,69 @@ class _PoliceAdminScreenState extends ConsumerState<PoliceAdminScreen> {
       backgroundColor: context.ground,
       drawer: const AppDrawer(),
       appBar: const LalAppBar(title: 'Police Administration'),
-      body: Column(
-        children: [
-          FadeSlide(
-            delay: const Duration(milliseconds: 100),
-            child: _buildSearchBar(context),
-          ),
-          FadeSlide(
-            delay: const Duration(milliseconds: 150),
-            child: _buildEmergencyPanel(context),
-          ),
-          const SizedBox(height: 12),
-          FadeSlide(
-            delay: const Duration(milliseconds: 200),
-            child: asyncDistricts.when(
-              data: (districts) => _buildDistrictFilters(context, ['All', ...districts]),
-              loading: () => const SizedBox(height: 48),
-              error: (_, __) => const SizedBox(height: 48),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FadeSlide(
+                  delay: const Duration(milliseconds: 100),
+                  child: _buildSearchBar(context),
+                ),
+                FadeSlide(
+                  delay: const Duration(milliseconds: 150),
+                  child: _buildEmergencyPanel(context),
+                ),
+                const SizedBox(height: 12),
+                FadeSlide(
+                  delay: const Duration(milliseconds: 200),
+                  child: asyncDistricts.when(
+                    data: (districts) => _buildDistrictFilters(context, ['All', ...districts]),
+                    loading: () => const SizedBox(height: 48),
+                    error: (_, __) => const SizedBox(height: 48),
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
             ),
           ),
-          Expanded(
-            child: asyncStations.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, stack) => Center(child: Text('Error loading stations', style: AppTextStyles.body(color: context.danger))),
-              data: (stations) {
-                final filteredStations = _activeDistrict == 'All'
-                  ? stations
-                  : stations.where((s) => s.district == _activeDistrict).toList();
+          asyncStations.when(
+            loading: () => const SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (err, stack) => SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(child: Text('Error loading stations', style: AppTextStyles.body(color: context.danger))),
+            ),
+            data: (stations) {
+              final filteredStations = _activeDistrict == 'All'
+                ? stations
+                : stations.where((s) => s.district == _activeDistrict).toList();
 
-                if (filteredStations.isEmpty) {
-                  return Center(child: Text('No police stations found.', style: AppTextStyles.bodySec(color: context.textSec)));
-                }
-
-                return ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: filteredStations.length,
-                  itemBuilder: (context, index) {
-                    return FadeSlide(
-                      delay: Duration(milliseconds: 300 + (index * 50)),
-                      child: _buildStationCard(context, filteredStations[index]),
-                    );
-                  },
+              if (filteredStations.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: Text('No police stations found.', style: AppTextStyles.bodySec(color: context.textSec))),
                 );
-              },
-            ),
+              }
+
+              return SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return FadeSlide(
+                        delay: Duration(milliseconds: 300 + (index * 50)),
+                        child: _buildStationCard(context, filteredStations[index]),
+                      );
+                    },
+                    childCount: filteredStations.length,
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),

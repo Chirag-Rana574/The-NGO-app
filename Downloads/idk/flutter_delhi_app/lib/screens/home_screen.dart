@@ -361,6 +361,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _buildNavCard(context, 'Delhi HC', 'High court filings', Icons.business, '/delhi_high_court', null),
         _buildNavCard(context, 'Case Diary', 'My cases roster', Icons.book, '/case_diary', null),
         _buildNavCard(context, 'Case Docs', 'Stored pleadings', Icons.folder, '/case_documents', null),
+        _buildNavCard(context, 'Judgments', 'Recent case law', Icons.gavel, '/judgments', null),
+        _buildNavCard(context, 'Updates', 'Recent legal news', Icons.newspaper, '/legal_updates', null),
         _buildNavCard(context, 'Criminal Laws', 'BNS / BNSS / BSA', Icons.menu_book, '/new_criminal_law', 'NEW'),
         _buildNavCard(context, 'Doc Builder', 'Vakalatnama & more', Icons.edit_document, '/document_selection', null),
         _buildNavCard(context, 'District Courts', '11 complexes', Icons.location_city, '/district_courts', null),

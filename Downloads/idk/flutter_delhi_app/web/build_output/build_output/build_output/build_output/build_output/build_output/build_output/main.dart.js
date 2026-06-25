@@ -51575,7 +51575,7 @@ var $async$DQ=A.u(function(d,e){if(d===1){o.push(e)
 s=p}for(;;)switch(s){case 0:p=4
 m=n.a.qR("landmark_judgements").rA(0)
 if(c.length!==0){k=m
-m=A.v7(k.q3(k.qo("case_number","ilike."+("%"+c+"%"))),k.$ti.c)}k=J.aQz(m,"date",!1)
+m=A.v7(k.q3(k.qo("case_number","ilike."+("%"+c+"%"))),k.$ti.c)}k=J.aQz(m,"judgement_date",!1)
 s=7
 return A.t(A.VA(k.Di(k.a08("limit",""+(b+a-1-b+1),k.qo("offset",""+b))),k.$ti.c),$async$DQ)
 case 7:l=e
@@ -51636,13 +51636,14 @@ case 2:return A.v(o.at(-1),r)}})
 return A.x($async$DS,r)},
 V4(){return A.b([new A.h8("1","CS(OS) 123/2024","Delhi High Court","ABC vs XYZ",new A.bx(Date.now(),0,!1).mA(-432e9),null,"Judgment on contract dispute"),new A.h8("2","Writ Petition 456/2024","Supreme Court","State vs Citizen",new A.bx(Date.now(),0,!1).mA(-864e9),null,"Constitutional validity of law")],t.ej)}}
 A.akH.prototype={
-$1(a){var s,r,q=J.ak(a),p=A.aH(q.i(a,"id")),o=A.aW(q.i(a,"case_number"))
-if(o==null)o="N/A"
-s=A.aW(q.i(a,"court"))
+$1(a){var s,r,q,p=J.ak(a),o=A.aH(p.i(a,"id")),n=A.aW(p.i(a,"case_number"))
+if(n==null)n="N/A"
+s=A.aW(p.i(a,"court"))
 if(s==null)s="Unknown"
-r=A.aW(q.i(a,"parties"))
+r=A.aW(p.i(a,"parties"))
 if(r==null)r="N/A"
-return new A.h8(p,o,s,r,A.xN(A.aH(q.i(a,"date"))),A.aW(q.i(a,"pdf_url")),A.aW(q.i(a,"summary")))},
+q=p.i(a,"judgement_date")
+return new A.h8(o,n,s,r,A.xN(A.aH(q==null?p.i(a,"date"):q)),A.aW(p.i(a,"pdf_url")),A.aW(p.i(a,"summary")))},
 $S:507}
 A.h8.prototype={
 aH(){var s,r=this,q=A.o(t.N,t.z)
@@ -51650,7 +51651,7 @@ q.l(0,"id",r.a)
 q.l(0,"case_number",r.b)
 q.l(0,"court",r.c)
 q.l(0,"parties",r.d)
-q.l(0,"date",r.e.ml())
+q.l(0,"judgement_date",r.e.ml())
 s=r.f
 if(s!=null)q.l(0,"pdf_url",s)
 s=r.r

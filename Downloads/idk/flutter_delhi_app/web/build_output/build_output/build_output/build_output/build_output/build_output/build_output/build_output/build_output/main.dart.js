@@ -8893,7 +8893,7 @@ break
 case 2:s=1
 break
 case 5:s=7
-return A.t(A.ay9("",""),$async$Pc)
+return A.t(A.ay9("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzeWJhbGV1dGFnaGJoaGticHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4OTI1MzksImV4cCI6MjA5NjQ2ODUzOX0.dAqCqDPYMYAB93KXnOjrXazO3vpcgl_5np49cvh0nF4","https://gsybaleutaghbhhkbpxj.supabase.co"),$async$Pc)
 case 7:s=8
 return A.t(A.Xt(new A.aPs(),new A.aPt()),$async$Pc)
 case 8:return A.w(null,r)
@@ -52030,7 +52030,7 @@ case 5:case 3:return A.w(null,r)}})
 return A.x($async$$0,r)},
 $S:15}
 A.aPs.prototype={
-$1(a){a.sN1("")
+$1(a){a.sN1("https://your-sentry-dsn-here@sentry.io/your-project-id")
 a.xr=1
 a.aaW(1)},
 $S:464}

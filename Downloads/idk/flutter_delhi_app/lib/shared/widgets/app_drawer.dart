@@ -96,7 +96,6 @@ class AppDrawer extends StatelessWidget {
                 _buildDrawerItem(context, 'Document Builder', Icons.edit_document, '/document_builder', currentRoute),
                 _buildDrawerItem(context, 'Legal Forms', Icons.folder_special, '/legal_forms', currentRoute),
                 _buildDrawerItem(context, 'Court Fee Calculator', Icons.calculate, '/fee_calculator', currentRoute),
-                _buildDrawerItem(context, 'Jail Mulakat Builder', Icons.receipt_long, '/legal_meeting_builder', currentRoute),
                 _buildDrawerItem(context, 'Court Calendar', Icons.calendar_today, '/court_calendar', currentRoute),
               ],
             ),

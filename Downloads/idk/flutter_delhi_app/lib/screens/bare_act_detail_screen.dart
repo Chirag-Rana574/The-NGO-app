@@ -5,6 +5,8 @@ import '../shared/widgets/lal_app_bar.dart';
 import '../shared/widgets/fade_slide.dart';
 import '../data/models/bare_act.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -39,10 +41,41 @@ class _BareActDetailScreenState extends State<BareActDetailScreen> {
       _hasError = false;
     });
 
+    if (_act != null) {
+      try {
+        final response = await Supabase.instance.client
+            .from('bare_acts')
+            .select('full_text')
+            .eq('id', _act!.id)
+            .maybeSingle();
+        if (response != null && response['full_text'] != null) {
+          final text = response['full_text'] as String;
+          if (text.isNotEmpty) {
+            setState(() {
+              _fullText = text;
+              _isLoading = false;
+            });
+            return;
+          }
+        }
+      } catch (e) {
+        debugPrint('BareActDetailScreen: Supabase fetch error: $e');
+      }
+    }
+
     final url = _act?.fullTextUrl;
     if (url == null || url.isEmpty) {
       setState(() {
         _fullText = 'Full text unavailable for this act.';
+        _isLoading = false;
+        _hasError = true;
+      });
+      return;
+    }
+
+    if (kIsWeb) {
+      setState(() {
+        _fullText = 'Full text not found in database. Tap below to view official source.';
         _isLoading = false;
         _hasError = true;
       });

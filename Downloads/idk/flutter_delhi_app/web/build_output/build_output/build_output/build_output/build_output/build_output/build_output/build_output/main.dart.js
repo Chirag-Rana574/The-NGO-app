@@ -51573,7 +51573,7 @@ DQ(a,b,c){return this.aAh(a,b,c)},
 aAh(a,b,c){var s=0,r=A.y(t.Si),q,p=2,o=[],n=this,m,l,k,j,i
 var $async$DQ=A.u(function(d,e){if(d===1){o.push(e)
 s=p}for(;;)switch(s){case 0:p=4
-m=n.a.qR("judgments").rA(0)
+m=n.a.qR("landmark_judgements").rA(0)
 if(c.length!==0){k=m
 m=A.v7(k.q3(k.qo("case_number","ilike."+("%"+c+"%"))),k.$ti.c)}k=J.aQz(m,"date",!1)
 s=7
@@ -51604,7 +51604,7 @@ DS(a){return this.aAj(a)},
 aAj(a){var s=0,r=A.y(t.S),q,p=2,o=[],n=this,m,l,k,j,i,h,g
 var $async$DS=A.u(function(b,c){if(b===1){o.push(c)
 s=p}for(;;)switch(s){case 0:p=4
-m=n.a.qR("judgments").rA(0)
+m=n.a.qR("landmark_judgements").rA(0)
 if(a.length!==0){k=m
 m=A.v7(k.q3(k.qo("case_number","ilike."+("%"+a+"%"))),k.$ti.c)}k=m
 j=A.k(k)
