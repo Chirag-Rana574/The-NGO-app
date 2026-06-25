@@ -15,7 +15,7 @@ class GeminiChatService {
   /// Send a message to Gemini and get a response
   Future<String> sendMessage({
     required String message,
-    List<Map<String, String>>? history,
+    List<Map<String, dynamic>>? history,
     String? systemPrompt,
   }) async {
     final contents = <Map<String, dynamic>>[];
@@ -80,7 +80,7 @@ class GeminiChatService {
   /// Send a message to Kilo Code (kilo-auto/free) as secondary fallback
   Future<String> sendMessageKilo({
     required String message,
-    List<Map<String, String>>? history,
+    List<Map<String, dynamic>>? history,
     String? systemPrompt,
   }) async {
     final kilocodeKey = Env.kilocodeApiKey;
@@ -134,7 +134,7 @@ class GeminiChatService {
   /// Stream a response from Gemini (for real-time chat)
   Stream<String> sendMessageStream({
     required String message,
-    List<Map<String, String>>? history,
+    List<Map<String, dynamic>>? history,
     String? systemPrompt,
   }) async* {
     try {

@@ -19,6 +19,7 @@ fi
 
 # Clean previous build
 echo "🧹 Cleaning previous build..."
+rm -rf web/build_output
 flutter clean
 
 # Get dependencies

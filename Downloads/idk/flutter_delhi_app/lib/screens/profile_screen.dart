@@ -9,6 +9,7 @@ import '../theme/context_colors.dart';
 import '../shared/widgets/fade_slide.dart';
 import '../shared/widgets/app_drawer.dart';
 import '../core/network/network_provider.dart';
+import '../theme/theme_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -191,7 +192,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       children: [
                         Text('ACCOUNT', style: AppTextStyles.bodySmall(color: context.textSec).copyWith(fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                         const SizedBox(height: 8),
-                        _buildAccountSection(context),
+                        _buildAccountSection(context, ref),
                         const SizedBox(height: 24),
                         Text('MY DATA', style: AppTextStyles.bodySmall(color: context.textSec).copyWith(fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                         const SizedBox(height: 8),
@@ -259,7 +260,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildAccountSection(BuildContext context) {
+  Widget _buildAccountSection(BuildContext context, WidgetRef ref) {
     return FadeSlide(
       child: Container(
         decoration: BoxDecoration(
@@ -284,10 +285,60 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               iconColor: Colors.cyan, 
               title: 'App Settings',
               subtitle: 'Chamber: ${_chamberAddress.split(',').first}',
+              showBorder: true,
               onTap: () => _showNotification('App configuration and settings loaded.'),
             ),
+            _buildThemeToggleTile(context, ref),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildThemeToggleTile(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    final isDark = themeMode == ThemeMode.dark || 
+        (themeMode == ThemeMode.system && Theme.of(context).brightness == Brightness.dark);
+        
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Container(
+            width: 32, height: 32,
+            decoration: BoxDecoration(
+              color: Colors.amber.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              isDark ? Icons.dark_mode : Icons.light_mode,
+              size: 16,
+              color: Colors.amber,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Dark Theme', style: AppTextStyles.body(color: context.textPri).copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  themeMode == ThemeMode.system 
+                      ? 'System Default' 
+                      : (isDark ? 'Dark Mode Enabled' : 'Light Mode Enabled'),
+                  style: AppTextStyles.bodySmall(color: context.textSec),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: isDark,
+            activeTrackColor: context.primary,
+            onChanged: (val) {
+              ref.read(themeModeProvider.notifier).toggle();
+            },
+          ),
+        ],
       ),
     );
   }
