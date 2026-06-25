@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,9 +9,22 @@ import 'core/config/env.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_provider.dart';
 import 'core/router/app_router.dart';
+import 'core/utils/local_logger.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Log Flutter framework errors
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    LocalLogger.logError(details.exceptionAsString(), details.stack);
+  };
+
+  // Log asynchronous errors
+  PlatformDispatcher.instance.onError = (error, stack) {
+    LocalLogger.logError(error, stack);
+    return true;
+  };
 
   // Initialize Firebase (optional - for legacy features)
   try {
