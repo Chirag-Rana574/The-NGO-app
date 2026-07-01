@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 import 'api_interceptor.dart';
 
 // Dio provider
@@ -17,22 +18,24 @@ final dioProvider = Provider<Dio>((ref) {
   return dio;
 });
 
-// Supabase client provider
-final supabaseClientProvider = Provider<SupabaseClient>((ref) {
-  return Supabase.instance.client;
+// Supabase client provider (for data access only — NOT auth)
+final supabaseClientProvider = Provider<supa.SupabaseClient>((ref) {
+  return supa.Supabase.instance.client;
 });
 
-// Auth state provider
-final authStateProvider = StreamProvider<AuthState>((ref) {
-  return Supabase.instance.client.auth.onAuthStateChange;
+// Firebase Auth state provider (stream)
+final authStateProvider = StreamProvider<User?>((ref) {
+  return FirebaseAuth.instance.authStateChanges();
 });
 
-// Current user provider
+// Current Firebase user provider
 final currentUserProvider = Provider<User?>((ref) {
-  return Supabase.instance.client.auth.currentUser;
+  // Watch the auth state stream to get reactive updates
+  final authState = ref.watch(authStateProvider);
+  return authState.valueOrNull;
 });
 
-// Session provider
-final sessionProvider = Provider<Session?>((ref) {
-  return Supabase.instance.client.auth.currentSession;
+// Session provider (Firebase doesn't have sessions — use user presence as proxy)
+final sessionProvider = Provider<User?>((ref) {
+  return ref.watch(currentUserProvider);
 });

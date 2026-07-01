@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/cause_list_item.dart';
@@ -27,6 +28,10 @@ class CauseListsService {
         query = query.eq('date', date);
       }
 
+      // Only fetch cause lists from the last 2 days
+      final twoDaysAgo = DateTime.now().subtract(const Duration(days: 2)).toIso8601String().split('T').first;
+      query = query.gte('date', twoDaysAgo);
+
       if (searchQuery != null && searchQuery.trim().isNotEmpty) {
         final formattedQuery = searchQuery.trim().split(RegExp(r'\s+')).join(' & ');
         query = query.textSearch('fts_vector', formattedQuery);
@@ -36,7 +41,8 @@ class CauseListsService {
 
       return response.map((json) => CauseListPayload.fromJson(json)).toList();
     } catch (e) {
-      return _getFallbackCauseLists();
+      debugPrint('Error fetching cause lists: $e');
+      return [];
     }
   }
 
@@ -53,28 +59,8 @@ class CauseListsService {
           .toList();
       return courts;
     } catch (e) {
-      return ['Delhi High Court', 'Supreme Court', 'District Court'];
+      debugPrint('Error fetching courts: $e');
+      return [];
     }
-  }
-
-  List<CauseListPayload> _getFallbackCauseLists() {
-    return [
-      CauseListPayload(
-        court: 'Delhi High Court',
-        date: '2025-01-15',
-        totalCases: 15,
-        sourceUrl: '',
-        scrapedAt: DateTime.now().toIso8601String(),
-        cases: [
-          CauseListItem(
-            caseNo: 'CS(OS) 123/2024',
-            parties: 'ABC vs XYZ',
-            listedOn: '10:30 AM',
-            courtRoom: 'Court No. 12',
-            judge: 'Hon. Judge A',
-          ),
-        ],
-      ),
-    ];
   }
 }

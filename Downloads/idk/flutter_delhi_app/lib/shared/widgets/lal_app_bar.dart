@@ -18,7 +18,7 @@ class LalAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(
-    showGoldDashes ? kToolbarHeight + 5 : kToolbarHeight,
+    showGoldDashes ? kToolbarHeight + 4.5 : kToolbarHeight + 1.5,
   );
 
   @override
@@ -27,27 +27,47 @@ class LalAppBar extends StatelessWidget implements PreferredSizeWidget {
     final surfaceColor = isDark ? AppColors.darkSurface : AppColors.lal;
     final goldColor    = isDark ? AppColors.darkGoldDim : AppColors.gold;
 
+    return AppBar(
+      title: Text(title, style: AppTextStyles.screenTitle(
+        color: isDark ? AppColors.darkSandGlow : AppColors.sandXlt,
+      )),
+      leading: leading ?? (Navigator.canPop(context) ? const BackButton() : null),
+      actions: actions,
+      backgroundColor: surfaceColor,
+      iconTheme: IconThemeData(color: isDark ? AppColors.darkSandGlow : AppColors.sandXlt),
+      actionsIconTheme: IconThemeData(color: isDark ? AppColors.darkSandGlow : AppColors.sandXlt),
+      bottom: _LalAppBarBottom(
+        goldColor: goldColor,
+        surfaceColor: surfaceColor,
+        showGoldDashes: showGoldDashes,
+      ),
+    );
+  }
+}
+
+class _LalAppBarBottom extends StatelessWidget implements PreferredSizeWidget {
+  final Color goldColor;
+  final Color surfaceColor;
+  final bool showGoldDashes;
+
+  const _LalAppBarBottom({
+    required this.goldColor,
+    required this.surfaceColor,
+    required this.showGoldDashes,
+  });
+
+  @override
+  Size get preferredSize => Size.fromHeight(showGoldDashes ? 4.5 : 1.5);
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        AppBar(
-          title: Text(title, style: AppTextStyles.screenTitle(
-            color: isDark ? AppColors.darkSandGlow : AppColors.sandXlt,
-          )),
-          leading: leading ?? (Navigator.canPop(context) ? const BackButton() : null),
-          actions: actions,
-          backgroundColor: surfaceColor,
-          iconTheme: IconThemeData(color: isDark ? AppColors.darkSandGlow : AppColors.sandXlt),
-          actionsIconTheme: IconThemeData(color: isDark ? AppColors.darkSandGlow : AppColors.sandXlt),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1.5),
-            child: Container(
-              height: 1.5,
-              color: goldColor,
-            ),
-          ),
+        Container(
+          height: 1.5,
+          color: goldColor,
         ),
-        // Optional dashed gold line below the solid border
         if (showGoldDashes)
           Container(
             height: 3,

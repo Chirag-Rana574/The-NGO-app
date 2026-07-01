@@ -36,4 +36,24 @@ class CaseItem {
       notes: notes ?? this.notes,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'caseNumber': caseNumber,
+    'court': court,
+    'nextHearingDate': nextHearingDate,
+    'status': status,
+    'notes': notes,
+  };
+
+  factory CaseItem.fromJson(Map<String, dynamic> json) => CaseItem(
+    id: json['id'] as String? ?? '',
+    title: json['title'] as String? ?? '',
+    caseNumber: json['caseNumber'] as String? ?? '',
+    court: json['court'] as String? ?? '',
+    nextHearingDate: json['nextHearingDate'] as String? ?? '',
+    status: json['status'] as String? ?? 'active',
+    notes: json['notes'] as String? ?? '',
+  );
 }

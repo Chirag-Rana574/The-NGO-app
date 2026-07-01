@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import '../../core/network/supabase_client.dart';
 
 /// Template Model
@@ -272,23 +273,23 @@ class AdminNotifier extends StateNotifier<AdminState> {
 
   final SupabaseClient _client = AppSupabaseClient.instance;
 
-  /// Check if current user has admin role
+  /// Check if current user has admin role via database user_profiles role check
   Future<void> checkAdminStatus() async {
     try {
-      final user = _client.auth.currentUser;
-      if (user == null) {
+      final fbUser = fb_auth.FirebaseAuth.instance.currentUser;
+      if (fbUser == null) {
         state = state.copyWith(isAdmin: false);
         return;
       }
 
       final response = await _client
-          .from('user_roles')
+          .from('user_profiles')
           .select('role')
-          .eq('user_id', user.id)
-          .eq('role', 'admin')
-          .limit(1);
+          .eq('user_id', fbUser.uid)
+          .maybeSingle();
 
-      state = state.copyWith(isAdmin: response.isNotEmpty);
+      final isAdmin = response != null && (response['role'] == 'admin' || response['role'] == 'superadmin');
+      state = state.copyWith(isAdmin: isAdmin);
     } catch (e) {
       state = state.copyWith(isAdmin: false, error: e.toString());
     }
@@ -480,11 +481,11 @@ class AdminNotifier extends StateNotifier<AdminState> {
           .select('id, is_active');
 
       final usersResponse = await _client
-          .from('users')
+          .from('user_profiles')
           .select('id');
 
       final documentsResponse = await _client
-          .from('generated_documents')
+          .from('documents')
           .select('id');
 
       final templates = templatesResponse as List;

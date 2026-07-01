@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/judgment.dart';
@@ -29,7 +30,8 @@ class JudgmentsService {
 
       return response.map((json) => Judgment.fromJson(json)).toList();
     } catch (e) {
-      return _getFallbackJudgments();
+      debugPrint('Error fetching judgments: $e');
+      return [];
     }
   }
 
@@ -44,28 +46,8 @@ class JudgmentsService {
       final countResult = await query.count();
       return countResult.count;
     } catch (e) {
-      return _getFallbackJudgments().length;
+      debugPrint('Error fetching judgment count: $e');
+      return 0;
     }
-  }
-
-  List<Judgment> _getFallbackJudgments() {
-    return [
-      Judgment(
-        id: '1',
-        caseNumber: 'CS(OS) 123/2024',
-        court: 'Delhi High Court',
-        parties: 'ABC vs XYZ',
-        date: DateTime.now().subtract(const Duration(days: 5)),
-        summary: 'Judgment on contract dispute',
-      ),
-      Judgment(
-        id: '2',
-        caseNumber: 'Writ Petition 456/2024',
-        court: 'Supreme Court',
-        parties: 'State vs Citizen',
-        date: DateTime.now().subtract(const Duration(days: 10)),
-        summary: 'Constitutional validity of law',
-      ),
-    ];
   }
 }

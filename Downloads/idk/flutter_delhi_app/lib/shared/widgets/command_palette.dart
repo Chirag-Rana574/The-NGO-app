@@ -93,8 +93,8 @@ class _CommandPaletteState extends State<CommandPalette> {
     super.dispose();
   }
 
-  void _handleKey(RawKeyEvent event) {
-    if (event is RawKeyDownEvent) {
+  void _handleKey(KeyEvent event) {
+    if (event is KeyDownEvent) {
       final filteredCommands = _getFilteredCommands();
       if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
         setState(() {
@@ -198,9 +198,9 @@ class _CommandPaletteState extends State<CommandPalette> {
     final filteredCommands = _getFilteredCommands();
     final groupedCommands = _getGroupedCommands(filteredCommands);
     
-    return RawKeyboardListener(
+    return KeyboardListener(
       focusNode: FocusNode(),
-      onKey: _handleKey,
+      onKeyEvent: _handleKey,
       child: Container(
         decoration: BoxDecoration(
           color: context.surface,

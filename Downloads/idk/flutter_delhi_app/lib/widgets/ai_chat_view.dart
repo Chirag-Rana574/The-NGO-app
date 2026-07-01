@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../utils/secure_storage_helper.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_text_styles.dart';
 import '../core/theme/context_colors.dart';
@@ -77,6 +80,51 @@ class _AiChatViewState extends ConsumerState<AiChatView> {
     });
   }
 
+  void _executeFlutterActionCommand(Map<String, dynamic> command) async {
+    final type = command['type'];
+    final route = command['mobileRoute'] ?? command['route'];
+    
+    if (type == 'navigate' && route != null) {
+      if (mounted) {
+        context.push(route);
+      }
+    } else if (type == 'prefill_form' && route != null) {
+      final prefill = command['prefill'];
+      final formId = command['formId'];
+      if (prefill != null && prefill is Map && formId != null) {
+        final key = 'document_form_$formId';
+        final payload = {
+          'formId': formId,
+          'fieldValues': Map<String, String>.from(prefill),
+        };
+        await SecureStorageHelper.instance.write(key, jsonEncode(payload));
+      }
+      if (mounted) {
+        context.push(route);
+      }
+    }
+  }
+
+  String _processResponse(String response) {
+    String cleanedResponse = response;
+    String actionMsg = "";
+    final regExp = RegExp(r'```action-command\n([\s\S]*?)\n```');
+    final match = regExp.firstMatch(response);
+    if (match != null) {
+      try {
+        final commandJson = match.group(1)?.trim() ?? '';
+        cleanedResponse = response.replaceAll(regExp, '').trim();
+        final command = jsonDecode(commandJson);
+        
+        _executeFlutterActionCommand(Map<String, dynamic>.from(command));
+        actionMsg = "\n\n⚙️ *System Action: Executed ${command['label'] ?? command['type']}*";
+      } catch (e) {
+        debugPrint("Failed to parse action command: $e");
+      }
+    }
+    return cleanedResponse + actionMsg;
+  }
+
   Future<void> _handleSend() async {
     final text = _controller.text.trim();
     if (text.isEmpty || _isTyping) return;
@@ -98,7 +146,9 @@ class _AiChatViewState extends ConsumerState<AiChatView> {
         history: history,
         systemPrompt: _getSystemPrompt(),
       );
-      ref.read(aiChatProvider.notifier).addMessage(response, false);
+      
+      final processed = _processResponse(response);
+      ref.read(aiChatProvider.notifier).addMessage(processed, false);
     } catch (e) {
       // Try Kilo fallback
       try {
@@ -113,8 +163,10 @@ class _AiChatViewState extends ConsumerState<AiChatView> {
           history: history,
           systemPrompt: _getSystemPrompt(),
         );
+        
+        final processed = _processResponse(response);
         ref.read(aiChatProvider.notifier).addMessage(
-          "⚠️ *Running via secondary AI (Kilo Code free tier)*\n\n$response",
+          "⚠️ *Running via secondary AI (Kilo Code free tier)*\n\n$processed",
           false,
         );
       } catch (kiloError) {

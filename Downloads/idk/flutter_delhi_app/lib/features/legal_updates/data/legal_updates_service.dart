@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/legal_update.dart';
@@ -33,8 +34,8 @@ class LegalUpdatesService {
 
       return response.map((json) => LegalUpdate.fromJson(json)).toList();
     } catch (e) {
-      // Fallback to mock data on error
-      return _getFallbackNews();
+      debugPrint('Error fetching legal updates: $e');
+      return [];
     }
   }
 
@@ -50,42 +51,8 @@ class LegalUpdatesService {
           .toList();
       return categories;
     } catch (e) {
-      return ['LiveLaw', 'Bar and Bench', 'SCC Online Blog', 'iPleaders', 'ETLegalWorld'];
+      debugPrint('Error fetching legal update categories: $e');
+      return [];
     }
-  }
-
-  List<LegalUpdate> _getFallbackNews() {
-    return [
-      LegalUpdate(
-        id: '1',
-        title: 'Supreme Court to hear Electoral Bonds case review on Feb 10',
-        content: null,
-        source: 'Legal News India',
-        sourceUrl: null,
-        category: 'Supreme Court',
-        isBreaking: true,
-        publishedAt: DateTime.now().subtract(const Duration(hours: 2)),
-      ),
-      LegalUpdate(
-        id: '2',
-        title: 'Delhi HC makes e-filing mandatory for all fresh matters from Feb 1, 2025',
-        content: null,
-        source: 'Bar & Bench',
-        sourceUrl: null,
-        category: 'Delhi High Court',
-        isBreaking: false,
-        publishedAt: DateTime.now().subtract(const Duration(hours: 5)),
-      ),
-      LegalUpdate(
-        id: '3',
-        title: 'Ministry issues clarification on BNS Section 111 - Organized Crime provisions',
-        content: null,
-        source: 'Ministry of Home Affairs',
-        sourceUrl: null,
-        category: 'New Laws',
-        isBreaking: false,
-        publishedAt: DateTime.now().subtract(const Duration(hours: 24)),
-      ),
-    ];
   }
 }

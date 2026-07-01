@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../utils/secure_storage_helper.dart';
 import '../models/bookmark.dart';
 
 class CaseDocument {
@@ -66,34 +66,13 @@ class CaseDocumentNotifier extends StateNotifier<List<CaseDocument>> {
 
   Future<void> _loadFromStorage() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final String? jsonStr = prefs.getString(_storageKey);
+      final String? jsonStr = await SecureStorageHelper.instance.read(_storageKey);
       if (jsonStr != null) {
         final List<dynamic> decoded = jsonDecode(jsonStr);
         state = decoded.map((item) => CaseDocument.fromJson(item)).toList();
       } else {
-        // Seeding initial documents if empty
-        state = [
-          CaseDocument(
-            id: '1',
-            fileName: 'FIR_Copy_Section_420.pdf',
-            fileSize: '2.4 MB',
-            date: 'Oct 12, 2024',
-            ocrStatus: 'completed',
-            ocrText: 'This is the FIR report under Section 420 for cheating. Accused represented by counsel. Complaint filed by complainant on October 10th.',
-            bookmarks: [
-              Bookmark(id: 'b1', pageNumber: 1, note: 'FIR Details & Section 420 invocation', createdAt: DateTime.now().toIso8601String())
-            ],
-          ),
-          CaseDocument(
-            id: '2',
-            fileName: 'Bail_Application_Draft_v2.pdf',
-            fileSize: '840 KB',
-            date: 'Oct 15, 2024',
-            ocrStatus: 'pending',
-          ),
-        ];
-        _saveToStorage();
+        // First run — start with empty list
+        state = [];
       }
     } catch (e) {
       // Handle storage load failure gracefully
@@ -103,9 +82,8 @@ class CaseDocumentNotifier extends StateNotifier<List<CaseDocument>> {
 
   Future<void> _saveToStorage() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
       final String encoded = jsonEncode(state.map((d) => d.toJson()).toList());
-      await prefs.setString(_storageKey, encoded);
+      await SecureStorageHelper.instance.write(_storageKey, encoded);
     } catch (_) {}
   }
 

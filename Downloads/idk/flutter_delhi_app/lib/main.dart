@@ -2,9 +2,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'firebase_options.dart';
 import 'core/config/env.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_provider.dart';
@@ -26,18 +28,31 @@ Future<void> main() async {
     return true;
   };
 
-  // Initialize Firebase (optional - for legacy features)
-  try {
-    await Firebase.initializeApp();
-  } catch (e) {
-    debugPrint("Firebase initialization failed/bypassed: $e");
-  }
+  // Initialize Firebase with project config
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-  // Initialize Supabase
   await Supabase.initialize(
     url: Env.supabaseUrl,
     publishableKey: Env.supabaseAnonKey,
   );
+
+  // Sync Firebase ID token with Supabase Client REST headers dynamically
+  FirebaseAuth.instance.idTokenChanges().listen((user) async {
+    if (user != null) {
+      try {
+        final token = await user.getIdToken();
+        Supabase.instance.client.rest.headers['Authorization'] = 'Bearer $token';
+        Supabase.instance.client.rest.headers['x-firebase-user-id'] = user.uid;
+      } catch (e) {
+        debugPrint('Error syncing Firebase token to Supabase: $e');
+      }
+    } else {
+      Supabase.instance.client.rest.headers.remove('Authorization');
+      Supabase.instance.client.rest.headers.remove('x-firebase-user-id');
+    }
+  });
 
   // Initialize Sentry for crash reporting
   await SentryFlutter.init(
@@ -60,6 +75,8 @@ class LegalAssistantApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final router = AppRouter.createRouter();
+    
+    // Firebase ID token is dynamically bound to Supabase rest headers in main()
 
     return MaterialApp.router(
       title: 'Delhi Legal Assistant Pro',

@@ -1,9 +1,7 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../services/firebase_auth_service.dart';
 import '../shared/widgets/jaali_background.dart';
 import '../shared/widgets/single_arch.dart';
@@ -23,14 +21,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   late Animation<double> _logoBounce, _cardFade;
   late Animation<Offset> _cardSlide;
 
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _otpController = TextEditingController();
+  final _codeController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  bool _isOtpSent = false;
+  bool _isLogin = true; // true = sign in, false = sign up
   bool _isLoading = false;
-  int _timerSeconds = 30;
-  Timer? _countdownTimer;
+  bool _obscurePassword = true;
+
+  bool _isPhoneLogin = false;
+  bool _codeSent = false;
+  String _verificationId = '';
 
   @override
   void initState() {
@@ -55,9 +58,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   void dispose() {
     _logoCtrl.dispose();
     _cardCtrl.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     _phoneController.dispose();
-    _otpController.dispose();
-    _countdownTimer?.cancel();
+    _codeController.dispose();
     super.dispose();
   }
 
@@ -90,86 +94,138 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     );
   }
 
-  void _startTimer() {
-    _countdownTimer?.cancel();
-    setState(() {
-      _timerSeconds = 30;
-    });
-    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_timerSeconds == 0) {
-        timer.cancel();
-      } else {
-        setState(() {
-          _timerSeconds--;
-        });
-      }
-    });
-  }
-
-  Future<void> _handlePhoneSubmit() async {
+  Future<void> _handleEmailSubmit() async {
     if (!_formKey.currentState!.validate()) return;
     
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 800)); // Simulate API delay
-    setState(() => _isLoading = false);
+    final authService = ref.read(firebaseAuthServiceProvider);
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
 
-    final phone = _phoneController.text.trim();
-    if (phone == '9876543210' || phone.length == 10) {
-      setState(() {
-        _isOtpSent = true;
-      });
-      _startTimer();
-      _showNotification('Verification OTP code sent to +91 $phone');
-    } else {
-      _showNotification('Please enter a valid 10-digit number', isError: true);
+    try {
+      if (_isLogin) {
+        await authService.signInWithEmail(email, password);
+        if (mounted) {
+          _showNotification('Welcome back!');
+          context.go('/home');
+        }
+      } else {
+        await authService.signUpWithEmail(email, password);
+        if (mounted) {
+          _showNotification('Account created! You are now signed in.');
+          context.go('/home');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _showNotification(e.toString().replaceFirst('Exception: ', ''), isError: true);
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  Future<void> _handleOtpSubmit() async {
-    final otp = _otpController.text.trim();
-    if (otp.length != 6) {
-      _showNotification('OTP must be exactly 6 digits', isError: true);
+  Future<void> _handlePhoneSubmit() async {
+    final phone = _phoneController.text.trim();
+    if (phone.isEmpty) {
+      _showNotification('Phone number is required', isError: true);
       return;
     }
 
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 1000)); // Simulate auth
-    setState(() => _isLoading = false);
+    final authService = ref.read(firebaseAuthServiceProvider);
 
-    if (otp == '123456' || otp.isNotEmpty) {
-      _showNotification('Authentication successful. Welcome!');
+    try {
+      await authService.verifyPhoneNumber(
+        phoneNumber: phone,
+        codeSent: (verificationId, resendToken) {
+          setState(() {
+            _verificationId = verificationId;
+            _codeSent = true;
+            _isLoading = false;
+          });
+          _showNotification('OTP sent successfully!');
+        },
+        verificationFailed: (e) {
+          setState(() => _isLoading = false);
+          _showNotification(e.message ?? 'Verification failed', isError: true);
+        },
+        verificationCompleted: (credential) async {
+          // Auto retrieval
+          final result = await FirebaseAuth.instance.signInWithCredential(credential);
+          if (mounted && result.user != null) {
+            _showNotification('Welcome back!');
+            context.go('/home');
+          }
+        },
+      );
+    } catch (e) {
       if (mounted) {
+        setState(() => _isLoading = false);
+        _showNotification(e.toString().replaceFirst('Exception: ', ''), isError: true);
+      }
+    }
+  }
+
+  Future<void> _handleVerifyOTP() async {
+    final code = _codeController.text.trim();
+    if (code.isEmpty || code.length < 6) {
+      _showNotification('Enter the 6-digit OTP code', isError: true);
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    final authService = ref.read(firebaseAuthServiceProvider);
+
+    try {
+      final user = await authService.signInWithOTP(_verificationId, code);
+      if (mounted && user != null) {
+        _showNotification('Welcome back!');
         context.go('/home');
       }
-    } else {
-      _showNotification('Invalid verification code. Try again.', isError: true);
+    } catch (e) {
+      if (mounted) {
+        _showNotification(e.toString().replaceFirst('Exception: ', ''), isError: true);
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   Future<void> _handleGoogleSignIn() async {
     setState(() => _isLoading = true);
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        setState(() => _isLoading = false);
-        return;
-      }
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      
       final authService = ref.read(firebaseAuthServiceProvider);
-      await authService.signInWithGoogleIdToken(googleAuth.idToken ?? '');
+      final user = await authService.signInWithGoogle();
       
-      setState(() => _isLoading = false);
-      if (mounted) {
-        _showNotification('Welcome, ${googleUser.displayName ?? "User"}!');
+      if (mounted && user != null) {
+        _showNotification('Welcome, ${user.displayName ?? "User"}!');
         context.go('/home');
       }
     } catch (e) {
-      debugPrint("Google Sign-In Error: $e");
-      setState(() => _isLoading = false);
       if (mounted) {
-        _showNotification("Simulated login enabled (Google OAuth not configured)");
-        context.go('/home');
+        _showNotification(e.toString().replaceFirst('Exception: ', ''), isError: true);
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handleForgotPassword() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) {
+      _showNotification('Enter your email address first', isError: true);
+      return;
+    }
+    try {
+      final authService = ref.read(firebaseAuthServiceProvider);
+      await authService.resetPassword(email);
+      if (mounted) {
+        _showNotification('Password reset email sent to $email');
+      }
+    } catch (e) {
+      if (mounted) {
+        _showNotification(e.toString().replaceFirst('Exception: ', ''), isError: true);
       }
     }
   }
@@ -235,7 +291,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       
                       Form(
                         key: _formKey,
-                        child: _isOtpSent ? _buildOtpForm(context) : _buildPhoneForm(context),
+                        child: _isPhoneLogin
+                            ? _buildPhoneForm(context)
+                            : _buildEmailForm(context),
                       ),
                       
                       const SizedBox(height: 24),
@@ -278,7 +336,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       ),
                       
                       const SizedBox(height: 36),
-                      Text('Secure · Encrypted · Enterprise Grade v2.0',
+                      Text('Secure · Firebase Auth · Enterprise Grade v2.0',
                         style: AppTextStyles.bodySmall(
                           color: context.textDim,
                         ),
@@ -294,45 +352,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     );
   }
 
-  Widget _buildPhoneForm(BuildContext context) {
+  Widget _buildEmailForm(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Mobile Authentication',
+          _isLogin ? 'Sign In' : 'Create Account',
           style: AppTextStyles.chatTitle(color: context.textPri),
         ),
         const SizedBox(height: 8),
         Text(
-          'Enter your registered number to receive a secure OTP.',
+          _isLogin
+              ? 'Enter your credentials to access your workspace.'
+              : 'Create a new account to get started.',
           style: AppTextStyles.bodySmall(color: context.textSec),
         ),
         const SizedBox(height: 16),
         TextFormField(
-          controller: _phoneController,
-          keyboardType: TextInputType.phone,
-          maxLength: 10,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          controller: _emailController,
+          keyboardType: TextInputType.emailAddress,
           style: TextStyle(color: context.textPri),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Phone number is required';
+              return 'Email is required';
             }
-            if (value.length != 10) {
-              return 'Must be exactly 10 digits';
+            if (!value.contains('@') || !value.contains('.')) {
+              return 'Enter a valid email address';
             }
             return null;
           },
           decoration: InputDecoration(
-            counterText: '',
-            prefixIcon: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-              child: Text(
-                '+91',
-                style: TextStyle(color: context.textPri, fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ),
-            hintText: 'Enter Mobile Number',
+            prefixIcon: Icon(Icons.email_outlined, color: context.textDim),
+            hintText: 'Email address',
             hintStyle: TextStyle(color: context.textDim),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.lal, width: 1.5),
@@ -347,63 +398,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             ),
           ),
         ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: _isLoading ? null : _handlePhoneSubmit,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.lal,
-            foregroundColor: Colors.white,
-            minimumSize: const Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-            elevation: 2,
-          ),
-          child: _isLoading 
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-              : const Text('Get OTP Code', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOtpForm(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Enter OTP Verification',
-              style: AppTextStyles.chatTitle(color: context.textPri),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _isOtpSent = false;
-                  _otpController.clear();
-                });
-              },
-              child: const Text('Change Number', style: TextStyle(color: Colors.blue)),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'We have sent a 6-digit code to +91 ${_phoneController.text}',
-          style: AppTextStyles.bodySmall(color: context.textSec),
-        ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
-          controller: _otpController,
-          keyboardType: TextInputType.number,
-          maxLength: 6,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          style: TextStyle(color: context.textPri, letterSpacing: 8, fontSize: 18, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
+          controller: _passwordController,
+          obscureText: _obscurePassword,
+          style: TextStyle(color: context.textPri),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Password is required';
+            }
+            if (!_isLogin && value.length < 6) {
+              return 'Password must be at least 6 characters';
+            }
+            return null;
+          },
           decoration: InputDecoration(
-            counterText: '',
-            hintText: '• • • • • •',
-            hintStyle: TextStyle(color: context.textDim, letterSpacing: 8),
+            prefixIcon: Icon(Icons.lock_outline, color: context.textDim),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                color: context.textDim,
+              ),
+              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            ),
+            hintText: 'Password',
+            hintStyle: TextStyle(color: context.textDim),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.lal, width: 1.5),
               borderRadius: BorderRadius.circular(4),
@@ -417,9 +436,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             ),
           ),
         ),
+        if (_isLogin) ...[
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: _handleForgotPassword,
+              child: Text('Forgot password?', style: TextStyle(color: AppColors.lazuli, fontSize: 13)),
+            ),
+          ),
+        ],
         const SizedBox(height: 16),
         ElevatedButton(
-          onPressed: _isLoading ? null : _handleOtpSubmit,
+          onPressed: _isLoading ? null : _handleEmailSubmit,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.lal,
             foregroundColor: Colors.white,
@@ -429,16 +458,138 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           ),
           child: _isLoading 
               ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-              : const Text('Verify & Proceed', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              : Text(_isLogin ? 'Sign In' : 'Create Account', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: TextButton(
+            onPressed: () => setState(() {
+              _isLogin = !_isLogin;
+              _passwordController.clear();
+            }),
+            child: Text(
+              _isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in',
+              style: TextStyle(color: AppColors.lazuli, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Center(
+          child: TextButton(
+            onPressed: () => setState(() {
+              _isPhoneLogin = true;
+              _codeSent = false;
+              _phoneController.clear();
+              _codeController.clear();
+            }),
+            child: Text(
+              'Sign In with Phone number',
+              style: TextStyle(color: AppColors.gold, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhoneForm(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Phone Sign In',
+          style: AppTextStyles.chatTitle(color: context.textPri),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          _codeSent
+              ? 'Enter the 6-digit OTP code sent to your phone.'
+              : 'Enter your phone number (with country code, e.g., +91).',
+          style: AppTextStyles.bodySmall(color: context.textSec),
         ),
         const SizedBox(height: 16),
-        Center(
-          child: _timerSeconds > 0
-              ? Text('Resend code in $_timerSeconds seconds', style: TextStyle(color: context.textSec, fontSize: 13))
-              : TextButton(
-                  onPressed: _handlePhoneSubmit,
-                  child: const Text('Resend Verification OTP', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+        if (!_codeSent)
+          TextFormField(
+            controller: _phoneController,
+            keyboardType: TextInputType.phone,
+            style: TextStyle(color: context.textPri),
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.phone_outlined, color: context.textDim),
+              hintText: '+919999988888',
+              hintStyle: TextStyle(color: context.textDim),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.lal, width: 1.5),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: context.border),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          )
+        else
+          TextFormField(
+            controller: _codeController,
+            keyboardType: TextInputType.number,
+            style: TextStyle(color: context.textPri),
+            maxLength: 6,
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.sms_outlined, color: context.textDim),
+              hintText: 'Enter 6-digit OTP',
+              hintStyle: TextStyle(color: context.textDim),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.lal, width: 1.5),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: context.border),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+        const SizedBox(height: 24),
+        ElevatedButton(
+          onPressed: _isLoading
+              ? null
+              : (_codeSent ? _handleVerifyOTP : _handlePhoneSubmit),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.lal,
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 50),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            elevation: 2,
+          ),
+          child: _isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                )
+              : Text(
+                  _codeSent ? 'Verify OTP' : 'Send Verification Code',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: TextButton(
+            onPressed: () => setState(() {
+              _isPhoneLogin = false;
+              _codeSent = false;
+              _phoneController.clear();
+              _codeController.clear();
+            }),
+            child: Text(
+              'Back to Email Sign In',
+              style: TextStyle(color: AppColors.lazuli, fontWeight: FontWeight.w500),
+            ),
+          ),
         ),
       ],
     );

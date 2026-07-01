@@ -166,12 +166,37 @@ class _LegalUpdatesScreenState extends ConsumerState<LegalUpdatesScreen> {
               data: (updates) {
                 if (updates.isEmpty) {
                   return Center(
-                    child: Text(
-                      'No legal updates found',
-                      style: AppTextStyles.body(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? AppColors.darkTextSec
-                            : AppColors.dust,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.newspaper,
+                            size: 48,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? AppColors.darkTextDim
+                                : AppColors.dust,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No legal updates available',
+                            style: AppTextStyles.body(
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? AppColors.darkTextSec
+                                  : AppColors.dust,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Pull down to refresh',
+                            style: AppTextStyles.bodySmall(
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? AppColors.darkTextDim
+                                  : AppColors.dust,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );

@@ -22,16 +22,9 @@ class _DistrictCourtsScreenState extends ConsumerState<DistrictCourtsScreen> {
   bool _showNotifications = false;
   bool _showMagistrate = false;
 
-  final mockNotifications = [
-    {'title': 'Holiday Notice - Id ul Zuha', 'date': '2024-06-16', 'type': 'holiday', 'district': 'All'},
-    {'title': 'New Filing Requirements', 'date': '2024-06-01', 'type': 'circular', 'district': 'Central'},
-    {'title': 'Recruitment - Stenographer', 'date': '2024-05-28', 'type': 'recruitment', 'district': 'West'},
-  ];
+  final List<Map<String, String>> mockNotifications = [];
 
-  final mockMagistrateRoster = [
-    {'date': '2024-06-01', 'magistrate': 'Sh. Rameshwar Singh', 'court': 'C-25', 'shift': 'Morning'},
-    {'date': '2024-06-02', 'magistrate': 'Sh. Priya Agarwal', 'court': 'C-32', 'shift': 'Evening'},
-  ];
+  final List<Map<String, String>> mockMagistrateRoster = [];
 
   @override
   Widget build(BuildContext context) {
@@ -179,6 +172,18 @@ class _DistrictCourtsScreenState extends ConsumerState<DistrictCourtsScreen> {
 
 
   Widget _buildNotificationsList(BuildContext context) {
+    if (mockNotifications.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        child: Center(
+          child: Text(
+            'No notifications available yet.\nData will appear once connected to the court API.',
+            style: AppTextStyles.bodySmall(color: context.textDim),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
     return Column(
       children: mockNotifications.map((notif) {
         return Padding(
@@ -219,6 +224,18 @@ class _DistrictCourtsScreenState extends ConsumerState<DistrictCourtsScreen> {
   }
 
   Widget _buildMagistrateList(BuildContext context) {
+    if (mockMagistrateRoster.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        child: Center(
+          child: Text(
+            'No duty magistrate data available yet.\nData will appear once connected to the court API.',
+            style: AppTextStyles.bodySmall(color: context.textDim),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
     return Column(
       children: mockMagistrateRoster.map((mag) {
         return Padding(

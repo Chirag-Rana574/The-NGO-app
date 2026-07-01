@@ -19,11 +19,11 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  String _advocateName = 'Aditi Sharma';
-  String _barId = 'D/2045/2018';
-  String _chamberAddress = 'Chamber 432, Delhi High Court, New Delhi';
-  int _favoritesCount = 8;
-  int _draftsCount = 3;
+  String _advocateName = '';
+  String _barId = '';
+  String _chamberAddress = '';
+  int _favoritesCount = 0;
+  int _draftsCount = 0;
   bool _isLoading = true;
 
   @override
@@ -39,13 +39,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       // Calculate drafts count dynamically by counting prefs keys
       final keys = prefs.getKeys();
       int drafts = keys.where((k) => k.startsWith('document_form_')).length;
-      if (drafts == 0) drafts = 3; // Fallback to React default
+      // No fallback — show actual count
 
       setState(() {
-        _advocateName = prefs.getString('practice_advocate_name') ?? 'Aditi Sharma';
-        _barId = prefs.getString('practice_bar_id') ?? 'D/2045/2018';
-        _chamberAddress = prefs.getString('practice_chamber_address') ?? 'Chamber 432, Delhi High Court, New Delhi';
-        _favoritesCount = prefs.getInt('practice_favorites_count') ?? 8;
+        _advocateName = prefs.getString('practice_advocate_name') ?? '';
+        _barId = prefs.getString('practice_bar_id') ?? '';
+        _chamberAddress = prefs.getString('practice_chamber_address') ?? '';
+        _favoritesCount = prefs.getInt('practice_favorites_count') ?? 0;
         _draftsCount = drafts;
         _isLoading = false;
       });
@@ -164,10 +164,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
-    final name = (user?.userMetadata?['display_name'] != null && (user!.userMetadata!['display_name'] as String).isNotEmpty)
-        ? user.userMetadata!['display_name'] as String
-        : _advocateName;
-    final email = user?.email ?? 'counselor@example.com';
+    final name = (user?.displayName != null && user!.displayName!.isNotEmpty)
+        ? user.displayName!
+        : (_advocateName.isNotEmpty ? _advocateName : 'Tap to set up profile');
+    final email = user?.email ?? 'Not signed in';
     final initialLetter = name.isNotEmpty ? name[0].toUpperCase() : 'A';
 
     return Scaffold(
@@ -275,7 +275,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               icon: Icons.shield, 
               iconColor: Colors.blue, 
               title: 'Practice Details',
-              subtitle: 'ID: $_barId',
+              subtitle: _barId.isNotEmpty ? 'ID: $_barId' : 'Tap to set up your practice details',
               showBorder: true,
               onTap: _showPracticeDetailsDialog,
             ),
@@ -284,7 +284,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               icon: Icons.settings, 
               iconColor: Colors.cyan, 
               title: 'App Settings',
-              subtitle: 'Chamber: ${_chamberAddress.split(',').first}',
+              subtitle: _chamberAddress.isNotEmpty ? 'Chamber: ${_chamberAddress.split(',').first}' : 'Not set',
               showBorder: true,
               onTap: () => _showNotification('App configuration and settings loaded.'),
             ),

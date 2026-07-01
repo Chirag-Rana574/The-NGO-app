@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import '../domain/document.dart';
 
 final documentServiceProvider = Provider<DocumentService>((ref) {
@@ -14,13 +15,17 @@ class DocumentService {
 
   Future<List<Document>> fetchDocuments({String? category}) async {
     try {
-      var query = _client.from('documents').select();
+      final user = fb.FirebaseAuth.instance.currentUser;
+      if (user == null) return [];
+
+      var query = _client.from('documents').select().eq('user_id', user.uid);
 
       if (category != null && category.isNotEmpty) {
         query = query.eq('category', category);
       }
 
-      final response = await query.order('created_at', ascending: false);
+      final response = await query
+          .order('created_at', ascending: false);
 
       return response.map((json) => Document.fromJson(json)).toList();
     } catch (e) {
@@ -45,9 +50,16 @@ class DocumentService {
 
   Future<Document> saveDocument(Document document) async {
     try {
+      final user = fb.FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception("User must be logged in to save documents");
+
+      // Inject the current user's UID as user_id in the JSON structure
+      final json = document.toJson();
+      json['user_id'] = user.uid;
+
       final response = await _client
           .from('documents')
-          .upsert(document.toJson())
+          .upsert(json)
           .select();
 
       return Document.fromJson(response.first);
@@ -58,7 +70,10 @@ class DocumentService {
 
   Future<void> deleteDocument(String id) async {
     try {
-      await _client.from('documents').delete().eq('id', id);
+      await _client
+          .from('documents')
+          .delete()
+          .eq('id', id);
     } catch (e) {
       rethrow;
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import 'document_controller.dart';
@@ -100,7 +101,7 @@ class _DocumentCard extends ConsumerWidget {
           ref.read(selectedDocumentConfigProvider.notifier).state = config;
           ref.read(documentFormDataProvider.notifier).state = {};
           // Navigate to document builder screen
-          Navigator.of(context).pushNamed('/document-builder');
+          context.push('/document_builder', extra: config.id);
         },
       ),
     );

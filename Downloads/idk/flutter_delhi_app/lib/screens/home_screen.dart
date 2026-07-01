@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/context_colors.dart';
@@ -481,8 +481,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   String _getGreeting(User? user) {
     final h = DateTime.now().hour;
-    final name = (user != null && user.userMetadata?['display_name'] != null && (user.userMetadata?['display_name'] as String).isNotEmpty)
-        ? user.userMetadata!['display_name'] as String
+    final name = (user != null && user.displayName != null && user.displayName!.isNotEmpty)
+        ? user.displayName!
         : 'Counselor';
     if (h < 12) return 'Good morning, $name';
     if (h < 17) return 'Good afternoon, $name';

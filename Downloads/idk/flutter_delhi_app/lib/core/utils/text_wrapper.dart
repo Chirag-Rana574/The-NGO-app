@@ -11,7 +11,7 @@ class TextWrapper {
   }) {
     final textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
-      maxLines: maxLines,
+      maxLines: 1, // Must be 1 to measure single line overflow boundary
       textDirection: TextDirection.ltr,
     );
 
@@ -62,6 +62,9 @@ class TextWrapper {
     required double maxWidth,
     String ellipsis = '...',
   }) {
+    if (text.isEmpty) {
+      return ellipsis;
+    }
     final textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       maxLines: 1,

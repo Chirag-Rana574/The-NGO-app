@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/context_colors.dart';
 import 'jaali_background.dart';
 
-class AppDrawer extends StatelessWidget {
+/// Provider that loads advocate name from SharedPreferences
+final advocateNameProvider = FutureProvider<String>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('practice_advocate_name') ?? '';
+});
+
+class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor = isDark ? AppColors.darkSurface : AppColors.lal;
     final currentRoute = GoRouterState.of(context).uri.path;
+    final advocateNameAsync = ref.watch(advocateNameProvider);
+    final advocateName = advocateNameAsync.valueOrNull ?? '';
+    final displayName = advocateName.isNotEmpty ? advocateName : 'Set up profile';
+    final initialLetter = advocateName.isNotEmpty ? advocateName[0].toUpperCase() : '?';
 
     return Drawer(
       backgroundColor: context.ground,
@@ -41,7 +53,7 @@ class AppDrawer extends StatelessWidget {
                                 color: isDark ? AppColors.darkLalDim : AppColors.gold,
                               ),
                               child: Center(
-                                child: Text('A', style: AppTextStyles.screenTitle(color: isDark ? AppColors.darkSandGlow : AppColors.lal)),
+                                child: Text(initialLetter, style: AppTextStyles.screenTitle(color: isDark ? AppColors.darkSandGlow : AppColors.lal)),
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -49,7 +61,7 @@ class AppDrawer extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Aditi Sharma', style: AppTextStyles.screenTitle(color: context.sandGlow)),
+                                  Text(displayName, style: AppTextStyles.screenTitle(color: context.sandGlow)),
                                   const SizedBox(height: 2),
                                   Text('Advocate, Delhi High Court', style: AppTextStyles.bodySmall(color: context.sandGlow.withValues(alpha: 0.8))),
                                 ],

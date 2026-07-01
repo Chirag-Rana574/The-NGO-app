@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../utils/secure_storage_helper.dart';
 
 // Document form state model
 class DocumentFormData {
@@ -51,31 +52,28 @@ class DocumentFormNotifier extends StateNotifier<DocumentFormData> {
   }
 
   Future<void> _saveToPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
     final key = 'document_form_${state.formId}';
-    await prefs.setString(key, state.fieldValues.toString());
+    await SecureStorageHelper.instance.write(key, jsonEncode(state.toJson()));
   }
 
   Future<void> loadFromPrefs(String formId) async {
-    final prefs = await SharedPreferences.getInstance();
     final key = 'document_form_$formId';
-    final saved = prefs.getString(key);
+    final saved = await SecureStorageHelper.instance.read(key);
     if (saved != null) {
-      // Simple parsing - in production use proper JSON serialization
-      final map = <String, String>{};
-      // Parse saved string to map (simplified)
-      state = DocumentFormData(formId: formId, fieldValues: map);
+      try {
+        final decoded = jsonDecode(saved) as Map<String, dynamic>;
+        state = DocumentFormData.fromJson(decoded);
+      } catch (_) {
+        // If the saved string isn't valid JSON (legacy format), discard it
+        state = DocumentFormData(formId: formId, fieldValues: {});
+      }
+    } else {
+      state = DocumentFormData(formId: formId, fieldValues: {});
     }
   }
 
   Future<void> _clearPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys();
-    for (final key in keys) {
-      if (key.startsWith('document_form_')) {
-        await prefs.remove(key);
-      }
-    }
+    await SecureStorageHelper.instance.deleteWithPrefix('document_form_');
   }
 }
 
@@ -86,12 +84,15 @@ final documentFormProvider = StateNotifierProvider<DocumentFormNotifier, Documen
 
 // Provider for loading saved document data
 final savedDocumentDataProvider = FutureProvider.family<DocumentFormData?, String>((ref, formId) async {
-  final prefs = await SharedPreferences.getInstance();
   final key = 'document_form_$formId';
-  final saved = prefs.getString(key);
+  final saved = await SecureStorageHelper.instance.read(key);
   if (saved != null) {
-    // Return parsed data
-    return DocumentFormData(formId: formId, fieldValues: {});
+    try {
+      final decoded = jsonDecode(saved) as Map<String, dynamic>;
+      return DocumentFormData.fromJson(decoded);
+    } catch (_) {
+      return null;
+    }
   }
   return null;
 });

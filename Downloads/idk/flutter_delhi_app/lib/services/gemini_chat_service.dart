@@ -1,79 +1,42 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/config/env.dart';
 
 /// Gemini AI Chat Service for legal assistant conversations.
 /// Use primary AI first, then Kilo Code, then local canned responses.
 class GeminiChatService {
-  final String apiKey;
-  final String baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
   final String model = 'gemini-2.0-flash';
 
-  GeminiChatService({required this.apiKey});
+  GeminiChatService();
 
-  /// Send a message to Gemini and get a response
+  /// Send a message to Gemini and get a response via secure Edge Function proxy
   Future<String> sendMessage({
     required String message,
     List<Map<String, dynamic>>? history,
     String? systemPrompt,
   }) async {
-    final contents = <Map<String, dynamic>>[];
-
-    if (systemPrompt != null && systemPrompt.isNotEmpty) {
-      contents.add({
-        'parts': [{'text': systemPrompt}],
-        'role': 'user',
-      });
-    }
-
-    if (history != null) {
-      for (final entry in history) {
-        contents.add({
-          'parts': [{'text': entry['content'] ?? ''}],
-          'role': entry['role'] == 'user' ? 'user' : 'model',
-        });
-      }
-    }
-
-    contents.add({
-      'parts': [{'text': message}],
-      'role': 'user',
-    });
-
-    final response = await http.post(
-      Uri.parse('$baseUrl/$model:generateContent?key=$apiKey'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'contents': contents,
-        'generationConfig': {
-          'temperature': 0.7,
-          'topK': 40,
-          'topP': 0.95,
-          'maxOutputTokens': 2048,
+    try {
+      final response = await Supabase.instance.client.functions.invoke(
+        'gemini',
+        body: {
+          'query': message,
+          'chatHistory': history,
         },
-        'safetySettings': [
-          {'category': 'HARM_CATEGORY_HARASSMENT', 'threshold': 'BLOCK_MEDIUM_AND_ABOVE'},
-          {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_MEDIUM_AND_ABOVE'},
-          {'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold': 'BLOCK_MEDIUM_AND_ABOVE'},
-          {'category': 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold': 'BLOCK_MEDIUM_AND_ABOVE'},
-        ],
-      }),
-    );
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final candidates = data['candidates'] as List?;
-      if (candidates != null && candidates.isNotEmpty) {
-        final content = candidates[0]['content'] as Map?;
-        final parts = content?['parts'] as List?;
-        if (parts != null && parts.isNotEmpty) {
-          return parts[0]['text'] as String? ?? 'No response generated.';
+      if (response.status == 200) {
+        final data = response.data as Map<String, dynamic>;
+        if (data.containsKey('text')) {
+          return data['text'] as String;
+        } else if (data.containsKey('error')) {
+          throw Exception(data['error']);
         }
       }
-      return 'No valid response from AI.';
-    } else {
-      throw Exception('Gemini API error: ${response.statusCode} - ${response.body}');
+      throw Exception('Unexpected response status from Edge Function: ${response.status}');
+    } catch (e) {
+      throw Exception('Gemini Edge Function error: $e');
     }
   }
 
@@ -131,68 +94,19 @@ class GeminiChatService {
     }
   }
 
-  /// Stream a response from Gemini (for real-time chat)
+  /// Stream a response from Gemini (fallback structure, calls edge function)
   Stream<String> sendMessageStream({
     required String message,
     List<Map<String, dynamic>>? history,
     String? systemPrompt,
   }) async* {
     try {
-      final contents = <Map<String, dynamic>>[];
-
-      if (systemPrompt != null && systemPrompt.isNotEmpty) {
-        contents.add({
-          'parts': [{'text': systemPrompt}],
-          'role': 'user',
-        });
-      }
-
-      if (history != null) {
-        for (final entry in history) {
-          contents.add({
-            'parts': [{'text': entry['content'] ?? ''}],
-            'role': entry['role'] == 'user' ? 'user' : 'model',
-          });
-        }
-      }
-
-      contents.add({
-        'parts': [{'text': message}],
-        'role': 'user',
-      });
-
-      final response = await http.post(
-        Uri.parse('$baseUrl/$model:streamGenerateContent?key=$apiKey&alt=sse'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'contents': contents,
-          'generationConfig': {
-            'temperature': 0.7,
-            'topK': 40,
-            'topP': 0.95,
-            'maxOutputTokens': 2048,
-          },
-        }),
+      final response = await sendMessage(
+        message: message,
+        history: history,
+        systemPrompt: systemPrompt,
       );
-
-      if (response.statusCode == 200) {
-        final lines = response.body.split('\n');
-        for (final line in lines) {
-          if (line.startsWith('data: ')) {
-            final data = jsonDecode(line.substring(6));
-            final candidates = data['candidates'] as List?;
-            if (candidates != null && candidates.isNotEmpty) {
-              final content = candidates[0]['content'] as Map?;
-              final parts = content?['parts'] as List?;
-              if (parts != null && parts.isNotEmpty) {
-                yield parts[0]['text'] as String? ?? '';
-              }
-            }
-          }
-        }
-      } else {
-        throw Exception('Gemini API streaming error: ${response.statusCode}');
-      }
+      yield response;
     } catch (e) {
       throw Exception('Chat stream error: $e');
     }
@@ -201,11 +115,7 @@ class GeminiChatService {
 
 /// Provider for GeminiChatService
 final geminiChatServiceProvider = Provider<GeminiChatService>((ref) {
-  final apiKey = Env.geminiApiKey;
-  if (apiKey.isEmpty) {
-    throw Exception('Gemini API key not configured. Set GEMINI_API_KEY in .env');
-  }
-  return GeminiChatService(apiKey: apiKey);
+  return GeminiChatService();
 });
 
 /// Chat message model

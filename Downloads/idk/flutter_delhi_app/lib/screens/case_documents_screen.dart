@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import '../theme/app_colors.dart';
+import 'package:share_plus/share_plus.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/context_colors.dart';
 import '../shared/widgets/pietra_card.dart';
@@ -11,6 +12,7 @@ import '../shared/widgets/fade_slide.dart';
 import '../shared/widgets/pdf_viewer.dart';
 import '../data/models/bookmark.dart';
 import '../data/providers/case_document_store.dart';
+import '../data/providers/ocr_history_provider.dart';
 import '../utils/ocr_service.dart';
 
 class CaseDocumentsScreen extends ConsumerStatefulWidget {
@@ -109,37 +111,18 @@ class _CaseDocumentsScreenState extends ConsumerState<CaseDocumentsScreen> {
 
       await ref.read(caseDocumentProvider.notifier).updateOcrResult(doc.id, 'completed', extractedText);
       ref.read(ocrStateProvider.notifier).reset();
+      // Persist to OCR history
+      await ref.read(ocrHistoryProvider.notifier).addScan(
+        fileName: doc.fileName,
+        extractedText: extractedText,
+      );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('OCR extraction completed!')),
-        );
+        // Show result in an in-app text viewer dialog
+        _showOcrResultDialog(doc.fileName, extractedText);
       }
     } catch (e) {
       await ref.read(caseDocumentProvider.notifier).updateOcrResult(doc.id, 'failed', '');
       ref.read(ocrStateProvider.notifier).setError('OCR failed: $e');
-    }
-  }
-
-  Future<void> _downloadOcrText(CaseDocument doc) async {
-    if (doc.ocrText.isEmpty) return;
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/${doc.fileName.replaceAll('.pdf', '')}_ocr.txt');
-      await file.writeAsString(doc.ocrText);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Saved OCR Text to: ${file.path}'),
-            backgroundColor: AppColors.lal,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save file locally: $e')),
-        );
-      }
     }
   }
 
@@ -348,9 +331,9 @@ class _CaseDocumentsScreenState extends ConsumerState<CaseDocumentsScreen> {
                                             ),
                                           if (doc.ocrStatus == 'completed' && doc.ocrText.isNotEmpty)
                                             IconButton(
-                                              icon: const Icon(Icons.download, size: 20, color: Colors.green),
-                                              onPressed: () => _downloadOcrText(doc),
-                                              tooltip: 'Download OCR text',
+                                              icon: Icon(Icons.text_snippet, size: 20, color: Colors.green),
+                                              onPressed: () => _showOcrResultDialog(doc.fileName, doc.ocrText),
+                                              tooltip: 'View OCR Result',
                                             ),
                                           IconButton(
                                             icon: Icon(Icons.remove_red_eye, size: 20, color: context.textSec),
@@ -411,6 +394,57 @@ class _CaseDocumentsScreenState extends ConsumerState<CaseDocumentsScreen> {
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text('OCR: $status', style: AppTextStyles.bodySmall(color: textColor).copyWith(fontWeight: FontWeight.bold, fontSize: 10)),
+    );
+  }
+
+  void _showOcrResultDialog(String fileName, String ocrText) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: context.surface,
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                'OCR: $fileName',
+                style: AppTextStyles.chatTitle(color: context.textPri),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 400,
+          child: SingleChildScrollView(
+            child: SelectableText(
+              ocrText,
+              style: AppTextStyles.bodySmall(color: context.textSec),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton.icon(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: ocrText));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Copied to clipboard')),
+              );
+            },
+            icon: const Icon(Icons.copy, size: 16),
+            label: const Text('Copy'),
+          ),
+          TextButton.icon(
+            onPressed: () => Share.share(ocrText),
+            icon: const Icon(Icons.share, size: 16),
+            label: const Text('Share'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
     );
   }
 }
